@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Drawer } from "@mui/material";
 import { List } from "@mui/material";
 import { ListItem } from "@mui/material";
@@ -10,6 +10,8 @@ import { SIDEBAR_LINKS } from "@/shared/utils/constants";
 
 export const Sidebar = () => {
   const user = useAuthStore((state) => state.user);
+
+  const { pathname } = useLocation();
 
   if (!user) return null;
 
@@ -32,13 +34,25 @@ export const Sidebar = () => {
       <Toolbar />
 
       <List>
-        {filteredLinks.map(({ to, label }) => (
-          <ListItem key={to} disablePadding>
-            <ListItemButton component={Link} to={to}>
-              <ListItemText primary={label} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {filteredLinks.map(({ to, label }) => {
+          const isActive = pathname.startsWith(to);
+
+          return (
+            <ListItem key={to} disablePadding>
+              <ListItemButton
+                component={Link}
+                to={to}
+                sx={{
+                  backgroundColor: isActive
+                    ? "rgba(33, 150, 243, 0.12)"
+                    : "transparent",
+                }}
+              >
+                <ListItemText primary={label} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Drawer>
   );

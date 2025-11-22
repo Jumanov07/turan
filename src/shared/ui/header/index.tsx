@@ -26,7 +26,7 @@ export const Header = () => {
               </Typography>
 
               {user.role !== "super_admin" && user.company && (
-                <Typography variant="body2">{user.company}</Typography>
+                <Typography variant="body2">{user.company.name}</Typography>
               )}
 
               <Typography variant="body2">{`${user.firstName} ${user.lastName}`}</Typography>
