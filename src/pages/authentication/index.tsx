@@ -14,13 +14,15 @@ const Authentication = () => {
 
   return (
     <Box sx={{ height: "100vh", position: "relative" }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={() => navigate(-1)}
-        sx={{ position: "absolute", top: 16, left: 16 }}
-      >
-        Назад
-      </Button>
+      {isForgot && (
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+          sx={{ position: "absolute", top: 16, left: 16 }}
+        >
+          Назад
+        </Button>
+      )}
 
       {isForgot ? <ForgotForm /> : <SignInForm />}
     </Box>

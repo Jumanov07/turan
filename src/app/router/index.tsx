@@ -1,11 +1,16 @@
 import { createBrowserRouter } from "react-router";
 import Authentication from "@/pages/authentication";
 import { Layout } from "../layout";
+import { ProtectedRoute } from "./protected";
 
 export const ROUTER = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "companies", element: <div>Companies</div> },
       { path: "users", element: <div>Users</div> },
