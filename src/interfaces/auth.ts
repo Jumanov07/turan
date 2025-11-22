@@ -7,6 +7,14 @@ export interface Company {
   isArchived: boolean;
 }
 
+export interface Device {
+  id: number;
+  deviceId: string;
+  verified: boolean;
+  createdAt: string;
+  isArchived: boolean;
+}
+
 export interface User {
   id: number;
   email: string;
@@ -14,7 +22,7 @@ export interface User {
   lastName: string;
   role: "super_admin" | "admin" | "user" | "controller";
   company: Company | null;
-  devices: string[];
+  devices: Device[] | [];
   passwordChange: boolean;
   createdAt: string;
   updatedAt: string;
