@@ -5,7 +5,7 @@ import { ListItem } from "@mui/material";
 import { ListItemButton } from "@mui/material";
 import { ListItemText } from "@mui/material";
 import { Toolbar } from "@mui/material";
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/shared/store/auth";
 import { SIDEBAR_LINKS } from "@/shared/utils/constants";
 
 export const Sidebar = () => {

@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useAuthStore } from "@/store/auth";
+import { useAuthStore } from "@/shared/store/auth";
 
 export const Header = () => {
   const navigate = useNavigate();
