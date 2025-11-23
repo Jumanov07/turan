@@ -8,20 +8,18 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
 import type { Role } from "@/shared/types";
-import { ROLE_LABELS, ROLES } from "@/shared/utils/constants";
 import { createUser } from "../../api";
 import type { CreateUserPayload } from "../../interfaces";
 
 interface Props {
-  companyId: number;
   onClose: () => void;
 }
 
-export const CreateUserForm = ({ companyId, onClose }: Props) => {
+export const CreateUserForm = ({ onClose }: Props) => {
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [role, setRole] = useState<Role>("user");
+  const [role, setRole] = useState<Role>("admin");
   const [errors, setErrors] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
@@ -112,11 +110,8 @@ export const CreateUserForm = ({ companyId, onClose }: Props) => {
         fullWidth
         required
       >
-        {ROLES.map((r) => (
-          <MenuItem key={r} value={r}>
-            {ROLE_LABELS[r]}
-          </MenuItem>
-        ))}
+        <MenuItem value="admin">Админ</MenuItem>
+        <MenuItem value="super_admin">Супер админ</MenuItem>
       </TextField>
 
       <Button

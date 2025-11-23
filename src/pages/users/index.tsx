@@ -7,9 +7,8 @@ import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import TablePagination from "@mui/material/TablePagination";
 import { UsersTable } from "@/features/users/ui/users-table";
-import { getUsers } from "@/features/users/api";
 import { CreateUserForm } from "@/features/users/ui/create-user-form";
-import type { GetUsersResponse } from "@/features/users/interfaces";
+import { getUsers } from "@/features/users/api";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
 
@@ -50,7 +49,7 @@ const Users = () => {
           </Button>
         </Box>
 
-        <UsersTable users={(data as GetUsersResponse).data} />
+        <UsersTable users={data.data} />
 
         <TablePagination
           component="div"
@@ -75,7 +74,7 @@ const Users = () => {
         onClose={toggleModal}
         title="Создать пользователя"
       >
-        <CreateUserForm />
+        <CreateUserForm onClose={toggleModal} />
       </Modal>
     </>
   );
