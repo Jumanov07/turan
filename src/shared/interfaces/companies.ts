@@ -13,3 +13,8 @@ export interface Company {
   updatedAt: string;
   isArchived: boolean;
 }
+
+export interface CompanyPayload {
+  name: string;
+  address: string;
+}

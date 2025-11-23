@@ -1,34 +1,41 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
+import toast from "react-hot-toast";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Alert from "@mui/material/Alert";
-import { createCompany } from "@/shared/api/companies";
-import toast from "react-hot-toast";
+import type { Company, CompanyPayload } from "@/shared/interfaces/companies";
+import { createCompany, editCompany } from "@/shared/api/companies";
 
-interface CreateCompanyFormProps {
+interface Props {
+  company?: Company | null;
   onClose: () => void;
 }
 
-export const CreateCompanyForm = ({ onClose }: CreateCompanyFormProps) => {
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
+export const CompanyForm = ({ company, onClose }: Props) => {
+  const [name, setName] = useState(company?.name || "");
+  const [address, setAddress] = useState(company?.address || "");
   const [errorMessage, setErrorMessage] = useState("");
 
   const queryClient = useQueryClient();
 
-  const createCompanyMutation = useMutation({
-    mutationFn: createCompany,
+  const isEditing = !!company;
+
+  const mutation = useMutation({
+    mutationFn: (payload: CompanyPayload) =>
+      isEditing ? editCompany(company!.id, payload) : createCompany(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["companies"] });
       onClose();
-      toast.success("Компания успешно создана");
+      toast.success(
+        isEditing ? "Компания успешно обновлена" : "Компания успешно создана"
+      );
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       setErrorMessage(
-        error.response?.data?.message || "Ошибка при создании компании"
+        error.response?.data?.message || "Ошибка при сохранении компании"
       );
     },
   });
@@ -36,8 +43,22 @@ export const CreateCompanyForm = ({ onClose }: CreateCompanyFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage("");
-    createCompanyMutation.mutate({ name, address });
+
+    if (name.trim().length < 3) {
+      setErrorMessage("Название должно быть не менее 3 символов");
+      return;
+    }
+
+    mutation.mutate({ name: name.trim(), address: address.trim() });
   };
+
+  const buttonText = mutation.isPending
+    ? isEditing
+      ? "Обновление..."
+      : "Создание..."
+    : isEditing
+    ? "Сохранить"
+    : "Создать";
 
   return (
     <Box
@@ -67,9 +88,9 @@ export const CreateCompanyForm = ({ onClose }: CreateCompanyFormProps) => {
         type="submit"
         variant="contained"
         color="primary"
-        disabled={createCompanyMutation.isPending}
+        disabled={mutation.isPending}
       >
-        {createCompanyMutation.isPending ? "Создание..." : "Создать"}
+        {buttonText}
       </Button>
     </Box>
   );

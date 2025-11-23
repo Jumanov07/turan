@@ -1,18 +1,25 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import { CompaniesTable } from "@/features/companies/ui/companies-table";
-import { CreateCompanyForm } from "@/features/companies/ui/create-company-form";
-import { getCompanies, refreshCompanyToken } from "@/shared/api/companies";
+import { CompanyForm } from "@/features/companies/ui/company-form";
+import {
+  archiveCompany,
+  getCompanies,
+  refreshCompanyToken,
+  unarchiveCompany,
+} from "@/shared/api/companies";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
-import toast from "react-hot-toast";
+import type { Company } from "@/shared/interfaces/companies";
 
 const Companies = () => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<Company | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -45,6 +52,40 @@ const Companies = () => {
 
   const toggleModal = () => setModalOpen((prev) => !prev);
 
+  const handleToggleArchive = async (
+    companyId: number,
+    isArchived: boolean
+  ) => {
+    try {
+      if (isArchived) {
+        await unarchiveCompany(companyId);
+        toast.success("Компания разархивирована");
+      } else {
+        await archiveCompany(companyId);
+        toast.success("Компания архивирована");
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["companies"] });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+
+      toast.error(
+        axiosError.response?.data?.message ||
+          "Ошибка при изменении статуса компании"
+      );
+    }
+  };
+
+  const openEditModal = (company: Company) => {
+    setEditingCompany(company);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setEditingCompany(null);
+    setModalOpen(false);
+  };
+
   return (
     <>
       <Box>
@@ -57,11 +98,17 @@ const Companies = () => {
         <CompaniesTable
           companies={data}
           onRefreshToken={(id) => refreshTokenMutation.mutate(id)}
+          onToggleArchive={handleToggleArchive}
+          onEdit={openEditModal}
         />
       </Box>
 
-      <Modal open={isModalOpen} onClose={toggleModal} title="Создать компанию">
-        <CreateCompanyForm onClose={toggleModal} />
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        title={editingCompany ? "Редактировать компанию" : "Создать компанию"}
+      >
+        <CompanyForm company={editingCompany} onClose={closeModal} />
       </Modal>
     </>
   );
