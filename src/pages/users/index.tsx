@@ -31,6 +31,12 @@ const Users = () => {
 
   const toggleModal = () => setModalOpen((prev) => !prev);
 
+  const hasUsers = data?.data?.length > 0;
+
+  const emptyText = isArchived
+    ? "Нет архивных пользователей"
+    : "Нет активных пользователей";
+
   return (
     <>
       <Box>
@@ -49,24 +55,34 @@ const Users = () => {
           </Button>
         </Box>
 
-        <UsersTable users={data.data} />
+        {!hasUsers && (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            {emptyText}
+          </Alert>
+        )}
 
-        <TablePagination
-          component="div"
-          count={data.total}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          rowsPerPage={limit}
-          onRowsPerPageChange={(e) => {
-            setLimit(parseInt(e.target.value, 10));
-            setPage(0);
-          }}
-          rowsPerPageOptions={[5, 10, 20]}
-          labelRowsPerPage="Пользователей на странице:"
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}-${to} из ${count !== -1 ? count : `более чем ${to}`}`
-          }
-        />
+        {hasUsers && (
+          <>
+            <UsersTable users={data.data} />
+
+            <TablePagination
+              component="div"
+              count={data.total}
+              page={page}
+              onPageChange={(_, newPage) => setPage(newPage)}
+              rowsPerPage={limit}
+              onRowsPerPageChange={(e) => {
+                setLimit(parseInt(e.target.value, 10));
+                setPage(0);
+              }}
+              rowsPerPageOptions={[5, 10, 20]}
+              labelRowsPerPage="Пользователей на странице:"
+              labelDisplayedRows={({ from, to, count }) =>
+                `${from}-${to} из ${count !== -1 ? count : `более чем ${to}`}`
+              }
+            />
+          </>
+        )}
       </Box>
 
       <Modal

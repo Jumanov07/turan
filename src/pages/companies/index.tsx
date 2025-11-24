@@ -86,6 +86,12 @@ const Companies = () => {
     setModalOpen(false);
   };
 
+  const hasCompanies = data && data.length > 0;
+
+  const emptyText = isArchived
+    ? "Нет архивных компаний"
+    : "Нет активных компаний";
+
   return (
     <>
       <Box>
@@ -104,12 +110,20 @@ const Companies = () => {
           </Button>
         </Box>
 
-        <CompaniesTable
-          companies={data}
-          onRefreshToken={(id) => refreshTokenMutation.mutate(id)}
-          onToggleArchive={handleToggleArchive}
-          onEdit={openEditModal}
-        />
+        {!hasCompanies && (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            {emptyText}
+          </Alert>
+        )}
+
+        {hasCompanies && (
+          <CompaniesTable
+            companies={data}
+            onRefreshToken={(id) => refreshTokenMutation.mutate(id)}
+            onToggleArchive={handleToggleArchive}
+            onEdit={openEditModal}
+          />
+        )}
       </Box>
 
       <Modal
