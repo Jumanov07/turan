@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://13215bf34ba4.ngrok-free.app",
+  baseURL: "http://92.62.72.168:50555",
 });
 
 api.interceptors.request.use((config) => {
@@ -9,10 +9,6 @@ api.interceptors.request.use((config) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  if (config.method?.toUpperCase() === "GET") {
-    config.headers["ngrok-skip-browser-warning"] = "1";
   }
 
   return config;
