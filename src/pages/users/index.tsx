@@ -7,13 +7,14 @@ import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
-import { UsersTable } from "@/features/users/ui/users-table";
 import { UserForm } from "@/features/users/ui/user-form";
 import { getUsers, archiveUser, unarchiveUser } from "@/features/users/api";
 import type { User } from "@/features/authentication/interfaces/auth";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
 import { Pagination } from "@/shared/ui/pagination";
+import { DataTable } from "@/shared/ui/data-table";
+import { createUserColumns } from "@/features/users/columns";
 
 const Users = () => {
   const [page, setPage] = useState(0);
@@ -77,6 +78,8 @@ const Users = () => {
     ? "Нет архивных пользователей"
     : "Нет активных пользователей";
 
+  const columns = createUserColumns(handleToggleArchive, openEditModal);
+
   return (
     <>
       <Box>
@@ -109,10 +112,10 @@ const Users = () => {
 
         {hasUsers && (
           <>
-            <UsersTable
-              users={data.data}
-              onToggleArchive={handleToggleArchive}
-              onEdit={openEditModal}
+            <DataTable
+              rows={data.data}
+              columns={columns}
+              getRowId={(user) => user.id}
             />
 
             <Pagination
