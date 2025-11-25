@@ -8,17 +8,17 @@ import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { Company } from "@/features/companies/interfaces/companies";
-import { CompaniesTable } from "@/features/companies/ui/companies-table";
 import { CompanyForm } from "@/features/companies/ui/company-form";
-import { Loader } from "@/shared/ui/loader";
-import { Modal } from "@/shared/ui/modal";
-
+import { createCompanyColumns } from "@/features/companies/columns";
 import {
   archiveCompany,
   getCompanies,
   refreshCompanyToken,
   unarchiveCompany,
 } from "@/features/companies/api/companies";
+import { Loader } from "@/shared/ui/loader";
+import { Modal } from "@/shared/ui/modal";
+import { DataTable } from "@/shared/ui/data-table";
 
 const Companies = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -45,7 +45,10 @@ const Companies = () => {
     },
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return <Loader />;
+  }
+
   if (isError)
     return (
       <Alert severity="error" variant="filled">
@@ -92,12 +95,24 @@ const Companies = () => {
     ? "Нет архивных компаний"
     : "Нет активных компаний";
 
+  const columns = createCompanyColumns(
+    (id) => refreshTokenMutation.mutate(id),
+    handleToggleArchive,
+    openEditModal
+  );
+
   return (
     <>
       <Box>
-        <Box mb={2} display="flex" justifyContent="flex-end" gap={2}>
+        <Box
+          mb={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="flex-end"
+          gap={2}
+        >
           <Select
-            sx={{ maxHeight: 36 }}
+            sx={{ maxHeight: 38 }}
             value={isArchived ? "archived" : "active"}
             onChange={(e) => setIsArchived(e.target.value === "archived")}
           >
@@ -117,12 +132,7 @@ const Companies = () => {
         )}
 
         {hasCompanies && (
-          <CompaniesTable
-            companies={data}
-            onRefreshToken={(id) => refreshTokenMutation.mutate(id)}
-            onToggleArchive={handleToggleArchive}
-            onEdit={openEditModal}
-          />
+          <DataTable rows={data} columns={columns} getRowId={(c) => c.id} />
         )}
       </Box>
 
