@@ -15,9 +15,10 @@ interface Props {
   groups: Group[];
   onEdit: (group: Group) => void;
   onDelete: (groupId: number) => void;
+  isAdmin: boolean;
 }
 
-export const GroupsTable = ({ groups, onEdit, onDelete }: Props) => (
+export const GroupsTable = ({ groups, onEdit, onDelete, isAdmin }: Props) => (
   <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
     <Table>
       <TableHead>
@@ -25,7 +26,7 @@ export const GroupsTable = ({ groups, onEdit, onDelete }: Props) => (
           <TableCell>ID</TableCell>
           <TableCell>Название</TableCell>
           <TableCell>Создано</TableCell>
-          <TableCell align="right">Действия</TableCell>
+          {isAdmin && <TableCell align="right">Действия</TableCell>}
         </TableRow>
       </TableHead>
 
@@ -40,17 +41,20 @@ export const GroupsTable = ({ groups, onEdit, onDelete }: Props) => (
               <TableCell>
                 {new Date(createdAt).toLocaleString("ru-RU")}
               </TableCell>
-              <TableCell align="right">
-                <Box display="flex" justifyContent="flex-end" gap={1}>
-                  <IconButton color="primary" onClick={() => onEdit(group)}>
-                    <EditIcon />
-                  </IconButton>
 
-                  <IconButton color="error" onClick={() => onDelete(id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              </TableCell>
+              {isAdmin && (
+                <TableCell align="right">
+                  <Box display="flex" justifyContent="flex-end" gap={1}>
+                    <IconButton color="primary" onClick={() => onEdit(group)}>
+                      <EditIcon />
+                    </IconButton>
+
+                    <IconButton color="error" onClick={() => onDelete(id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              )}
             </TableRow>
           );
         })}

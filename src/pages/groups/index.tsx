@@ -6,6 +6,7 @@ import type { AxiosError } from "axios";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+
 import { GroupsTable } from "@/features/groups/ui/groups-table";
 import { GroupForm } from "@/features/groups/ui/group-form";
 import { deleteGroup, getGroups } from "@/features/groups/api";
@@ -13,6 +14,7 @@ import type { Group } from "@/features/groups/interface";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
 import { Modal } from "@/shared/ui/modal";
+import { useAuthStore } from "@/features/authentication/store/auth";
 
 const Groups = () => {
   const [page, setPage] = useState(0);
@@ -21,6 +23,8 @@ const Groups = () => {
   const [editingGroup, setEditingGroup] = useState<Group | null>(null);
 
   const queryClient = useQueryClient();
+
+  const { user } = useAuthStore();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["groups", page, limit],
@@ -38,12 +42,16 @@ const Groups = () => {
 
   const hasGroups = data?.data?.length > 0;
 
+  const isAdmin = user?.role === "admin";
+
   const openCreateModal = () => {
+    if (!isAdmin) return;
     setEditingGroup(null);
     setModalOpen(true);
   };
 
   const openEditModal = (group: Group) => {
+    if (!isAdmin) return;
     setEditingGroup(group);
     setModalOpen(true);
   };
@@ -54,6 +62,8 @@ const Groups = () => {
   };
 
   const handleDelete = async (groupId: number) => {
+    if (!isAdmin) return;
+
     try {
       await deleteGroup(groupId);
       toast.success("Группа удалена");
@@ -75,9 +85,15 @@ const Groups = () => {
           alignItems="center"
           justifyContent="flex-end"
         >
-          <Button onClick={openCreateModal} variant="contained" color="primary">
-            Создать
-          </Button>
+          {isAdmin && (
+            <Button
+              onClick={openCreateModal}
+              variant="contained"
+              color="primary"
+            >
+              Создать
+            </Button>
+          )}
         </Box>
 
         {!hasGroups && (
@@ -92,6 +108,7 @@ const Groups = () => {
               groups={data.data}
               onEdit={openEditModal}
               onDelete={handleDelete}
+              isAdmin={isAdmin}
             />
 
             <Pagination
