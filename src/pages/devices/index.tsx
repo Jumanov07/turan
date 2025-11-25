@@ -6,10 +6,11 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import { DevicesTable } from "@/features/devices/ui/devices-table";
 import { getDevices, verifyDevice, deleteDevice } from "@/features/devices/api";
+import { createDeviceColumns } from "@/features/devices/columns";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
+import { DataTable } from "@/shared/ui/data-table";
 
 const Devices = () => {
   const [page, setPage] = useState(0);
@@ -77,6 +78,8 @@ const Devices = () => {
     }
   };
 
+  const columns = createDeviceColumns(handleVerify, handleDelete);
+
   return (
     <Box>
       <Box
@@ -119,10 +122,10 @@ const Devices = () => {
 
       {hasDevices && (
         <>
-          <DevicesTable
-            devices={data.data}
-            onVerify={handleVerify}
-            onDelete={handleDelete}
+          <DataTable
+            rows={data.data}
+            columns={columns}
+            getRowId={(d) => d.id}
           />
 
           <Pagination
