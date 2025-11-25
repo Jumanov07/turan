@@ -33,7 +33,10 @@ const Users = () => {
     staleTime: 5000,
   });
 
-  if (isLoading) return <Loader />;
+  if (isLoading) {
+    return <Loader />;
+  }
+
   if (isError)
     return <Alert severity="error">Ошибка при загрузке пользователей</Alert>;
 

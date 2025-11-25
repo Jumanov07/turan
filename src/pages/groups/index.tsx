@@ -1,5 +1,124 @@
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
+import type { AxiosError } from "axios";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import { GroupsTable } from "@/features/groups/ui/groups-table";
+import { GroupForm } from "@/features/groups/ui/group-form";
+import { deleteGroup, getGroups } from "@/features/groups/api";
+import type { Group } from "@/features/groups/interface";
+import { Loader } from "@/shared/ui/loader";
+import { Pagination } from "@/shared/ui/pagination";
+import { Modal } from "@/shared/ui/modal";
+
 const Groups = () => {
-  return <h1>Groups</h1>;
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(10);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<Group | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["groups", page, limit],
+    queryFn: () => getGroups(page + 1, limit),
+    staleTime: 5000,
+  });
+
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <Alert severity="error">Ошибка при загрузке групп</Alert>;
+  }
+
+  const hasGroups = data?.data?.length > 0;
+
+  const openCreateModal = () => {
+    setEditingGroup(null);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (group: Group) => {
+    setEditingGroup(group);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setEditingGroup(null);
+    setModalOpen(false);
+  };
+
+  const handleDelete = async (groupId: number) => {
+    try {
+      await deleteGroup(groupId);
+      toast.success("Группа удалена");
+      await queryClient.invalidateQueries({ queryKey: ["groups"] });
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      toast.error(
+        axiosError.response?.data?.message || "Ошибка при удалении группы"
+      );
+    }
+  };
+
+  return (
+    <>
+      <Box>
+        <Box
+          mb={2}
+          display="flex"
+          alignItems="center"
+          justifyContent="flex-end"
+        >
+          <Button onClick={openCreateModal} variant="contained" color="primary">
+            Создать
+          </Button>
+        </Box>
+
+        {!hasGroups && (
+          <Alert severity="info" sx={{ mt: 2 }}>
+            Группы не найдены
+          </Alert>
+        )}
+
+        {hasGroups && (
+          <>
+            <GroupsTable
+              groups={data.data}
+              onEdit={openEditModal}
+              onDelete={handleDelete}
+            />
+
+            <Pagination
+              page={page}
+              limit={limit}
+              total={data.total}
+              onPageChange={setPage}
+              rowsPerPageOptions={[5, 10, 20]}
+              labelRowsPerPage="Групп на странице:"
+              onRowsPerPageChange={(newLimit) => {
+                setLimit(newLimit);
+                setPage(0);
+              }}
+            />
+          </>
+        )}
+      </Box>
+
+      <Modal
+        open={isModalOpen}
+        onClose={closeModal}
+        title={editingGroup ? "Редактировать группу" : "Создать группу"}
+      >
+        <GroupForm groupToEdit={editingGroup} onClose={closeModal} />
+      </Modal>
+    </>
+  );
 };
 
 export default Groups;
