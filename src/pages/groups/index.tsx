@@ -7,14 +7,15 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 
-import { GroupsTable } from "@/features/groups/ui/groups-table";
+import { useAuthStore } from "@/features/authentication/store/auth";
 import { GroupForm } from "@/features/groups/ui/group-form";
+import { createGroupColumns } from "@/features/groups/columns";
 import { deleteGroup, getGroups } from "@/features/groups/api";
 import type { Group } from "@/features/groups/interface";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
 import { Modal } from "@/shared/ui/modal";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { DataTable } from "@/shared/ui/data-table";
 
 const Groups = () => {
   const [page, setPage] = useState(0);
@@ -76,6 +77,8 @@ const Groups = () => {
     }
   };
 
+  const columns = createGroupColumns(openEditModal, handleDelete, isAdmin);
+
   return (
     <>
       <Box>
@@ -104,11 +107,10 @@ const Groups = () => {
 
         {hasGroups && (
           <>
-            <GroupsTable
-              groups={data.data}
-              onEdit={openEditModal}
-              onDelete={handleDelete}
-              isAdmin={isAdmin}
+            <DataTable
+              rows={data.data}
+              columns={columns}
+              getRowId={(g) => g.id}
             />
 
             <Pagination
