@@ -1,13 +1,8 @@
 import { api } from "@/shared/api";
 
-export const getDevices = async (
-  page = 1,
-  limit = 10,
-  verified = false,
-  isArchived = false
-) => {
+export const getDevices = async (page = 1, limit = 10, verified = false) => {
   const { data } = await api.get("/devices", {
-    params: { page, limit, verified, isArchived },
+    params: { page, limit, verified, isArchived: false },
   });
   return data;
 };

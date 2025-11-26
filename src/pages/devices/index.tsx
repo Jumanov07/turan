@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+
 import { getDevices, verifyDevice, deleteDevice } from "@/features/devices/api";
 import { createDeviceColumns } from "@/features/devices/columns";
 import { Loader } from "@/shared/ui/loader";
@@ -16,13 +17,12 @@ const Devices = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
   const [verified, setVerified] = useState(false);
-  const [isArchived, setIsArchived] = useState(false);
 
   const queryClient = useQueryClient();
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["devices", page, limit, verified, isArchived],
-    queryFn: () => getDevices(page + 1, limit, verified, isArchived),
+    queryKey: ["devices", page, limit, verified],
+    queryFn: () => getDevices(page + 1, limit, verified),
     staleTime: 5000,
   });
 
@@ -30,26 +30,17 @@ const Devices = () => {
     return <Loader />;
   }
 
-  if (isError)
+  if (isError) {
     return <Alert severity="error">Ошибка при загрузке устройств</Alert>;
+  }
 
   const hasDevices = data?.data?.length > 0;
 
-  let emptyText = "Устройства не найдены";
-
-  if (!isArchived && !verified) {
-    emptyText = "Нет неподтверждённых устройств";
-  } else if (!isArchived && verified) {
-    emptyText = "Нет подтверждённых устройств";
-  } else if (isArchived && !verified) {
-    emptyText = "Нет архивных неподтверждённых устройств";
-  } else if (isArchived && verified) {
-    emptyText = "Нет архивных подтверждённых устройств";
-  }
+  const emptyText = verified
+    ? "Нет подтверждённых устройств"
+    : "Нет неподтверждённых устройств";
 
   const handleVerify = async (deviceId: number) => {
-    console.log(deviceId);
-
     try {
       await verifyDevice(deviceId);
       toast.success("Устройство подтверждено");
@@ -89,18 +80,6 @@ const Devices = () => {
         justifyContent="flex-end"
         gap={2}
       >
-        <Select
-          sx={{ maxHeight: 38 }}
-          value={isArchived ? "archived" : "active"}
-          onChange={(e) => {
-            setIsArchived(e.target.value === "archived");
-            setPage(0);
-          }}
-        >
-          <MenuItem value="active">Активные</MenuItem>
-          <MenuItem value="archived">Архивные</MenuItem>
-        </Select>
-
         <Select
           sx={{ maxHeight: 38 }}
           value={verified ? "verified" : "unverified"}
