@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckIcon from "@mui/icons-material/Check";
 import type { Column } from "@/shared/types";
 import type { Device } from "../interfaces";
 
@@ -20,6 +20,19 @@ export const createDeviceColumns = (
     cell: (d) => d.deviceId,
   },
   {
+    id: "user",
+    header: "Пользователь",
+    cell: (d) => {
+      const user = d.user;
+
+      if (!user) return "-";
+
+      const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
+
+      return fullName || user.email || "-";
+    },
+  },
+  {
     id: "createdAt",
     header: "Создан",
     cell: (d) => new Date(d.createdAt).toLocaleString("ru-RU"),
@@ -31,13 +44,9 @@ export const createDeviceColumns = (
     cell: (d) => (
       <Box display="flex" justifyContent="flex-end" gap={1}>
         {!d.verified && (
-          <Button
-            size="small"
-            variant="contained"
-            onClick={() => onVerify(d.id)}
-          >
-            Подтвердить
-          </Button>
+          <IconButton color="success" onClick={() => onVerify(d.id)}>
+            <CheckIcon />
+          </IconButton>
         )}
 
         <IconButton color="error" onClick={() => onDelete(d.id)}>
