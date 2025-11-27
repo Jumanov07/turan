@@ -1,0 +1,130 @@
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import Checkbox from "@mui/material/Checkbox";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ToggleOnIcon from "@mui/icons-material/ToggleOn";
+import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import type { Column } from "@/shared/types";
+import type { CreateMeterColumnsParams, Meter } from "../interfaces";
+
+export const createMeterColumns = ({
+  isAdmin,
+  canEdit,
+  selectedIds,
+  allSelected,
+  isIndeterminate,
+  onToggleAll,
+  onToggleOne,
+  onEdit,
+  onDeleteOne,
+  onCommand,
+}: CreateMeterColumnsParams): Column<Meter>[] => {
+  const columns: Column<Meter>[] = [];
+
+  if (isAdmin) {
+    columns.push({
+      id: "select",
+      header: (
+        <Checkbox
+          checked={allSelected}
+          indeterminate={isIndeterminate}
+          onChange={(e) => onToggleAll(e.target.checked)}
+        />
+      ),
+      cell: (m) => (
+        <Checkbox
+          checked={selectedIds.includes(m.id)}
+          onChange={() => onToggleOne(m.id)}
+        />
+      ),
+    });
+  }
+
+  columns.push(
+    {
+      id: "id",
+      header: "ID",
+      cell: (m) => m.id,
+    },
+    {
+      id: "name",
+      header: "Номер счётчика",
+      cell: (m) => m.name,
+    },
+    {
+      id: "client",
+      header: "Клиент",
+      cell: (m) => m.client || "-",
+    },
+    {
+      id: "address",
+      header: "Адрес",
+      cell: (m) => m.address || "-",
+    },
+    {
+      id: "valveStatus",
+      header: "Клапан",
+      cell: (m) => m.valveStatus || "-",
+    },
+    {
+      id: "status",
+      header: "Статус",
+      cell: (m) => m.status,
+    },
+    {
+      id: "createdAt",
+      header: "Создан",
+      cell: (m) => new Date(m.createdAt).toLocaleString("ru-RU"),
+    }
+  );
+
+  columns.push({
+    id: "actions",
+    header: "Действия",
+    align: "right",
+    cell: (m) => {
+      const isOpen = m.valveStatus === "open";
+
+      return (
+        <Box display="flex" justifyContent="flex-end" gap={1}>
+          {isAdmin && (
+            <>
+              {!isOpen && (
+                <IconButton
+                  color="success"
+                  onClick={() => onCommand(m.id, "open")}
+                >
+                  <ToggleOnIcon />
+                </IconButton>
+              )}
+
+              {isOpen && (
+                <IconButton
+                  color="warning"
+                  onClick={() => onCommand(m.id, "close")}
+                >
+                  <ToggleOffIcon />
+                </IconButton>
+              )}
+            </>
+          )}
+
+          {canEdit && (
+            <IconButton color="primary" onClick={() => onEdit(m)}>
+              <EditIcon />
+            </IconButton>
+          )}
+
+          {isAdmin && (
+            <IconButton color="error" onClick={() => onDeleteOne(m.id)}>
+              <DeleteIcon />
+            </IconButton>
+          )}
+        </Box>
+      );
+    },
+  });
+
+  return columns;
+};
