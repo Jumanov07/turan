@@ -3,11 +3,11 @@ import { Navigate, useLocation } from "react-router";
 import { useAuthStore } from "@/features/authentication/store/auth";
 import { getAllowedPathsByRole } from "@/shared/utils/helpers";
 
-interface ProtectedRouteProps {
+interface Props {
   children: ReactNode;
 }
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children }: Props) => {
   const { user, accessToken } = useAuthStore();
 
   const location = useLocation();

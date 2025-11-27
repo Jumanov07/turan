@@ -3,8 +3,8 @@ import { lazy } from "react";
 
 import { Authentication } from "@/pages/authentication";
 import { ProtectedRoute } from "./ui/protected-route";
+import { WithSuspense } from "./ui/with-suspense";
 import { Layout } from "../layout";
-import { WithSuspense } from "./ui";
 
 const Companies = lazy(() => import("@/pages/companies"));
 const Users = lazy(() => import("@/pages/users"));
