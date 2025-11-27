@@ -7,6 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useMeters } from "@/features/meters/hooks/useMeters";
 import { createMeterColumns } from "@/features/meters/columns";
 import { MeterForm } from "@/features/meters/ui/meter-form";
+import { MeterDetails } from "@/features/meters/ui/meter-details";
 import type { Meter } from "@/features/meters/interfaces";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
@@ -15,7 +16,9 @@ import { Modal } from "@/shared/ui/modal";
 
 const Meters = () => {
   const [editingMeter, setEditingMeter] = useState<Meter | null>(null);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [detailsMeter, setDetailsMeter] = useState<Meter | null>(null);
+  const [isDetailsOpen, setDetailsOpen] = useState(false);
 
   const {
     meters,
@@ -57,12 +60,22 @@ const Meters = () => {
   const handleEdit = (meter: Meter) => {
     if (!canEdit) return;
     setEditingMeter(meter);
-    setModalOpen(true);
+    setEditModalOpen(true);
   };
 
-  const closeModal = () => {
+  const closeEditModal = () => {
     setEditingMeter(null);
-    setModalOpen(false);
+    setEditModalOpen(false);
+  };
+
+  const handleView = (meter: Meter) => {
+    setDetailsMeter(meter);
+    setDetailsOpen(true);
+  };
+
+  const closeDetailsModal = () => {
+    setDetailsMeter(null);
+    setDetailsOpen(false);
   };
 
   const columns = createMeterColumns({
@@ -76,6 +89,7 @@ const Meters = () => {
     onEdit: handleEdit,
     onDeleteOne: handleDeleteOne,
     onCommand: handleCommand,
+    onView: handleView,
   });
 
   return (
@@ -172,15 +186,23 @@ const Meters = () => {
       </Box>
 
       <Modal
-        open={isModalOpen}
-        onClose={closeModal}
+        open={isEditModalOpen}
+        onClose={closeEditModal}
         title="Редактировать счётчик"
       >
         <MeterForm
           meterToEdit={editingMeter}
-          onClose={closeModal}
+          onClose={closeEditModal}
           canArchive={isAdmin}
         />
+      </Modal>
+
+      <Modal
+        open={isDetailsOpen}
+        onClose={closeDetailsModal}
+        title="Детальная информация по счётчику"
+      >
+        {detailsMeter && <MeterDetails meter={detailsMeter} />}
       </Modal>
     </>
   );

@@ -5,6 +5,8 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
+import InfoIcon from "@mui/icons-material/Info";
+import Tooltip from "@mui/material/Tooltip";
 import type { Column } from "@/shared/types";
 import type { CreateMeterColumnsParams, Meter } from "../interfaces";
 import { STATUS_LABELS, VALVE_LABELS } from "../utils/constants";
@@ -20,6 +22,7 @@ export const createMeterColumns = ({
   onEdit,
   onDeleteOne,
   onCommand,
+  onView,
 }: CreateMeterColumnsParams): Column<Meter>[] => {
   const columns: Column<Meter>[] = [];
 
@@ -54,6 +57,16 @@ export const createMeterColumns = ({
       cell: (m) => m.name,
     },
     {
+      id: "password",
+      header: "Пароль",
+      cell: (m) => m.password || "-",
+    },
+    {
+      id: "customerID",
+      header: "Customer ID",
+      cell: (m) => m.customerID ?? "-",
+    },
+    {
       id: "client",
       header: "Клиент",
       cell: (m) => m.client || "-",
@@ -62,6 +75,29 @@ export const createMeterColumns = ({
       id: "address",
       header: "Адрес",
       cell: (m) => m.address || "-",
+    },
+    {
+      id: "descriptions",
+      header: "Описание",
+      cell: (m) =>
+        m.descriptions ? (
+          <Tooltip title={m.descriptions}>
+            <Box
+              component="span"
+              sx={{
+                maxWidth: 180,
+                display: "inline-block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {m.descriptions}
+            </Box>
+          </Tooltip>
+        ) : (
+          "-"
+        ),
     },
     {
       id: "valveStatus",
@@ -86,6 +122,29 @@ export const createMeterColumns = ({
       },
     },
     {
+      id: "valveStatusChange",
+      header: "Изм. клапана",
+      cell: (m) =>
+        m.valveStatusChange
+          ? new Date(m.valveStatusChange).toLocaleString("ru-RU")
+          : "-",
+    },
+    {
+      id: "batteryStatus",
+      header: "Батарея",
+      cell: (m) => m.batteryStatus || "-",
+    },
+    {
+      id: "lastReading",
+      header: "Последнее показание",
+      cell: (m) => m.lastReading ?? "-",
+    },
+    {
+      id: "pendingCommand",
+      header: "Команда",
+      cell: (m) => m.pendingCommand || "-",
+    },
+    {
       id: "status",
       header: "Статус",
       cell: (m) => {
@@ -108,6 +167,34 @@ export const createMeterColumns = ({
       },
     },
     {
+      id: "errorMessage",
+      header: "Ошибка",
+      cell: (m) =>
+        m.errorMessage ? (
+          <Tooltip title={m.errorMessage}>
+            <Box
+              component="span"
+              sx={{
+                maxWidth: 180,
+                display: "inline-block",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {m.errorMessage}
+            </Box>
+          </Tooltip>
+        ) : (
+          "-"
+        ),
+    },
+    {
+      id: "isArchived",
+      header: "Архив",
+      cell: (m) => (m.isArchived ? "Да" : "Нет"),
+    },
+    {
       id: "createdAt",
       header: "Создан",
       cell: (m) => new Date(m.createdAt).toLocaleString("ru-RU"),
@@ -124,6 +211,10 @@ export const createMeterColumns = ({
 
         return (
           <Box display="flex" justifyContent="flex-end" gap={1}>
+            <IconButton onClick={() => onView(m)}>
+              <InfoIcon />
+            </IconButton>
+
             {isAdmin && (
               <>
                 {!isOpen && (

@@ -29,4 +29,5 @@ export interface CreateMeterColumnsParams {
   onEdit: (meter: Meter) => void;
   onDeleteOne: (id: number) => void;
   onCommand: (id: number, command: "open" | "close") => void;
+  onView: (meter: Meter) => void;
 }
