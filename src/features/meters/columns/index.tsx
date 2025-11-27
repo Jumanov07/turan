@@ -61,11 +61,6 @@ export const createMeterColumns = ({
       cell: (m) => m.client || "-",
     },
     {
-      id: "address",
-      header: "Адрес",
-      cell: (m) => m.address || "-",
-    },
-    {
       id: "valveStatus",
       header: "Клапан",
       cell: (m) => {
@@ -86,16 +81,6 @@ export const createMeterColumns = ({
           </Box>
         );
       },
-    },
-    {
-      id: "batteryStatus",
-      header: "Батарея",
-      cell: (m) => m.batteryStatus || "-",
-    },
-    {
-      id: "lastReading",
-      header: "Последнее показание",
-      cell: (m) => m.lastReading ?? "-",
     },
     {
       id: "status",
@@ -120,9 +105,9 @@ export const createMeterColumns = ({
       },
     },
     {
-      id: "createdAt",
-      header: "Создан",
-      cell: (m) => new Date(m.createdAt).toLocaleString("ru-RU"),
+      id: "lastReading",
+      header: "Последнее показание",
+      cell: (m) => m.lastReading ?? "-",
     }
   );
 
@@ -136,6 +121,7 @@ export const createMeterColumns = ({
 
         return (
           <Box display="flex" justifyContent="flex-end" gap={1}>
+            {/* Детальный просмотр */}
             <IconButton onClick={() => onView(m)}>
               <InfoIcon />
             </IconButton>
