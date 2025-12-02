@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { Group } from "@/features/groups/interface";
@@ -82,10 +81,6 @@ export const MetersFiltersModal = ({
         <MenuItem value="active">Активные</MenuItem>
         <MenuItem value="archived">Архивные</MenuItem>
       </Select>
-
-      <Box display="flex" justifyContent="flex-end" gap={1} mt={1}>
-        <Button onClick={onClose}>Закрыть</Button>
-      </Box>
     </Box>
   </Modal>
 );

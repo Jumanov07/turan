@@ -65,14 +65,6 @@ const Meters = () => {
       forFilter: true,
     });
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (isError) {
-    return <Alert severity="error">Ошибка при загрузке счётчиков</Alert>;
-  }
-
   const handleEdit = (meter: Meter) => {
     if (!canEdit) return;
     setEditingMeter(meter);
@@ -173,9 +165,17 @@ const Meters = () => {
     onView: handleView,
   });
 
+  const isEmptyState = !isLoading && !isError && !hasMeters;
+
   return (
     <>
       <Box>
+        {isError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Ошибка при загрузке счётчиков
+          </Alert>
+        )}
+
         <MetersActions
           isAdmin={isAdmin}
           canManageMetersToGroups={canManageMetersToGroups}
@@ -188,13 +188,19 @@ const Meters = () => {
           onResetFilters={handleResetFilters}
         />
 
-        {!hasMeters && (
+        {isLoading && (
+          <Box mt={2}>
+            <Loader />
+          </Box>
+        )}
+
+        {isEmptyState && (
           <Alert severity="info" sx={{ mt: 2 }}>
             {emptyText}
           </Alert>
         )}
 
-        {hasMeters && (
+        {!isLoading && hasMeters && (
           <>
             <DataTable
               rows={meters}
