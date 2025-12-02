@@ -13,6 +13,7 @@ import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
 import { Modal } from "@/shared/ui/modal";
+import { MetersFiltersModal } from "@/features/meters/ui/meters-filters-modal";
 
 const Meters = () => {
   const [editingMeter, setEditingMeter] = useState<Meter | null>(null);
@@ -172,18 +173,11 @@ const Meters = () => {
     <>
       <Box>
         <MetersActions
-          status={status}
-          onStatusChange={handleStatusChange}
-          valveFilter={valveFilter}
-          onValveFilterChange={handleValveFilterChange}
-          isArchived={isArchived}
-          onArchivedChange={handleArchivedChange}
-          groupId={groupId}
-          onGroupChange={handleGroupChange}
-          groups={groups}
           isAdmin={isAdmin}
           canManageMetersToGroups={canManageMetersToGroups}
           selectedCount={selectedIds.length}
+          hasGroups={}
+          onOpenFilters={}
           onDeleteSelected={handleDeleteSelected}
           onAddSelectedToGroup={openAddToGroupModal}
           onRemoveSelectedFromGroup={openRemoveFromGroupModal}
@@ -248,6 +242,20 @@ const Meters = () => {
         onChangeGroup={setGroupModalGroupId}
         onClose={closeGroupModal}
         onConfirm={handleConfirmGroupModal}
+      />
+
+      <MetersFiltersModal
+        open={isFiltersOpen}
+        onClose={toggleFiltersModal}
+        status={status}
+        onStatusChange={handleStatusChange}
+        valveFilter={valveFilter}
+        onValveFilterChange={handleValveFilterChange}
+        isArchived={isArchived}
+        onArchivedChange={handleArchivedChange}
+        groupId={groupId}
+        onGroupChange={handleGroupChange}
+        groups={groups}
       />
     </>
   );
