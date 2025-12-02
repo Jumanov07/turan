@@ -6,7 +6,7 @@ import { useGroups } from "@/features/groups/hooks/useGroups";
 import { createMeterColumns } from "@/features/meters/columns";
 import { MeterForm } from "@/features/meters/ui/meter-form";
 import { MeterDetails } from "@/features/meters/ui/meter-details";
-import { MetersFilters } from "@/features/meters/ui/meters-filters";
+import { MetersActions } from "@/features/meters/ui/meters-actions";
 import type { Meter } from "@/features/meters/interfaces";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
@@ -118,7 +118,7 @@ const Meters = () => {
   return (
     <>
       <Box>
-        <MetersFilters
+        <MetersActions
           status={status}
           onStatusChange={handleStatusChange}
           valveFilter={valveFilter}

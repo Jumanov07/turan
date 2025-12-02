@@ -19,7 +19,7 @@ interface Props {
   onDeleteSelected: () => void;
 }
 
-export const MetersFilters = ({
+export const MetersActions = ({
   status,
   onStatusChange,
   valveFilter,

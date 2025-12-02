@@ -15,6 +15,7 @@ export const useGroups = ({ forFilter = false }: Props) => {
   const [limit, setLimit] = useState(10);
 
   const queryClient = useQueryClient();
+
   const { user } = useAuthStore();
 
   const isAdmin = user?.role === "admin";
