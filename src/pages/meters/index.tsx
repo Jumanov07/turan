@@ -5,6 +5,7 @@ import Alert from "@mui/material/Alert";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import { useMeters } from "@/features/meters/hooks/useMeters";
+import { useGroups } from "@/features/groups/hooks/useGroups";
 import { createMeterColumns } from "@/features/meters/columns";
 import { MeterForm } from "@/features/meters/ui/meter-form";
 import { MeterDetails } from "@/features/meters/ui/meter-details";
@@ -37,6 +38,8 @@ const Meters = () => {
     setIsArchived,
     valveFilter,
     setValveFilter,
+    groupId,
+    setGroupId,
     isAdmin,
     canEdit,
     selectedIds,
@@ -49,6 +52,8 @@ const Meters = () => {
     handleCommand,
   } = useMeters();
 
+  const { groups } = useGroups({ forFilter: true });
+
   if (isLoading) {
     return <Loader />;
   }
@@ -59,6 +64,7 @@ const Meters = () => {
 
   const handleEdit = (meter: Meter) => {
     if (!canEdit) return;
+
     setEditingMeter(meter);
     setEditModalOpen(true);
   };
@@ -128,6 +134,24 @@ const Meters = () => {
               <MenuItem value="all">Все клапаны</MenuItem>
               <MenuItem value="open">Клапан открыт</MenuItem>
               <MenuItem value="closed">Клапан закрыт</MenuItem>
+            </Select>
+
+            <Select
+              sx={{ maxHeight: 38, minWidth: 160 }}
+              value={groupId ?? "all"}
+              onChange={(e) => {
+                const value = e.target.value;
+                setGroupId(value === "all" ? null : Number(value));
+                setPage(0);
+              }}
+            >
+              <MenuItem value="all">Все группы</MenuItem>
+
+              {groups.map((g) => (
+                <MenuItem key={g.id} value={g.id}>
+                  {g.name}
+                </MenuItem>
+              ))}
             </Select>
 
             <Select

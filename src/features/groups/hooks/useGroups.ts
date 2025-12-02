@@ -6,19 +6,25 @@ import { useAuthStore } from "@/features/authentication/store/auth";
 import { deleteGroup, getGroups } from "@/features/groups/api";
 import type { Group } from "@/features/groups/interface";
 
-export const useGroups = () => {
+interface Props {
+  forFilter?: boolean;
+}
+
+export const useGroups = ({ forFilter = false }: Props) => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
 
   const queryClient = useQueryClient();
-
   const { user } = useAuthStore();
 
   const isAdmin = user?.role === "admin";
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["groups", page, limit],
-    queryFn: () => getGroups(page + 1, limit),
+    queryKey: forFilter
+      ? ["groups", "all-for-filter"]
+      : ["groups", page, limit],
+    queryFn: () =>
+      forFilter ? getGroups(1, 1000) : getGroups(page + 1, limit),
     staleTime: 5000,
   });
 
@@ -60,7 +66,6 @@ export const useGroups = () => {
     setLimit,
 
     isAdmin,
-
     handleDelete,
   };
 };
