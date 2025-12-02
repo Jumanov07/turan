@@ -3,8 +3,14 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { deleteGroup, getGroups } from "@/features/groups/api";
+import {
+  addMetersToGroup,
+  deleteGroup,
+  getGroups,
+  removeMetersFromGroup,
+} from "@/features/groups/api";
 import type { Group } from "@/features/groups/interface";
+import { getMetersWordForm } from "../utils/helpers";
 
 interface Props {
   forFilter?: boolean;
@@ -34,8 +40,12 @@ export const useGroups = ({ forFilter = false }: Props) => {
   const hasGroups = groups.length > 0;
   const emptyText = "Группы не найдены";
 
-  const invalidate = async () => {
+  const invalidateGroups = async () => {
     await queryClient.invalidateQueries({ queryKey: ["groups"] });
+  };
+
+  const invalidateMeters = async () => {
+    await queryClient.invalidateQueries({ queryKey: ["meters"] });
   };
 
   const handleDelete = async (groupId: number) => {
@@ -44,11 +54,55 @@ export const useGroups = ({ forFilter = false }: Props) => {
     try {
       await deleteGroup(groupId);
       toast.success("Группа удалена");
-      await invalidate();
+      await invalidateGroups();
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
         axiosError.response?.data?.message || "Ошибка при удалении группы"
+      );
+    }
+  };
+
+  const handleAddMetersToGroup = async (
+    groupId: number,
+    meterIds: number[]
+  ) => {
+    if (!isAdmin) return;
+
+    const count = meterIds.length;
+    const word = getMetersWordForm(count);
+
+    try {
+      await addMetersToGroup(groupId, meterIds);
+      toast.success(`${word} добавлен${count === 1 ? "" : "ы"} в группу`);
+      await invalidateMeters();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      toast.error(
+        axiosError.response?.data?.message ||
+          `Ошибка при добавлении ${word.toLowerCase()} в группу`
+      );
+    }
+  };
+
+  const handleRemoveMetersFromGroup = async (
+    groupId: number,
+    meterIds: number[]
+  ) => {
+    if (!isAdmin) return;
+
+    const count = meterIds.length;
+    const word = getMetersWordForm(count);
+
+    try {
+      await removeMetersFromGroup(groupId, meterIds);
+      toast.success(`${word} удалён${count === 1 ? "" : "ы"} из группы`);
+      await invalidateMeters();
+    } catch (error) {
+      const axiosError = error as AxiosError<{ message?: string }>;
+      toast.error(
+        axiosError.response?.data?.message ||
+          `Ошибка при удалении ${word.toLowerCase()} из группы`
       );
     }
   };
@@ -68,5 +122,8 @@ export const useGroups = ({ forFilter = false }: Props) => {
 
     isAdmin,
     handleDelete,
+
+    handleAddMetersToGroup,
+    handleRemoveMetersFromGroup,
   };
 };

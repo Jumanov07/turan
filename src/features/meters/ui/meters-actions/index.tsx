@@ -1,8 +1,10 @@
+import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import type { Group } from "@/features/groups/interface";
+import { Modal } from "@/shared/ui/modal";
 
 interface Props {
   status: string;
@@ -15,8 +17,11 @@ interface Props {
   onGroupChange: (groupId: number | null) => void;
   groups: Group[];
   isAdmin: boolean;
+  canManageMetersToGroups: boolean;
   selectedCount: number;
   onDeleteSelected: () => void;
+  onAddSelectedToGroup: () => void;
+  onRemoveSelectedFromGroup: () => void;
 }
 
 export const MetersActions = ({
@@ -30,76 +35,120 @@ export const MetersActions = ({
   onGroupChange,
   groups,
   isAdmin,
+  canManageMetersToGroups,
   selectedCount,
   onDeleteSelected,
-}: Props) => (
-  <Box
-    mb={2}
-    display="flex"
-    alignItems="center"
-    justifyContent="space-between"
-    gap={2}
-  >
-    <Box display="flex" gap={2}>
-      <Select
-        sx={{ maxHeight: 38, minWidth: 160 }}
-        value={status}
-        onChange={(e) => onStatusChange(e.target.value)}
-      >
-        <MenuItem value="normal">Нормальные</MenuItem>
-        <MenuItem value="warning">Предупреждения</MenuItem>
-        <MenuItem value="error">С ошибками</MenuItem>
-        <MenuItem value="all">Все статусы</MenuItem>
-      </Select>
+  onAddSelectedToGroup,
+  onRemoveSelectedFromGroup,
+}: Props) => {
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
 
-      <Select
-        sx={{ maxHeight: 38, minWidth: 160 }}
-        value={valveFilter}
-        onChange={(e) =>
-          onValveFilterChange(e.target.value as "all" | "open" | "closed")
-        }
-      >
-        <MenuItem value="all">Все клапаны</MenuItem>
-        <MenuItem value="open">Клапан открыт</MenuItem>
-        <MenuItem value="closed">Клапан закрыт</MenuItem>
-      </Select>
+  const handleOpenFilters = () => setFiltersOpen(true);
+  const handleCloseFilters = () => setFiltersOpen(false);
 
-      <Select
-        sx={{ maxHeight: 38, minWidth: 160 }}
-        value={groupId ?? "all"}
-        onChange={(e) => {
-          const value = e.target.value;
-          onGroupChange(value === "all" ? null : Number(value));
-        }}
+  return (
+    <>
+      <Box
+        mb={2}
+        display="flex"
+        alignItems="center"
+        justifyContent="space-between"
+        gap={2}
       >
-        <MenuItem value="all">Все группы</MenuItem>
+        <Button variant="outlined" onClick={handleOpenFilters}>
+          Фильтры
+        </Button>
 
-        {groups.map((g) => (
-          <MenuItem key={g.id} value={g.id}>
-            {g.name}
-          </MenuItem>
-        ))}
-      </Select>
+        <Box display="flex" gap={1}>
+          {canManageMetersToGroups && (
+            <>
+              <Button
+                variant="outlined"
+                disabled={selectedCount === 0 || groups.length === 0}
+                onClick={onAddSelectedToGroup}
+              >
+                Добавить в группу
+              </Button>
 
-      <Select
-        sx={{ maxHeight: 38, minWidth: 160 }}
-        value={isArchived ? "archived" : "active"}
-        onChange={(e) => onArchivedChange(e.target.value === "archived")}
-      >
-        <MenuItem value="active">Активные</MenuItem>
-        <MenuItem value="archived">Архивные</MenuItem>
-      </Select>
-    </Box>
+              <Button
+                variant="outlined"
+                disabled={selectedCount === 0 || groups.length === 0}
+                onClick={onRemoveSelectedFromGroup}
+              >
+                Удалить из группы
+              </Button>
+            </>
+          )}
 
-    {isAdmin && (
-      <Button
-        variant="outlined"
-        color="error"
-        disabled={selectedCount === 0}
-        onClick={onDeleteSelected}
-      >
-        Удалить выбранные
-      </Button>
-    )}
-  </Box>
-);
+          {isAdmin && (
+            <Button
+              variant="outlined"
+              color="error"
+              disabled={selectedCount === 0}
+              onClick={onDeleteSelected}
+            >
+              Удалить выбранные
+            </Button>
+          )}
+        </Box>
+      </Box>
+
+      <Modal open={isFiltersOpen} onClose={handleCloseFilters} title="Фильтры">
+        <Box display="flex" flexDirection="column" gap={2}>
+          <Select
+            fullWidth
+            value={status}
+            onChange={(e) => onStatusChange(e.target.value)}
+          >
+            <MenuItem value="normal">Нормальные</MenuItem>
+            <MenuItem value="warning">Предупреждения</MenuItem>
+            <MenuItem value="error">С ошибками</MenuItem>
+            <MenuItem value="all">Все статусы</MenuItem>
+          </Select>
+
+          <Select
+            fullWidth
+            value={valveFilter}
+            onChange={(e) =>
+              onValveFilterChange(e.target.value as "all" | "open" | "closed")
+            }
+          >
+            <MenuItem value="all">Все клапаны</MenuItem>
+            <MenuItem value="open">Клапан открыт</MenuItem>
+            <MenuItem value="closed">Клапан закрыт</MenuItem>
+          </Select>
+
+          <Select
+            fullWidth
+            value={groupId ?? "all"}
+            onChange={(e) => {
+              const value = e.target.value;
+              onGroupChange(value === "all" ? null : Number(value));
+            }}
+          >
+            <MenuItem value="all">Все группы</MenuItem>
+
+            {groups.map((g) => (
+              <MenuItem key={g.id} value={g.id}>
+                {g.name}
+              </MenuItem>
+            ))}
+          </Select>
+
+          <Select
+            fullWidth
+            value={isArchived ? "archived" : "active"}
+            onChange={(e) => onArchivedChange(e.target.value === "archived")}
+          >
+            <MenuItem value="active">Активные</MenuItem>
+            <MenuItem value="archived">Архивные</MenuItem>
+          </Select>
+
+          <Box display="flex" justifyContent="flex-end" gap={1} mt={1}>
+            <Button onClick={handleCloseFilters}>Закрыть</Button>
+          </Box>
+        </Box>
+      </Modal>
+    </>
+  );
+};

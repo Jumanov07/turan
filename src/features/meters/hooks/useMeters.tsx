@@ -22,10 +22,15 @@ export const useMeters = () => {
   );
 
   const queryClient = useQueryClient();
+
   const { user } = useAuthStore();
 
   const isAdmin = user?.role === "admin";
   const canEdit = user?.role === "admin" || user?.role === "controller";
+  const canManageMetersToGroups =
+    user?.role === "admin" ||
+    user?.role === "controller" ||
+    user?.role === "user";
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["meters", page, limit, status, isArchived, groupId],
@@ -152,6 +157,7 @@ export const useMeters = () => {
 
     isAdmin,
     canEdit,
+    canManageMetersToGroups,
 
     selectedIds,
     allSelected,

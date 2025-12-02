@@ -26,3 +26,24 @@ export const deleteGroup = async (groupId: number) => {
   const { data } = await api.delete(`/group/${groupId}`);
   return data;
 };
+
+export const addMetersToGroup = async (groupId: number, meterIds: number[]) => {
+  const { data } = await api.post("/group/add", {
+    groupId,
+    meterIds,
+  });
+
+  return data;
+};
+
+export const removeMetersFromGroup = async (
+  groupId: number,
+  meterIds: number[]
+) => {
+  const { data } = await api.post("/group/remove", {
+    groupId,
+    meterIds,
+  });
+
+  return data;
+};

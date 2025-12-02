@@ -7,6 +7,7 @@ import { createMeterColumns } from "@/features/meters/columns";
 import { MeterForm } from "@/features/meters/ui/meter-form";
 import { MeterDetails } from "@/features/meters/ui/meter-details";
 import { MetersActions } from "@/features/meters/ui/meters-actions";
+import { MeterGroupModal } from "@/features/meters/ui/meter-group-modal";
 import type { Meter } from "@/features/meters/interfaces";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
@@ -18,6 +19,11 @@ const Meters = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [detailsMeter, setDetailsMeter] = useState<Meter | null>(null);
   const [isDetailsOpen, setDetailsOpen] = useState(false);
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [groupModalMode, setGroupModalMode] = useState<"add" | "remove">("add");
+  const [groupModalGroupId, setGroupModalGroupId] = useState<number | null>(
+    null
+  );
 
   const {
     meters,
@@ -40,6 +46,7 @@ const Meters = () => {
     setGroupId,
     isAdmin,
     canEdit,
+    canManageMetersToGroups,
     selectedIds,
     allSelected,
     isIndeterminate,
@@ -50,7 +57,10 @@ const Meters = () => {
     handleCommand,
   } = useMeters();
 
-  const { groups } = useGroups({ forFilter: true });
+  const { groups, handleAddMetersToGroup, handleRemoveMetersFromGroup } =
+    useGroups({
+      forFilter: true,
+    });
 
   if (isLoading) {
     return <Loader />;
@@ -101,6 +111,49 @@ const Meters = () => {
     setPage(0);
   };
 
+  const openAddToGroupModal = () => {
+    if (
+      !canManageMetersToGroups ||
+      selectedIds.length === 0 ||
+      groups.length === 0
+    )
+      return;
+
+    setGroupModalMode("add");
+    setGroupModalGroupId(groupId ?? null);
+    setGroupModalOpen(true);
+  };
+
+  const openRemoveFromGroupModal = () => {
+    if (
+      !canManageMetersToGroups ||
+      selectedIds.length === 0 ||
+      groups.length === 0
+    )
+      return;
+
+    setGroupModalMode("remove");
+    setGroupModalGroupId(groupId ?? null);
+    setGroupModalOpen(true);
+  };
+
+  const closeGroupModal = () => {
+    setGroupModalOpen(false);
+    setGroupModalGroupId(null);
+  };
+
+  const handleConfirmGroupModal = () => {
+    if (!groupModalGroupId || selectedIds.length === 0) return;
+
+    if (groupModalMode === "add") {
+      handleAddMetersToGroup(groupModalGroupId, selectedIds);
+    } else {
+      handleRemoveMetersFromGroup(groupModalGroupId, selectedIds);
+    }
+
+    closeGroupModal();
+  };
+
   const columns = createMeterColumns({
     isAdmin,
     canEdit,
@@ -129,8 +182,11 @@ const Meters = () => {
           onGroupChange={handleGroupChange}
           groups={groups}
           isAdmin={isAdmin}
+          canManageMetersToGroups={canManageMetersToGroups}
           selectedCount={selectedIds.length}
           onDeleteSelected={handleDeleteSelected}
+          onAddSelectedToGroup={openAddToGroupModal}
+          onRemoveSelectedFromGroup={openRemoveFromGroupModal}
         />
 
         {!hasMeters && (
@@ -182,6 +238,17 @@ const Meters = () => {
       >
         {detailsMeter && <MeterDetails meter={detailsMeter} />}
       </Modal>
+
+      <MeterGroupModal
+        open={groupModalOpen}
+        mode={groupModalMode}
+        groups={groups}
+        selectedCount={selectedIds.length}
+        selectedGroupId={groupModalGroupId}
+        onChangeGroup={setGroupModalGroupId}
+        onClose={closeGroupModal}
+        onConfirm={handleConfirmGroupModal}
+      />
     </>
   );
 };
