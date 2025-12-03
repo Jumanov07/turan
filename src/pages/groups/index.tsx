@@ -28,7 +28,7 @@ const Groups = () => {
     setLimit,
     isAdmin,
     handleDelete,
-  } = useGroups();
+  } = useGroups({});
 
   if (isLoading) {
     return <Loader />;

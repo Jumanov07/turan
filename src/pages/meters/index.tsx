@@ -1,13 +1,14 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
 import { useMeters } from "@/features/meters/hooks/useMeters";
+import { useGroups } from "@/features/groups/hooks/useGroups";
 import { createMeterColumns } from "@/features/meters/columns";
 import { MeterForm } from "@/features/meters/ui/meter-form";
 import { MeterDetails } from "@/features/meters/ui/meter-details";
+import { MetersActions } from "@/features/meters/ui/meters-actions";
+import { MeterGroupModal } from "@/features/meters/ui/meter-group-modal";
+import { MetersFiltersModal } from "@/features/meters/ui/meters-filters-modal";
 import type { Meter } from "@/features/meters/interfaces";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
@@ -19,6 +20,12 @@ const Meters = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [detailsMeter, setDetailsMeter] = useState<Meter | null>(null);
   const [isDetailsOpen, setDetailsOpen] = useState(false);
+  const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [groupModalOpen, setGroupModalOpen] = useState(false);
+  const [groupModalMode, setGroupModalMode] = useState<"add" | "remove">("add");
+  const [groupModalGroupId, setGroupModalGroupId] = useState<number | null>(
+    null
+  );
 
   const {
     meters,
@@ -37,8 +44,11 @@ const Meters = () => {
     setIsArchived,
     valveFilter,
     setValveFilter,
+    groupId,
+    setGroupId,
     isAdmin,
     canEdit,
+    canManageMetersToGroups,
     selectedIds,
     allSelected,
     isIndeterminate,
@@ -47,15 +57,14 @@ const Meters = () => {
     handleDeleteOne,
     handleDeleteSelected,
     handleCommand,
+    handleResetFilters,
+    clearSelection,
   } = useMeters();
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (isError) {
-    return <Alert severity="error">Ошибка при загрузке счётчиков</Alert>;
-  }
+  const { groups, handleAddMetersToGroup, handleRemoveMetersFromGroup } =
+    useGroups({
+      forFilter: true,
+    });
 
   const handleEdit = (meter: Meter) => {
     if (!canEdit) return;
@@ -78,6 +87,72 @@ const Meters = () => {
     setDetailsOpen(false);
   };
 
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(0);
+  };
+
+  const handleValveFilterChange = (value: "all" | "open" | "closed") => {
+    setValveFilter(value);
+    setPage(0);
+  };
+
+  const handleArchivedChange = (archived: boolean) => {
+    setIsArchived(archived);
+    setPage(0);
+  };
+
+  const handleGroupChange = (id: number | null) => {
+    setGroupId(id);
+    setPage(0);
+  };
+
+  const openAddToGroupModal = () => {
+    if (
+      !canManageMetersToGroups ||
+      selectedIds.length === 0 ||
+      groups.length === 0
+    ) {
+      return;
+    }
+
+    setGroupModalMode("add");
+    setGroupModalGroupId(groupId ?? null);
+    setGroupModalOpen(true);
+  };
+
+  const openRemoveFromGroupModal = () => {
+    if (
+      !canManageMetersToGroups ||
+      selectedIds.length === 0 ||
+      groups.length === 0
+    ) {
+      return;
+    }
+
+    setGroupModalMode("remove");
+    setGroupModalGroupId(groupId ?? null);
+    setGroupModalOpen(true);
+  };
+
+  const closeGroupModal = () => {
+    setGroupModalOpen(false);
+    setGroupModalGroupId(null);
+  };
+
+  const handleConfirmGroupModal = () => {
+    if (!groupModalGroupId || selectedIds.length === 0) return;
+
+    if (groupModalMode === "add") {
+      handleAddMetersToGroup(groupModalGroupId, selectedIds);
+    } else {
+      handleRemoveMetersFromGroup(groupModalGroupId, selectedIds);
+    }
+
+    clearSelection();
+    closeGroupModal();
+  };
+
   const columns = createMeterColumns({
     isAdmin,
     canEdit,
@@ -92,76 +167,42 @@ const Meters = () => {
     onView: handleView,
   });
 
+  const isEmptyState = !isLoading && !isError && !hasMeters;
+
   return (
     <>
       <Box>
-        <Box
-          mb={2}
-          display="flex"
-          alignItems="center"
-          justifyContent="space-between"
-          gap={2}
-        >
-          <Box display="flex" gap={2}>
-            <Select
-              sx={{ maxHeight: 38, minWidth: 160 }}
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value);
-                setPage(0);
-              }}
-            >
-              <MenuItem value="normal">Нормальные</MenuItem>
-              <MenuItem value="warning">Предупреждения</MenuItem>
-              <MenuItem value="error">С ошибками</MenuItem>
-              <MenuItem value="all">Все статусы</MenuItem>
-            </Select>
+        {isError && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            Ошибка при загрузке счётчиков
+          </Alert>
+        )}
 
-            <Select
-              sx={{ maxHeight: 38, minWidth: 160 }}
-              value={valveFilter}
-              onChange={(e) => {
-                setValveFilter(e.target.value as "all" | "open" | "closed");
-                setPage(0);
-              }}
-            >
-              <MenuItem value="all">Все клапаны</MenuItem>
-              <MenuItem value="open">Клапан открыт</MenuItem>
-              <MenuItem value="closed">Клапан закрыт</MenuItem>
-            </Select>
+        <MetersActions
+          isAdmin={isAdmin}
+          canManageMetersToGroups={canManageMetersToGroups}
+          selectedCount={selectedIds.length}
+          hasGroups={groups.length > 0}
+          onOpenFilters={() => setFiltersOpen(true)}
+          onDeleteSelected={handleDeleteSelected}
+          onAddSelectedToGroup={openAddToGroupModal}
+          onRemoveSelectedFromGroup={openRemoveFromGroupModal}
+          onResetFilters={handleResetFilters}
+        />
 
-            <Select
-              sx={{ maxHeight: 38, minWidth: 160 }}
-              value={isArchived ? "archived" : "active"}
-              onChange={(e) => {
-                setIsArchived(e.target.value === "archived");
-                setPage(0);
-              }}
-            >
-              <MenuItem value="active">Активные</MenuItem>
-              <MenuItem value="archived">Архивные</MenuItem>
-            </Select>
+        {isLoading && (
+          <Box mt={2}>
+            <Loader />
           </Box>
+        )}
 
-          {isAdmin && (
-            <Button
-              variant="outlined"
-              color="error"
-              disabled={selectedIds.length === 0}
-              onClick={handleDeleteSelected}
-            >
-              Удалить выбранные
-            </Button>
-          )}
-        </Box>
-
-        {!hasMeters && (
+        {isEmptyState && (
           <Alert severity="info" sx={{ mt: 2 }}>
             {emptyText}
           </Alert>
         )}
 
-        {hasMeters && (
+        {!isLoading && hasMeters && (
           <>
             <DataTable
               rows={meters}
@@ -204,6 +245,31 @@ const Meters = () => {
       >
         {detailsMeter && <MeterDetails meter={detailsMeter} />}
       </Modal>
+
+      <MeterGroupModal
+        open={groupModalOpen}
+        mode={groupModalMode}
+        groups={groups}
+        selectedCount={selectedIds.length}
+        selectedGroupId={groupModalGroupId}
+        onChangeGroup={setGroupModalGroupId}
+        onClose={closeGroupModal}
+        onConfirm={handleConfirmGroupModal}
+      />
+
+      <MetersFiltersModal
+        open={isFiltersOpen}
+        onClose={() => setFiltersOpen(false)}
+        status={status}
+        onStatusChange={handleStatusChange}
+        valveFilter={valveFilter}
+        onValveFilterChange={handleValveFilterChange}
+        isArchived={isArchived}
+        onArchivedChange={handleArchivedChange}
+        groupId={groupId}
+        onGroupChange={handleGroupChange}
+        groups={groups}
+      />
     </>
   );
 };

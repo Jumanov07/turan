@@ -121,7 +121,6 @@ export const createMeterColumns = ({
 
         return (
           <Box display="flex" justifyContent="flex-end" gap={1}>
-            {/* Детальный просмотр */}
             <IconButton onClick={() => onView(m)}>
               <InfoIcon />
             </IconButton>

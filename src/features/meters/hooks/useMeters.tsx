@@ -13,22 +13,28 @@ import {
 export const useMeters = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [status, setStatus] = useState<string>("normal");
+  const [status, setStatus] = useState<string>("all");
   const [isArchived, setIsArchived] = useState(false);
+  const [groupId, setGroupId] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [valveFilter, setValveFilter] = useState<"all" | "open" | "closed">(
     "all"
   );
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const queryClient = useQueryClient();
+
   const { user } = useAuthStore();
 
   const isAdmin = user?.role === "admin";
   const canEdit = user?.role === "admin" || user?.role === "controller";
+  const canManageMetersToGroups =
+    user?.role === "admin" ||
+    user?.role === "controller" ||
+    user?.role === "user";
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["meters", page, limit, status, isArchived],
-    queryFn: () => getMeters(page + 1, limit, isArchived, status),
+    queryKey: ["meters", page, limit, status, isArchived, groupId],
+    queryFn: () => getMeters(page + 1, limit, isArchived, status, groupId),
     staleTime: 5000,
   });
 
@@ -37,15 +43,12 @@ export const useMeters = () => {
     if (valveFilter === "all") {
       return true;
     }
-
     if (valveFilter === "open") {
       return m.valveStatus === "open";
     }
-
     if (valveFilter === "closed") {
       return m.valveStatus === "closed";
     }
-
     return true;
   });
 
@@ -116,18 +119,28 @@ export const useMeters = () => {
 
   const handleToggleAll = (checked: boolean) => {
     if (!isAdmin) return;
-    if (checked) {
-      setSelectedIds(meters.map((m) => m.id));
-    } else {
-      setSelectedIds([]);
-    }
+
+    setSelectedIds(checked ? meters.map((m) => m.id) : []);
   };
 
   const handleToggleOne = (id: number) => {
     if (!isAdmin) return;
+
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
+  };
+
+  const handleResetFilters = () => {
+    setStatus("all");
+    setValveFilter("all");
+    setIsArchived(false);
+    setGroupId(null);
+    setPage(0);
+  };
+
+  const clearSelection = () => {
+    setSelectedIds([]);
   };
 
   return {
@@ -151,8 +164,12 @@ export const useMeters = () => {
     valveFilter,
     setValveFilter,
 
+    groupId,
+    setGroupId,
+
     isAdmin,
     canEdit,
+    canManageMetersToGroups,
 
     selectedIds,
     allSelected,
@@ -162,5 +179,7 @@ export const useMeters = () => {
     handleDeleteOne,
     handleDeleteSelected,
     handleCommand,
+    handleResetFilters,
+    clearSelection,
   };
 };
