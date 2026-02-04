@@ -11,51 +11,65 @@ export const createUserColumns = (
   onToggleArchive: (userId: number, isArchived: boolean) => void,
   onEdit: (user: UserRow) => void
 ): Column<UserRow>[] => [
-  {
-    id: "id",
-    header: "ID",
-    cell: (user) => user.id,
-  },
-  {
-    id: "email",
-    header: "Почта",
-    cell: (user) => user.email,
-  },
-  {
-    id: "fullName",
-    header: "ФИО",
-    cell: (user) => {
-      const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
-      return fullName || "-";
+    {
+      id: "id",
+      header: "ID",
+      cell: (user) => user.id,
     },
-  },
-  {
-    id: "company",
-    header: "Компания",
-    cell: (user) => user.company?.name ?? "-",
-  },
-  {
-    id: "role",
-    header: "Роль",
-    cell: (user) => ROLE_LABELS[user.role],
-  },
-  {
-    id: "actions",
-    header: "Действия",
-    align: "right",
-    cell: (user) => (
-      <Box display="flex" justifyContent="flex-end" gap={1}>
-        <IconButton
-          color={user.isArchived ? "success" : "warning"}
-          onClick={() => onToggleArchive(user.id, user.isArchived)}
-        >
-          {user.isArchived ? <UnarchiveIcon /> : <ArchiveIcon />}
-        </IconButton>
+    {
+      id: "email",
+      header: "Почта",
+      cell: (user) => user.email,
+    },
+    {
+      id: "fullName",
+      header: "ФИО",
+      cell: (user) => {
+        const fullName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
+        return fullName || "-";
+      },
+    },
+    {
+      id: "company",
+      header: "Компания",
+      cell: (user) => user.company?.name ?? "-",
+    },
+    {
+      id: "role",
+      header: "Роль",
+      cell: (user) => ROLE_LABELS[user.role],
+    },
+    {
+      id: "createdAt",
+      header: "Дата создания",
+      cell: (user) => {
+        const date = new Date(user.createdAt);
+        return date.toLocaleString("ru-RU", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
+    },
+    {
+      id: "actions",
+      header: "Действия",
+      align: "right",
+      cell: (user) => (
+        <Box display="flex" justifyContent="flex-end" gap={1}>
+          <IconButton
+            color={user.isArchived ? "success" : "warning"}
+            onClick={() => onToggleArchive(user.id, user.isArchived)}
+          >
+            {user.isArchived ? <UnarchiveIcon /> : <ArchiveIcon />}
+          </IconButton>
 
-        <IconButton color="primary" onClick={() => onEdit(user)}>
-          <EditIcon />
-        </IconButton>
-      </Box>
-    ),
-  },
-];
+          <IconButton color="primary" onClick={() => onEdit(user)}>
+            <EditIcon />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
