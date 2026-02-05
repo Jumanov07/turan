@@ -21,6 +21,7 @@ export interface Meter {
 export interface CreateMeterColumnsParams {
   isAdmin: boolean;
   canEdit: boolean;
+  canManageMetersToGroups?: boolean;
   selectedIds: number[];
   allSelected: boolean;
   isIndeterminate: boolean;
