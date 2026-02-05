@@ -2,7 +2,7 @@ export interface Meter {
   id: number;
   name: string;
   password: string;
-  customerID: number | null;
+  customerID: string | null;
   client: string | null;
   address: string | null;
   descriptions: string | null;
