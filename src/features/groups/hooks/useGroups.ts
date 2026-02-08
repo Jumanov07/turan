@@ -10,7 +10,10 @@ import {
   removeMetersFromGroup,
 } from "@/features/groups/api";
 import type { Group } from "@/features/groups/interface";
-import { ROLE } from "@/shared/utils/constants/roles";
+import {
+  canManageMetersToGroups as canManageMetersToGroupsRole,
+  hasRoleAdmin,
+} from "@/shared/utils/helpers/roles";
 
 interface Props {
   forFilter?: boolean;
@@ -24,12 +27,8 @@ export const useGroups = ({ forFilter = false }: Props) => {
 
   const { user } = useAuthStore();
 
-  const isAdmin = user?.role === ROLE.ADMIN;
-
-  const canManageMetersToGroups =
-    user?.role === ROLE.ADMIN ||
-    user?.role === ROLE.CONTROLLER ||
-    user?.role === ROLE.USER;
+  const isAdmin = hasRoleAdmin(user?.role);
+  const canManageMetersToGroups = canManageMetersToGroupsRole(user?.role);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: forFilter

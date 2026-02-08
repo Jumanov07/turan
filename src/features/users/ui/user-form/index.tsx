@@ -11,10 +11,16 @@ import type { Company } from "@/features/companies/interfaces/companies";
 import { getCompanies } from "@/features/companies/api/companies";
 import type { User } from "@/features/authentication/interfaces/auth";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
+
 import type { Role } from "@/shared/types";
 import { createUser, editUser } from "../../api";
 import type { CreateUserPayload } from "../../interfaces";
+import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
+import {
+  availableUserRolesFor,
+  canSelectCompanyForRole,
+  hasRoleSuperAdmin,
+} from "@/shared/utils/helpers/roles";
 
 interface Props {
   onClose: () => void;
@@ -38,7 +44,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
   const { data: companies, isLoading: isCompaniesLoading } = useQuery({
     queryKey: ["companies"],
     queryFn: () => getCompanies(false),
-    enabled: user?.role === ROLE.SUPER_ADMIN,
+    enabled: hasRoleSuperAdmin(user?.role),
   });
 
   const mutation = useMutation({
@@ -61,13 +67,9 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
     },
   });
 
-  const availableRoles: Role[] =
-    user?.role === ROLE.SUPER_ADMIN
-      ? [ROLE.ADMIN, ROLE.SUPER_ADMIN]
-      : [ROLE.ADMIN, ROLE.USER, ROLE.CONTROLLER];
+  const availableRoles = availableUserRolesFor(user?.role);
 
-  const showCompanySelect =
-    user?.role === ROLE.SUPER_ADMIN && role === ROLE.ADMIN;
+  const showCompanySelect = canSelectCompanyForRole(user?.role, role);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

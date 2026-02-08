@@ -1,11 +1,5 @@
-import type { Role } from "@/shared/types";
+import type { SidebarLink } from "@/shared/types";
 import { ROLE } from "./roles";
-
-type SidebarLink = {
-  label: string;
-  to: string;
-  roles: Role[];
-};
 
 export const SIDEBAR_LINKS: SidebarLink[] = [
   {

@@ -8,7 +8,8 @@ interface Props {
 }
 
 export const ProtectedRoute = ({ children }: Props) => {
-  const { user, accessToken } = useAuthStore();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const user = useAuthStore((state) => state.user);
 
   const location = useLocation();
 

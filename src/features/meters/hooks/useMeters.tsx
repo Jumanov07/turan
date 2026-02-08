@@ -9,7 +9,11 @@ import {
   deleteMeters,
   sendMeterCommand,
 } from "@/features/meters/api";
-import { ROLE } from "@/shared/utils/constants/roles";
+import {
+  canEditMeters,
+  canManageMetersToGroups as canManageMetersToGroupsRole,
+  hasRoleAdmin,
+} from "@/shared/utils/helpers/roles";
 
 export const useMeters = () => {
   const [page, setPage] = useState(0);
@@ -26,14 +30,11 @@ export const useMeters = () => {
 
   const queryClient = useQueryClient();
 
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
-  const isAdmin = user?.role === ROLE.ADMIN;
-  const canEdit = user?.role === ROLE.ADMIN || user?.role === ROLE.CONTROLLER;
-  const canManageMetersToGroups =
-    user?.role === ROLE.ADMIN ||
-    user?.role === ROLE.CONTROLLER ||
-    user?.role === ROLE.USER;
+  const isAdmin = hasRoleAdmin(user?.role);
+  const canEdit = canEditMeters(user?.role);
+  const canManageMetersToGroups = canManageMetersToGroupsRole(user?.role);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [

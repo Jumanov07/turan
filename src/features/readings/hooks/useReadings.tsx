@@ -5,7 +5,7 @@ import type { AxiosError } from "axios";
 import { getReadings, deleteReadings } from "@/features/readings/api";
 import type { Reading } from "@/features/readings/interfaces";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { ROLE } from "@/shared/utils/constants/roles";
+import { hasRoleAdmin } from "@/shared/utils/helpers/roles";
 
 export const useReadings = () => {
   const [page, setPage] = useState(0);
@@ -14,9 +14,9 @@ export const useReadings = () => {
 
   const queryClient = useQueryClient();
 
-  const { user } = useAuthStore();
+  const user = useAuthStore((state) => state.user);
 
-  const isAdmin = user?.role === ROLE.ADMIN;
+  const isAdmin = hasRoleAdmin(user?.role);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["readings", page, limit],
