@@ -9,6 +9,7 @@ import {
   deleteMeters,
   sendMeterCommand,
 } from "@/features/meters/api";
+import { ROLE } from "@/shared/utils/constants/roles";
 
 export const useMeters = () => {
   const [page, setPage] = useState(0);
@@ -27,12 +28,12 @@ export const useMeters = () => {
 
   const { user } = useAuthStore();
 
-  const isAdmin = user?.role === "admin";
-  const canEdit = user?.role === "admin" || user?.role === "controller";
+  const isAdmin = user?.role === ROLE.ADMIN;
+  const canEdit = user?.role === ROLE.ADMIN || user?.role === ROLE.CONTROLLER;
   const canManageMetersToGroups =
-    user?.role === "admin" ||
-    user?.role === "controller" ||
-    user?.role === "user";
+    user?.role === ROLE.ADMIN ||
+    user?.role === ROLE.CONTROLLER ||
+    user?.role === ROLE.USER;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: [

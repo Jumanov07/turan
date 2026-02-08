@@ -13,9 +13,10 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import PersonIcon from "@mui/icons-material/Person";
 import toast from "react-hot-toast";
+import type { Role } from "@/shared/types";
 import { SIDEBAR_LINKS } from "../constants";
 
-export const getAllowedPathsByRole = (role: string): string[] => {
+export const getAllowedPathsByRole = (role: Role): string[] => {
   return SIDEBAR_LINKS.filter((l) => l.roles.includes(role)).map((l) => l.to);
 };
 
@@ -50,13 +51,13 @@ export const getSidebarIcon = (to: string) => {
   }
 };
 
-export const getRoleIcon = (role: string) => {
+export const getRoleIcon = (role: Role) => {
   switch (role) {
-    case "super_admin":
+    case ROLE.SUPER_ADMIN:
       return ShieldIcon;
-    case "admin":
+    case ROLE.ADMIN:
       return AdminPanelSettingsIcon;
-    case "controller":
+    case ROLE.CONTROLLER:
       return ManageAccountsIcon;
     default:
       return PersonIcon;

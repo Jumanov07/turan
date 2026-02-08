@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { ROLE_LABELS } from "@/shared/utils/constants";
+import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
 
 export const Header = () => {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ export const Header = () => {
 
   const TITLES = user
     ? [
-        user.role !== "super_admin" && user.company?.name,
+        user.role !== ROLE.SUPER_ADMIN && user.company?.name,
         `${user.firstName} ${user.lastName}`,
         ROLE_LABELS[user.role],
       ].filter(Boolean)

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-
-export type Role = "super_admin" | "admin" | "user" | "controller";
+import type { ROLE } from "../utils/constants/roles";
 
 export type Column<T> = {
   id: string;
@@ -8,3 +7,5 @@ export type Column<T> = {
   cell: (row: T) => ReactNode;
   align?: "left" | "right" | "center";
 };
+
+export type Role = (typeof ROLE)[keyof typeof ROLE];

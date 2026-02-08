@@ -1,48 +1,39 @@
-import type { Role } from "@/shared/types";
+import { ROLE } from "./roles";
 
 export const SIDEBAR_LINKS = [
   {
     label: "Компании",
     to: "/companies",
-    roles: ["super_admin"],
+    roles: [ROLE.SUPER_ADMIN],
   },
   {
     label: "Пользователи",
     to: "/users",
-    roles: ["super_admin", "admin"],
+    roles: [ROLE.SUPER_ADMIN, ROLE.ADMIN],
   },
   {
     label: "Устройства",
     to: "/devices",
-    roles: ["admin"],
+    roles: [ROLE.ADMIN],
   },
   {
     label: "Группы",
     to: "/groups",
-    roles: ["admin", "user", "controller"],
+    roles: [ROLE.ADMIN, ROLE.USER, ROLE.CONTROLLER],
   },
   {
     label: "Счётчики",
     to: "/meters",
-    roles: ["admin", "user", "controller"],
+    roles: [ROLE.ADMIN, ROLE.USER, ROLE.CONTROLLER],
   },
   {
     label: "Показания",
     to: "/readings",
-    roles: ["admin", "user", "controller"],
+    roles: [ROLE.ADMIN, ROLE.USER, ROLE.CONTROLLER],
   },
   {
     label: "Вебхуки",
     to: "/webhooks",
-    roles: ["admin"],
+    roles: [ROLE.ADMIN],
   },
 ];
-
-export const ROLE_LABELS = {
-  super_admin: "Супер админ",
-  admin: "Админ",
-  user: "Пользователь",
-  controller: "Контроллер",
-};
-
-export const ROLES: Role[] = ["super_admin", "admin", "user", "controller"];

@@ -13,6 +13,7 @@ import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
 import { Pagination } from "@/shared/ui/pagination";
 import { DataTable } from "@/shared/ui/data-table";
+import { ROLE } from "@/shared/utils/constants/roles";
 
 export const UsersWidget = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -56,7 +57,8 @@ export const UsersWidget = () => {
     setModalOpen(false);
   };
 
-  const canDelete = user?.role === "admin" || user?.role === "super_admin";
+  const canDelete =
+    user?.role === ROLE.ADMIN || user?.role === ROLE.SUPER_ADMIN;
 
   const columns = createUserColumns(
     handleToggleArchive,

@@ -5,6 +5,7 @@ import type { AxiosError } from "axios";
 import { getReadings, deleteReadings } from "@/features/readings/api";
 import type { Reading } from "@/features/readings/interfaces";
 import { useAuthStore } from "@/features/authentication/store/auth";
+import { ROLE } from "@/shared/utils/constants/roles";
 
 export const useReadings = () => {
   const [page, setPage] = useState(0);
@@ -15,7 +16,7 @@ export const useReadings = () => {
 
   const { user } = useAuthStore();
 
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === ROLE.ADMIN;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["readings", page, limit],
@@ -43,7 +44,7 @@ export const useReadings = () => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Ошибка при удалении показания"
+        axiosError.response?.data?.message || "Ошибка при удалении показания",
       );
     }
   };
@@ -60,7 +61,7 @@ export const useReadings = () => {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
         axiosError.response?.data?.message ||
-          "Ошибка при удалении выбранных показаний"
+          "Ошибка при удалении выбранных показаний",
       );
     }
   };
@@ -81,7 +82,7 @@ export const useReadings = () => {
   const handleToggleOne = (id: string) => {
     if (!isAdmin) return;
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 

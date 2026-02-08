@@ -11,7 +11,7 @@ import type { Company } from "@/features/companies/interfaces/companies";
 import { getCompanies } from "@/features/companies/api/companies";
 import type { User } from "@/features/authentication/interfaces/auth";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { ROLE_LABELS } from "@/shared/utils/constants";
+import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
 import type { Role } from "@/shared/types";
 import { createUser, editUser } from "../../api";
 import type { CreateUserPayload } from "../../interfaces";
@@ -25,7 +25,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
   const [email, setEmail] = useState(userToEdit?.email || "");
   const [firstName, setFirstName] = useState(userToEdit?.firstName || "");
   const [lastName, setLastName] = useState(userToEdit?.lastName || "");
-  const [role, setRole] = useState<Role>(userToEdit?.role || "admin");
+  const [role, setRole] = useState<Role>(userToEdit?.role || ROLE.ADMIN);
   const [companyId, setCompanyId] = useState<number | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
 
@@ -38,7 +38,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
   const { data: companies, isLoading: isCompaniesLoading } = useQuery({
     queryKey: ["companies"],
     queryFn: () => getCompanies(false),
-    enabled: user?.role === "super_admin",
+    enabled: user?.role === ROLE.SUPER_ADMIN,
   });
 
   const mutation = useMutation({
@@ -50,7 +50,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       toast.success(
         isEditing
           ? `${ROLE_LABELS[role]} успешно обновлён`
-          : `${ROLE_LABELS[role]} успешно создан`
+          : `${ROLE_LABELS[role]} успешно создан`,
       );
     },
     onError: (error: AxiosError<{ message?: string; errors?: string[] }>) => {
@@ -62,11 +62,12 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
   });
 
   const availableRoles: Role[] =
-    user?.role === "super_admin"
-      ? ["admin", "super_admin"]
-      : ["admin", "user", "controller"];
+    user?.role === ROLE.SUPER_ADMIN
+      ? [ROLE.ADMIN, ROLE.SUPER_ADMIN]
+      : [ROLE.ADMIN, ROLE.USER, ROLE.CONTROLLER];
 
-  const showCompanySelect = user?.role === "super_admin" && role === "admin";
+  const showCompanySelect =
+    user?.role === ROLE.SUPER_ADMIN && role === ROLE.ADMIN;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,8 +190,8 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
             ? "Обновление..."
             : "Создание..."
           : isEditing
-          ? "Сохранить"
-          : "Создать"}
+            ? "Сохранить"
+            : "Создать"}
       </Button>
     </Box>
   );
