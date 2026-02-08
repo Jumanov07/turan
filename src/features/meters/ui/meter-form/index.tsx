@@ -36,12 +36,11 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
       setDescriptions(meterToEdit.descriptions ?? "");
       setIsArchived(meterToEdit.isArchived);
     } else {
-      setCustomerID(null);
+      setCustomerID("");
       setClient("");
       setAddress("");
       setDescriptions("");
       setIsArchived(false);
-      setCustomerID("");
     }
   }, [meterToEdit]);
 
@@ -53,9 +52,7 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
       setLoading(true);
 
       const normalizedCustomerID =
-        customerID && customerID.trim().length > 0
-          ? customerID.trim()
-          : null;
+        customerID && customerID.trim().length > 0 ? customerID.trim() : null;
 
       await updateMeter({
         meterId: meterToEdit.id,
@@ -72,7 +69,7 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Ошибка при сохранении счётчика"
+        axiosError.response?.data?.message || "Ошибка при сохранении счётчика",
       );
     } finally {
       setLoading(false);

@@ -15,7 +15,8 @@ import Box from "@mui/material/Box";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAuthStore } from "@/features/authentication/store/auth";
-import { ROLE_LABELS, SIDEBAR_LINKS } from "@/shared/utils/constants";
+import { SIDEBAR_LINKS } from "@/shared/utils/constants";
+import { ROLE_LABELS } from "@/shared/utils/constants/roles";
 import { getRoleIcon, getSidebarIcon } from "@/shared/utils/helpers";
 
 export const Sidebar = () => {
@@ -30,7 +31,7 @@ export const Sidebar = () => {
   if (!user) return;
 
   const filteredLinks = SIDEBAR_LINKS.filter(({ roles }) =>
-    roles.includes(user.role)
+    roles.includes(user.role),
   );
 
   const drawerWidth = collapsed ? 72 : 240;

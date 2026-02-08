@@ -15,6 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import toast from "react-hot-toast";
 import type { Role } from "@/shared/types";
 import { SIDEBAR_LINKS } from "../constants";
+import { ROLE } from "../constants/roles";
 
 export const getAllowedPathsByRole = (role: Role): string[] => {
   return SIDEBAR_LINKS.filter((l) => l.roles.includes(role)).map((l) => l.to);
