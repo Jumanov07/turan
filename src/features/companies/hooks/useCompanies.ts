@@ -1,10 +1,5 @@
 import { useState } from "react";
-import {
-  keepPreviousData,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import {
@@ -23,7 +18,6 @@ export const useCompanies = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["companies", isArchived],
     queryFn: () => getCompanies(isArchived),
-    placeholderData: keepPreviousData,
   });
 
   const refreshTokenMutation = useMutation({

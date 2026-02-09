@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { deleteDevice, getDevices, verifyDevice } from "@/entities/devices";
@@ -17,7 +17,6 @@ export const useDevices = () => {
     queryKey: ["devices", page, limit, verified],
     queryFn: () => getDevices(page + 1, limit, verified),
     staleTime: 5000,
-    placeholderData: keepPreviousData,
   });
 
   const devices: Device[] = data?.data ?? [];

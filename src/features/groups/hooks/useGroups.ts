@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/authentication/store/auth";
@@ -37,7 +37,6 @@ export const useGroups = ({ forFilter = false }: Props) => {
     queryFn: () =>
       forFilter ? getGroups(1, 1000) : getGroups(page + 1, limit),
     staleTime: 5000,
-    placeholderData: keepPreviousData,
   });
 
   const groups: Group[] = data?.data ?? [];

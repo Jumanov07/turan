@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { deleteWebhook, getWebhooks, type Webhook } from "@/entities/webhooks";
@@ -10,7 +10,6 @@ export const useWebhooks = () => {
     queryKey: ["webhooks"],
     queryFn: () => getWebhooks(),
     staleTime: 5000,
-    placeholderData: keepPreviousData,
   });
 
   const webhooks: Webhook[] = data ?? [];
