@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -35,5 +35,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );

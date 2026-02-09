@@ -14,7 +14,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 import { SIDEBAR_LINKS } from "@/shared/utils/constants";
 import { ROLE_LABELS } from "@/shared/utils/constants/roles";
 import { getRoleIcon, getSidebarIcon } from "@/shared/utils/helpers";

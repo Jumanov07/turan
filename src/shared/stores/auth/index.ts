@@ -1,19 +1,18 @@
+import type { AuthSession, AuthState } from "@/shared/types";
+import { AUTH_STORAGE_KEY } from "@/shared/utils/constants";
 import { create } from "zustand";
-import type { AuthSession, AuthState } from "@/entities/authentication";
-import type { User } from "@/shared/types";
-import { AUTH_STORAGE_KEY } from "../../utils/constants";
 
 export const useAuthStore = create<AuthState>((set) => {
   const stored = localStorage.getItem(AUTH_STORAGE_KEY);
 
-  let user: User | null = null;
-  let accessToken: string | null = null;
+  let user: AuthState["user"] = null;
+  let accessToken: AuthState["accessToken"] = null;
 
   if (stored) {
     try {
       const parsed = JSON.parse(stored) as Partial<AuthSession>;
-      user = (parsed.user as User) ?? null;
-      accessToken = (parsed.accessToken as string) ?? null;
+      user = parsed.user ?? null;
+      accessToken = parsed.accessToken ?? null;
     } catch {
       // ignore
     }

@@ -39,3 +39,5 @@ export const SIDEBAR_LINKS: SidebarLink[] = [
     roles: [ROLE.ADMIN],
   },
 ];
+
+export const AUTH_STORAGE_KEY = "turan_auth";

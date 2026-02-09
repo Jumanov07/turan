@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { deleteReadings, getReadings, type Reading } from "@/entities/readings";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 import { hasRoleAdmin } from "@/shared/utils/helpers/roles";
 
 export const useReadings = () => {

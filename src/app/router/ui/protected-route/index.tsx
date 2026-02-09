@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 import { getAllowedPathsByRole } from "@/shared/utils/helpers";
 import { ROUTES } from "@/shared/utils/constants/routes";
 

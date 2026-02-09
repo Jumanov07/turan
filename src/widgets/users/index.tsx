@@ -6,7 +6,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
 import { useUsers } from "@/features/users/hooks/useUsers";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 import { UserForm } from "@/features/users/ui/user-form";
 import { createUserColumns } from "@/features/users/columns";
 import type { UserRow } from "@/entities/users";

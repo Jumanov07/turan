@@ -4,7 +4,7 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores/auth";
 import { hasRoleSuperAdmin } from "@/shared/utils/helpers/roles";
 import { ROLE_LABELS } from "@/shared/utils/constants/roles";
 import { ROUTES } from "@/shared/utils/constants/routes";

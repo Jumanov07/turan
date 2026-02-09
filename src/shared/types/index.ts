@@ -17,6 +17,18 @@ export interface User {
   isArchived: boolean;
 }
 
+export interface AuthSession {
+  user: User;
+  accessToken: string;
+}
+
+export interface AuthState {
+  user: User | null;
+  accessToken: string | null;
+  setAuth: (session: AuthSession) => void;
+  logout: () => void;
+}
+
 export interface Company {
   id: number;
   name: string;
