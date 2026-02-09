@@ -6,7 +6,7 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import type { Column, Company } from "@/shared/types";
-import { copyToClipboard } from "@/shared/utils/helpers";
+import { copyToClipboard } from "../utils/helpers";
 
 export const createCompanyColumns = (
   onRefreshToken: (id: number) => void,

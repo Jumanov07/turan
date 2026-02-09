@@ -72,15 +72,15 @@ export interface Meter {
   isArchived: boolean;
 }
 
-export type SidebarLink = {
+export interface SidebarLink {
   label: string;
   to: string;
   roles: Role[];
-};
+}
 
-export type Column<T> = {
+export interface Column<T> {
   id: string;
   header: ReactNode;
   cell: (row: T) => ReactNode;
   align?: "left" | "right" | "center";
-};
+}

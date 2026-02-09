@@ -15,9 +15,9 @@ import Box from "@mui/material/Box";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
 import { useAuthStore } from "@/shared/stores/auth";
-import { SIDEBAR_LINKS } from "@/shared/utils/constants";
 import { ROLE_LABELS } from "@/shared/utils/constants/roles";
-import { getRoleIcon, getSidebarIcon } from "@/shared/utils/helpers";
+import { SIDEBAR_LINKS } from "@/shared/utils/constants";
+import { getRoleIcon, getSidebarIcon } from "../../utils/helpers";
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(true);

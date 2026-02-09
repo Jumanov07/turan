@@ -5,7 +5,7 @@ export const ROLE = {
   ADMIN: "admin",
   USER: "user",
   CONTROLLER: "controller",
-} as const;
+};
 
 export const ROLES: Role[] = [
   ROLE.SUPER_ADMIN,

@@ -5,7 +5,7 @@ import { Authentication } from "@/pages/authentication";
 import { ROUTES } from "@/shared/utils/constants/routes";
 import { ProtectedRoute } from "./ui/protected-route";
 import { WithSuspense } from "./ui/with-suspense";
-import { Layout } from "../layout";
+import { Layout } from "../../widgets/layout/ui/layout";
 
 const Companies = lazy(() =>
   import("@/pages/companies").then((m) => ({ default: m.Companies })),

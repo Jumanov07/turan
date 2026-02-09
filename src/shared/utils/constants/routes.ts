@@ -8,4 +8,4 @@ export const ROUTES = {
   METERS: "meters",
   READINGS: "readings",
   WEBHOOKS: "webhooks",
-} as const;
+};
