@@ -3,12 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import {
-  getUsers,
   archiveUser,
-  unarchiveUser,
   deleteUser,
-} from "@/features/users/api";
-import type { UserRow } from "../types";
+  getUsers,
+  unarchiveUser,
+  type UserRow,
+} from "@/entities/users";
 
 export const useUsers = () => {
   const [page, setPage] = useState(0);

@@ -7,7 +7,7 @@ export const getMeters = async (
   status?: string,
   groupId?: number | null,
   customerId?: string,
-  meterName?: string
+  meterName?: string,
 ) => {
   const params: Record<string, unknown> = {
     page,
@@ -66,7 +66,7 @@ export const updateMeter = async (params: {
 
 export const sendMeterCommand = async (
   meterId: number,
-  command: "open" | "close"
+  command: "open" | "close",
 ) => {
   const { data } = await api.patch(`/meters/command/${meterId}`, null, {
     params: {

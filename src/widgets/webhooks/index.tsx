@@ -6,7 +6,7 @@ import Alert from "@mui/material/Alert";
 import { useWebhooks } from "@/features/webhooks/hooks/useWebhooks";
 import { WebhookForm } from "@/features/webhooks/ui/webhook-form";
 import { createWebhookColumns } from "@/features/webhooks/columns";
-import type { Webhook } from "@/features/webhooks/interfaces";
+import type { Webhook } from "@/entities/webhooks";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";

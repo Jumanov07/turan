@@ -7,7 +7,8 @@ import ToggleOnIcon from "@mui/icons-material/ToggleOn";
 import ToggleOffIcon from "@mui/icons-material/ToggleOff";
 import InfoIcon from "@mui/icons-material/Info";
 import type { Column } from "@/shared/types";
-import type { CreateMeterColumnsParams, Meter } from "../interfaces";
+import type { Meter } from "@/entities/meters";
+import type { CreateMeterColumnsParams } from "../interfaces";
 import { STATUS_LABELS, VALVE_LABELS } from "../utils/constants";
 
 export const createMeterColumns = ({

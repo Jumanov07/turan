@@ -4,7 +4,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckIcon from "@mui/icons-material/Check";
 import Checkbox from "@mui/material/Checkbox";
 import type { Column } from "@/shared/types";
-import type { CreateDeviceColumnsParams, Device } from "../interfaces";
+import type { Device } from "@/entities/devices";
+import type { CreateDeviceColumnsParams } from "../interfaces";
 
 export const createDeviceColumns = ({
   selectedIds,

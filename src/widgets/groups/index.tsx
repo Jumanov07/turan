@@ -5,7 +5,7 @@ import Alert from "@mui/material/Alert";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import { GroupForm } from "@/features/groups/ui/group-form";
 import { createGroupColumns } from "@/features/groups/columns";
-import type { Group } from "@/features/groups/interface";
+import type { Group } from "@/entities/groups";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
 import { Modal } from "@/shared/ui/modal";

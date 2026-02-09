@@ -1,8 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
-import { deleteWebhook, getWebhooks } from "../api";
-import type { Webhook } from "../interfaces";
+import { deleteWebhook, getWebhooks, type Webhook } from "@/entities/webhooks";
 
 export const useWebhooks = () => {
   const queryClient = useQueryClient();
@@ -29,7 +28,7 @@ export const useWebhooks = () => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Ошибка при удалении вебхука"
+        axiosError.response?.data?.message || "Ошибка при удалении вебхука",
       );
     }
   };

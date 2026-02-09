@@ -2,8 +2,8 @@ import { create } from "zustand";
 import type {
   AuthSession,
   AuthState,
-  User,
 } from "@/features/authentication/interfaces/auth";
+import type { User } from "@/entities/users";
 import { AUTH_STORAGE_KEY } from "../../utils/constants";
 
 export const useAuthStore = create<AuthState>((set) => {

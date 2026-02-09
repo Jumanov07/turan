@@ -9,7 +9,7 @@ import { MeterDetails } from "@/features/meters/ui/meter-details";
 import { MetersActions } from "@/features/meters/ui/meters-actions";
 import { MeterGroupModal } from "@/features/meters/ui/meter-group-modal";
 import { MetersFiltersModal } from "@/features/meters/ui/meters-filters-modal";
-import type { Meter } from "@/features/meters/interfaces";
+import type { Meter } from "@/entities/meters";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";

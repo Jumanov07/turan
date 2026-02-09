@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
-import type { Meter } from "@/features/meters/interfaces";
 import { useAuthStore } from "@/features/authentication/store/auth";
 import {
-  getMeters,
   deleteMeters,
+  getMeters,
   sendMeterCommand,
-} from "@/features/meters/api";
+  type Meter,
+} from "@/entities/meters";
 import {
   canEditMeters,
   canManageMetersToGroups as canManageMetersToGroupsRole,

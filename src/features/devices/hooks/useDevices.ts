@@ -2,8 +2,12 @@ import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
-import { getDevices, verifyDevice, deleteDevice } from "@/features/devices/api";
-import type { Device } from "@/features/devices/interfaces";
+import {
+  deleteDevice,
+  getDevices,
+  verifyDevice,
+  type Device,
+} from "@/entities/devices";
 
 export const useDevices = () => {
   const [page, setPage] = useState(0);
@@ -40,7 +44,7 @@ export const useDevices = () => {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
         axiosError.response?.data?.message ||
-          "Ошибка при подтверждении устройства"
+          "Ошибка при подтверждении устройства",
       );
     }
   };
@@ -54,7 +58,7 @@ export const useDevices = () => {
     } catch (error) {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
-        axiosError.response?.data?.message || "Ошибка при удалении устройства"
+        axiosError.response?.data?.message || "Ошибка при удалении устройства",
       );
     }
   };
@@ -71,7 +75,7 @@ export const useDevices = () => {
       const axiosError = error as AxiosError<{ message?: string }>;
       toast.error(
         axiosError.response?.data?.message ||
-          "Ошибка при удалении выбранных устройств"
+          "Ошибка при удалении выбранных устройств",
       );
     }
   };
@@ -89,7 +93,7 @@ export const useDevices = () => {
 
   const handleToggleOne = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 

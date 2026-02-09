@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { useReadings } from "@/features/readings/hooks/useReadings";
-import type { Reading } from "@/features/readings/interfaces";
+import type { Reading } from "@/entities/readings";
 import { createReadingColumns } from "@/features/readings/columns";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";

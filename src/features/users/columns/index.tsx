@@ -6,7 +6,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ROLE_LABELS } from "@/shared/utils/constants/roles";
 import type { Column } from "@/shared/types";
-import type { UserRow } from "../types";
+import type { UserRow } from "@/entities/users";
 
 export const createUserColumns = (
   onToggleArchive: (userId: number, isArchived: boolean) => void,

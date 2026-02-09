@@ -8,8 +8,8 @@ import {
   deleteGroup,
   getGroups,
   removeMetersFromGroup,
-} from "@/features/groups/api";
-import type { Group } from "@/features/groups/interface";
+  type Group,
+} from "@/entities/groups";
 import {
   canManageMetersToGroups as canManageMetersToGroupsRole,
   hasRoleAdmin,

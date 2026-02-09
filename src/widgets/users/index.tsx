@@ -8,7 +8,7 @@ import { useUsers } from "@/features/users/hooks/useUsers";
 import { useAuthStore } from "@/features/authentication/store/auth";
 import { UserForm } from "@/features/users/ui/user-form";
 import { createUserColumns } from "@/features/users/columns";
-import type { UserRow } from "@/features/users/types";
+import type { UserRow } from "@/entities/users";
 import { Loader } from "@/shared/ui/loader";
 import { Modal } from "@/shared/ui/modal";
 import { Pagination } from "@/shared/ui/pagination";

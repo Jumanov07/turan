@@ -2,8 +2,9 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { CreateReadingColumnsParams, Reading } from "../interfaces";
+import type { Reading } from "@/entities/readings";
 import type { Column } from "@/shared/types";
+import type { CreateReadingColumnsParams } from "../interfaces";
 
 export const createReadingColumns = ({
   isAdmin,

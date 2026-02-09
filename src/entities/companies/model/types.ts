@@ -1,4 +1,4 @@
-import type { User } from "@/features/authentication/interfaces/auth";
+import type { User } from "@/entities/users";
 
 export interface Company {
   id: number;

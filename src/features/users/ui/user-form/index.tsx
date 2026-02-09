@@ -8,12 +8,15 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
 import { getCompanies, type Company } from "@/entities/companies";
-import type { User } from "@/features/authentication/interfaces/auth";
 import { useAuthStore } from "@/features/authentication/store/auth";
 
 import type { Role } from "@/shared/types";
-import { createUser, editUser } from "../../api";
-import type { CreateUserPayload } from "../../interfaces";
+import {
+  createUser,
+  editUser,
+  type CreateUserPayload,
+  type User,
+} from "@/entities/users";
 import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
 import {
   availableUserRolesFor,

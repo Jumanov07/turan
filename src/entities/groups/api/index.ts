@@ -38,7 +38,7 @@ export const addMetersToGroup = async (groupId: number, meterIds: number[]) => {
 
 export const removeMetersFromGroup = async (
   groupId: number,
-  meterIds: number[]
+  meterIds: number[],
 ) => {
   const { data } = await api.post("/group/remove", {
     groupId,

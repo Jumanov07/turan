@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import { Field } from "../field";
-import type { Meter } from "../../interfaces";
+import type { Meter } from "@/entities/meters";
 import { STATUS_LABELS, VALVE_LABELS } from "../../utils/constants";
 
 interface Props {
@@ -55,5 +55,4 @@ export const MeterDetails = ({ meter }: Props) => (
     />
   </Box>
 );
-
 
