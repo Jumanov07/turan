@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/authentication/store/auth";
@@ -30,13 +30,14 @@ export const useGroups = ({ forFilter = false }: Props) => {
   const isAdmin = hasRoleAdmin(user?.role);
   const canManageMetersToGroups = canManageMetersToGroupsRole(user?.role);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: forFilter
       ? ["groups", "all-for-filter"]
       : ["groups", page, limit],
     queryFn: () =>
       forFilter ? getGroups(1, 1000) : getGroups(page + 1, limit),
     staleTime: 5000,
+    placeholderData: keepPreviousData,
   });
 
   const groups: Group[] = data?.data ?? [];
@@ -116,6 +117,7 @@ export const useGroups = ({ forFilter = false }: Props) => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
 
     page,
     limit,

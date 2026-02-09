@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/features/authentication/store/auth";
@@ -32,7 +32,7 @@ export const useMeters = () => {
   const canEdit = canEditMeters(user?.role);
   const canManageMetersToGroups = canManageMetersToGroupsRole(user?.role);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: [
       "meters",
       page,
@@ -54,6 +54,7 @@ export const useMeters = () => {
         meterName,
       ),
     staleTime: 5000,
+    placeholderData: keepPreviousData,
   });
 
   const metersRaw: Meter[] = data?.data ?? [];
@@ -186,6 +187,7 @@ export const useMeters = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
 
     page,
     limit,

@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useCompanies } from "@/features/companies/hooks/useCompanies";
 import { CompanyForm } from "@/features/companies/ui/company-form";
 import { createCompanyColumns } from "@/features/companies/columns";
@@ -24,6 +25,7 @@ export const CompaniesWidget = () => {
     setIsArchived,
     isLoading,
     isError,
+    isFetching,
     handleRefreshToken,
     handleToggleArchive,
   } = useCompanies();
@@ -80,6 +82,8 @@ export const CompaniesWidget = () => {
             Создать
           </Button>
         </Box>
+
+        {isFetching && !isLoading && <LinearProgress sx={{ mb: 2 }} />}
 
         {!hasCompanies && (
           <Alert severity="info" sx={{ mt: 2 }}>

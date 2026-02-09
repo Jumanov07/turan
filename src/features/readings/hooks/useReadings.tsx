@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { deleteReadings, getReadings, type Reading } from "@/entities/readings";
@@ -17,10 +17,11 @@ export const useReadings = () => {
 
   const isAdmin = hasRoleAdmin(user?.role);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["readings", page, limit],
     queryFn: () => getReadings(page + 1, limit),
     staleTime: 5000,
+    placeholderData: keepPreviousData,
   });
 
   const readings: Reading[] = data?.data ?? [];
@@ -92,6 +93,7 @@ export const useReadings = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
 
     page,
     limit,

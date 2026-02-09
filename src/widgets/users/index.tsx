@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useUsers } from "@/features/users/hooks/useUsers";
 import { useAuthStore } from "@/features/authentication/store/auth";
 import { UserForm } from "@/features/users/ui/user-form";
@@ -28,6 +29,7 @@ export const UsersWidget = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
     page,
     limit,
     setPage,
@@ -92,6 +94,8 @@ export const UsersWidget = () => {
             Создать
           </Button>
         </Box>
+
+        {isFetching && !isLoading && <LinearProgress sx={{ mb: 2 }} />}
 
         {!hasUsers && (
           <Alert severity="info" sx={{ mt: 2 }}>

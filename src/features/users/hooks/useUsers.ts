@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import {
@@ -17,10 +17,11 @@ export const useUsers = () => {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["users", page, limit, isArchived],
     queryFn: () => getUsers(page + 1, limit, isArchived),
     staleTime: 5000,
+    placeholderData: keepPreviousData,
   });
 
   const users: UserRow[] = data?.data ?? [];
@@ -76,6 +77,7 @@ export const useUsers = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
 
     page,
     limit,

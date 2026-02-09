@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useReadings } from "@/features/readings/hooks/useReadings";
 import type { Reading } from "@/entities/readings";
 import { createReadingColumns } from "@/features/readings/columns";
@@ -16,6 +17,7 @@ export const ReadingsWidget = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
 
     page,
     limit,
@@ -67,6 +69,8 @@ export const ReadingsWidget = () => {
           </Button>
         )}
       </Box>
+
+      {isFetching && !isLoading && <LinearProgress sx={{ mb: 2 }} />}
 
       {!hasReadings && (
         <Alert severity="info" sx={{ mt: 2 }}>

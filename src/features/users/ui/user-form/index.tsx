@@ -10,8 +10,13 @@ import Alert from "@mui/material/Alert";
 import { getCompanies } from "@/entities/companies";
 import { useAuthStore } from "@/features/authentication/store/auth";
 
-import type { Company, Role, User } from "@/shared/types";
-import { createUser, editUser, type CreateUserPayload } from "@/entities/users";
+import type { Company, Role } from "@/shared/types";
+import {
+  createUser,
+  editUser,
+  type CreateUserPayload,
+  type UserRow,
+} from "@/entities/users";
 import { ROLE, ROLE_LABELS } from "@/shared/utils/constants/roles";
 import {
   availableUserRolesFor,
@@ -21,7 +26,7 @@ import {
 
 interface Props {
   onClose: () => void;
-  userToEdit?: Omit<User, "devices"> | null;
+  userToEdit?: UserRow | null;
 }
 
 export const UserForm = ({ onClose, userToEdit }: Props) => {

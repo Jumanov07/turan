@@ -1,7 +1,9 @@
 import type { Role, User } from "@/shared/types";
 
+export type UserRow = Omit<User, "devices">;
+
 export interface GetUsersResponse {
-  data: Omit<User, "devices">;
+  data: UserRow[];
   total: number;
   page: number;
   limit: number;

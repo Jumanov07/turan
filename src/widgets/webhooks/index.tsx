@@ -2,6 +2,7 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import { useWebhooks } from "@/features/webhooks/hooks/useWebhooks";
 import { WebhookForm } from "@/features/webhooks/ui/webhook-form";
@@ -14,8 +15,15 @@ import { Modal } from "@/shared/ui/modal";
 export const WebhooksWidget = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const { webhooks, hasWebhooks, emptyText, isLoading, isError, handleDelete } =
-    useWebhooks();
+  const {
+    webhooks,
+    hasWebhooks,
+    emptyText,
+    isLoading,
+    isError,
+    isFetching,
+    handleDelete,
+  } = useWebhooks();
 
   if (isLoading) {
     return <Loader />;
@@ -43,6 +51,8 @@ export const WebhooksWidget = () => {
             Создать
           </Button>
         </Box>
+
+        {isFetching && !isLoading && <LinearProgress sx={{ mb: 2 }} />}
 
         {!hasWebhooks && (
           <Alert severity="info" sx={{ mt: 2 }}>

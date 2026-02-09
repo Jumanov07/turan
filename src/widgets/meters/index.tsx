@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
+import LinearProgress from "@mui/material/LinearProgress";
 import { useMeters } from "@/features/meters/hooks/useMeters";
 import { useGroups } from "@/features/groups/hooks/useGroups";
 import { createMeterColumns } from "@/features/meters/columns";
@@ -34,6 +35,7 @@ export const MetersWidget = () => {
     emptyText,
     isLoading,
     isError,
+    isFetching,
     page,
     limit,
     setPage,
@@ -204,6 +206,8 @@ export const MetersWidget = () => {
           onRemoveSelectedFromGroup={openRemoveFromGroupModal}
           onResetFilters={handleResetFilters}
         />
+
+        {isFetching && !isLoading && <LinearProgress sx={{ mb: 2 }} />}
 
         {isLoading && (
           <Box mt={2}>
