@@ -7,6 +7,9 @@ import { ROUTES } from "@/shared/constants";
 import { ProtectedRoute } from "./ui/protected-route";
 import { WithSuspense } from "./ui/with-suspense";
 
+const NotFound = lazy(() =>
+  import("@/pages/not-found").then((m) => ({ default: m.NotFound })),
+);
 const Companies = lazy(() =>
   import("@/pages/companies").then((m) => ({ default: m.Companies })),
 );
@@ -27,9 +30,6 @@ const Readings = lazy(() =>
 );
 const Webhooks = lazy(() =>
   import("@/pages/webhooks").then((m) => ({ default: m.Webhooks })),
-);
-const NotFound = lazy(() =>
-  import("@/pages/not-found").then((m) => ({ default: m.NotFound })),
 );
 
 export const ROUTER = createBrowserRouter([
