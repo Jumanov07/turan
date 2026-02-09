@@ -2,8 +2,8 @@ import { Outlet } from "react-router";
 import { Toaster } from "react-hot-toast";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import { Header } from "@/widgets/layout/ui/header";
-import { Sidebar } from "@/widgets/layout/ui/sidebar";
+import { Header } from "../header";
+import { Sidebar } from "../sidebar";
 
 export const Layout = () => (
   <>
