@@ -1,5 +1,5 @@
 import { api } from "@/shared/api";
-import type { CompanyPayload } from "@/entities/companies/model/types";
+import type { CompanyPayload } from "../model/types";
 
 export const getCompanies = async (isArchived: boolean) => {
   const { data } = await api.get(`/companies`, {
