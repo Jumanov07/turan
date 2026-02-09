@@ -5,8 +5,8 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import { useAuthStore } from "@/shared/stores";
 import { logIn } from "@/entities/authentication";
+import { useAuthStore } from "@/shared/stores";
 import { ROUTES } from "@/shared/constants";
 
 export const SignInForm = () => {

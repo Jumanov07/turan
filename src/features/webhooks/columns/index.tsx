@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { Column } from "@/shared/types";
 import type { Webhook } from "@/entities/webhooks";
+import type { Column } from "@/shared/types";
 
 export const createWebhookColumns = (
   onDelete: (id: number) => void,

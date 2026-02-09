@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
-
 import { Authentication } from "@/pages/authentication";
 import { Layout } from "@/widgets/layout";
 import { ROUTES } from "@/shared/constants";
