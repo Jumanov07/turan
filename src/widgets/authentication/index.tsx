@@ -2,8 +2,7 @@ import { useLocation, useNavigate } from "react-router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { SignInForm } from "@/features/authentication/ui/sign-in-form";
-import { ForgotForm } from "@/features/authentication/ui/forgot-form";
+import { ForgotForm, SignInForm } from "@/features/authentication";
 
 export const AuthenticationWidget = () => {
   const { pathname } = useLocation();

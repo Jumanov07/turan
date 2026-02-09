@@ -4,9 +4,11 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
 
-import { useWebhooks } from "@/features/webhooks/hooks/useWebhooks";
-import { WebhookForm } from "@/features/webhooks/ui/webhook-form";
-import { createWebhookColumns } from "@/features/webhooks/columns";
+import {
+  createWebhookColumns,
+  useWebhooks,
+  WebhookForm,
+} from "@/features/webhooks";
 import type { Webhook } from "@/entities/webhooks";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";

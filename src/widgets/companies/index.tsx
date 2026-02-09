@@ -5,9 +5,11 @@ import Button from "@mui/material/Button";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useCompanies } from "@/features/companies/hooks/useCompanies";
-import { CompanyForm } from "@/features/companies/ui/company-form";
-import { createCompanyColumns } from "@/features/companies/columns";
+import {
+  CompanyForm,
+  createCompanyColumns,
+  useCompanies,
+} from "@/features/companies";
 import { Modal } from "@/shared/ui/modal";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";

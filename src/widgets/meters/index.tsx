@@ -2,14 +2,16 @@ import { useState } from "react";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 import LinearProgress from "@mui/material/LinearProgress";
-import { useMeters } from "@/features/meters/hooks/useMeters";
-import { useGroups } from "@/features/groups/hooks/useGroups";
-import { createMeterColumns } from "@/features/meters/columns";
-import { MeterForm } from "@/features/meters/ui/meter-form";
-import { MeterDetails } from "@/features/meters/ui/meter-details";
-import { MetersActions } from "@/features/meters/ui/meters-actions";
-import { MeterGroupModal } from "@/features/meters/ui/meter-group-modal";
-import { MetersFiltersModal } from "@/features/meters/ui/meters-filters-modal";
+import {
+  createMeterColumns,
+  MeterDetails,
+  MeterForm,
+  MeterGroupModal,
+  MetersActions,
+  MetersFiltersModal,
+  useMeters,
+} from "@/features/meters";
+import { useGroups } from "@/features/groups";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
