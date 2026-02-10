@@ -19,7 +19,6 @@ export const useUsers = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["users", page, limit, isArchived],
     queryFn: () => getUsers(page + 1, limit, isArchived),
-    staleTime: 5000,
   });
 
   const users: UserRow[] = data?.data ?? [];

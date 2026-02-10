@@ -19,7 +19,6 @@ export const useDevices = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["devices", page, limit, verified],
     queryFn: () => getDevices(page + 1, limit, verified),
-    staleTime: 5000,
   });
 
   const devices: Device[] = data?.data ?? [];

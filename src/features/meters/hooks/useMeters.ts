@@ -56,7 +56,6 @@ export const useMeters = () => {
         customerId,
         meterName,
       ),
-    staleTime: 5000,
   });
 
   const metersRaw: Meter[] = data?.data ?? [];

@@ -18,7 +18,6 @@ export const useReadings = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["readings", page, limit],
     queryFn: () => getReadings(page + 1, limit),
-    staleTime: 5000,
   });
 
   const readings: Reading[] = data?.data ?? [];

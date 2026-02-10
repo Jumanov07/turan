@@ -35,7 +35,6 @@ export const useGroups = ({ forFilter = false }: Props) => {
       : ["groups", page, limit],
     queryFn: () =>
       forFilter ? getGroups(1, 1000) : getGroups(page + 1, limit),
-    staleTime: 5000,
   });
 
   const groups: Group[] = data?.data ?? [];

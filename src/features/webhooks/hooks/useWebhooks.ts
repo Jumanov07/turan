@@ -8,7 +8,6 @@ export const useWebhooks = () => {
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["webhooks"],
     queryFn: () => getWebhooks(),
-    staleTime: 5000,
   });
 
   const webhooks: Webhook[] = data ?? [];
