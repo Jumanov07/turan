@@ -1,6 +1,6 @@
 import { api } from "@/shared/api";
 import { API_ROUTES } from "@/shared/constants";
-import { SignInResponseSchema } from "./schema";
+import { SignInResponseSchema } from "./schemas";
 
 export const signIn = async (email: string, password: string) => {
   const { data } = await api.post(API_ROUTES.AUTH_LOGIN, {
