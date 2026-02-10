@@ -9,6 +9,7 @@ import {
 } from "@/entities/meters";
 import { useToastMutation } from "@/shared/hooks";
 import {
+  getApiErrorMessage,
   canEditMeters,
   canManageMetersToGroups as canManageMetersToGroupsRole,
   hasRoleAdmin,
@@ -84,10 +85,12 @@ export const useMeters = () => {
         ? "Счётчик удалён"
         : "Выбранные счётчики удалены",
     errorMessage: (error: AxiosError<{ message?: string }>, meterIds) =>
-      error.response?.data?.message ||
-      (meterIds.length === 1
-        ? "Ошибка при удалении счётчика"
-        : "Ошибка при удалении выбранных счётчиков"),
+      getApiErrorMessage(
+        error,
+        meterIds.length === 1
+          ? "Ошибка при удалении счётчика"
+          : "Ошибка при удалении выбранных счётчиков",
+      ),
     onSuccess: (_, meterIds) => {
       setSelectedIds((prev) => prev.filter((id) => !meterIds.includes(id)));
     },
@@ -107,8 +110,7 @@ export const useMeters = () => {
         ? "Команда на открытие клапана отправлена"
         : "Команда на закрытие клапана отправлена",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message ||
-      "Ошибка при отправке команды клапану",
+      getApiErrorMessage(error, "Ошибка при отправке команды клапану"),
   });
 
   const handleDeleteOne = (meterId: number) => {

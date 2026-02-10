@@ -10,6 +10,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { updateMeter, type Meter } from "@/entities/meters";
 import { useToastMutation } from "@/shared/hooks";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { MeterFormSchema } from "../../model/schema";
 import type { MeterFormValues } from "../../model/types";
@@ -59,7 +60,7 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
     invalidateKeys: [["meters"]],
     successMessage: "Счётчик обновлён",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при сохранении счётчика",
+      getApiErrorMessage(error, "Ошибка при сохранении счётчика"),
     onSuccess: () => {
       onClose();
     },

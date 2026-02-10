@@ -3,8 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { deleteReadings, getReadings, type Reading } from "@/entities/readings";
 import { useAuthStore } from "@/shared/stores";
-import { hasRoleAdmin } from "@/shared/helpers";
 import { useToastMutation } from "@/shared/hooks";
+import { getApiErrorMessage, hasRoleAdmin } from "@/shared/helpers";
 
 export const useReadings = () => {
   const [page, setPage] = useState(0);
@@ -34,10 +34,12 @@ export const useReadings = () => {
         ? "Показание удалено"
         : "Выбранные показания удалены",
     errorMessage: (error: AxiosError<{ message?: string }>, ids) =>
-      error.response?.data?.message ||
-      (ids.length === 1
-        ? "Ошибка при удалении показания"
-        : "Ошибка при удалении выбранных показаний"),
+      getApiErrorMessage(
+        error,
+        ids.length === 1
+          ? "Ошибка при удалении показания"
+          : "Ошибка при удалении выбранных показаний",
+      ),
     onSuccess: (_, ids) => {
       setSelectedIds((prev) => prev.filter((x) => !ids.includes(x)));
     },

@@ -37,3 +37,12 @@ export interface Column<T> {
   cell: (row: T) => ReactNode;
   align?: "left" | "right" | "center";
 }
+
+export interface ApiErrorLike {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
+}

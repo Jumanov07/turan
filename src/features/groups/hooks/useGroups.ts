@@ -11,6 +11,7 @@ import {
 } from "@/entities/groups";
 import { useToastMutation } from "@/shared/hooks";
 import {
+  getApiErrorMessage,
   canManageMetersToGroups as canManageMetersToGroupsRole,
   hasRoleAdmin,
 } from "@/shared/helpers";
@@ -47,7 +48,7 @@ export const useGroups = ({ forFilter = false }: Props) => {
     invalidateKeys: [["groups"]],
     successMessage: "Группа удалена",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при удалении группы",
+      getApiErrorMessage(error, "Ошибка при удалении группы"),
   });
 
   const addMetersMutation = useToastMutation({
@@ -64,7 +65,7 @@ export const useGroups = ({ forFilter = false }: Props) => {
       return message || null;
     },
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при добавлении в группу",
+      getApiErrorMessage(error, "Ошибка при добавлении в группу"),
   });
 
   const removeMetersMutation = useToastMutation({
@@ -81,7 +82,7 @@ export const useGroups = ({ forFilter = false }: Props) => {
       return message || null;
     },
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при удалении из группы",
+      getApiErrorMessage(error, "Ошибка при удалении из группы"),
   });
 
   const handleDelete = (groupId: number) => {

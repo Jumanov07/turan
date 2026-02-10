@@ -9,6 +9,7 @@ import {
   type UserRow,
 } from "@/entities/users";
 import { useToastMutation } from "@/shared/hooks";
+import { getApiErrorMessage } from "@/shared/helpers";
 
 export const useUsers = () => {
   const [page, setPage] = useState(0);
@@ -41,8 +42,7 @@ export const useUsers = () => {
     successMessage: (_, { archived }) =>
       archived ? "Пользователь разархивирован" : "Пользователь архивирован",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message ||
-      "Ошибка при изменении статуса пользователя",
+      getApiErrorMessage(error, "Ошибка при изменении статуса пользователя"),
   });
 
   const deleteUserMutation = useToastMutation({
@@ -50,7 +50,7 @@ export const useUsers = () => {
     invalidateKeys: [["users"]],
     successMessage: "Пользователь удален",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при удалении пользователя",
+      getApiErrorMessage(error, "Ошибка при удалении пользователя"),
   });
 
   const handleToggleArchive = (userId: number, archived: boolean) => {

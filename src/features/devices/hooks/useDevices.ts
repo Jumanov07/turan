@@ -8,6 +8,7 @@ import {
   type Device,
 } from "@/entities/devices";
 import { useToastMutation } from "@/shared/hooks";
+import { getApiErrorMessage } from "@/shared/helpers";
 
 export const useDevices = () => {
   const [page, setPage] = useState(0);
@@ -34,7 +35,7 @@ export const useDevices = () => {
     invalidateKeys: [["devices"]],
     successMessage: "Устройство подтверждено",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при подтверждении устройства",
+      getApiErrorMessage(error, "Ошибка при подтверждении устройства"),
   });
 
   const deleteMutation = useToastMutation({
@@ -45,10 +46,12 @@ export const useDevices = () => {
         ? "Устройство удалено"
         : "Выбранные устройства удалены",
     errorMessage: (error: AxiosError<{ message?: string }>, deviceIds) =>
-      error.response?.data?.message ||
-      (deviceIds.length === 1
-        ? "Ошибка при удалении устройства"
-        : "Ошибка при удалении выбранных устройств"),
+      getApiErrorMessage(
+        error,
+        deviceIds.length === 1
+          ? "Ошибка при удалении устройства"
+          : "Ошибка при удалении выбранных устройств",
+      ),
     onSuccess: (_, deviceIds) => {
       setSelectedIds((prev) => prev.filter((id) => !deviceIds.includes(id)));
     },

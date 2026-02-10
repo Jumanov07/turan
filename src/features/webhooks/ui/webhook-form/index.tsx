@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import { createWebhook } from "@/entities/webhooks";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { WebhookFormSchema } from "../../model/schema";
 import type { WebhookFormValues } from "../../model/types";
 
@@ -31,7 +32,7 @@ export const WebhookForm = ({ onClose }: Props) => {
     invalidateKeys: [["webhooks"]],
     successMessage: "Вебхук создан",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при создании вебхука",
+      getApiErrorMessage(error, "Ошибка при создании вебхука"),
     onSuccess: () => {
       onClose();
     },

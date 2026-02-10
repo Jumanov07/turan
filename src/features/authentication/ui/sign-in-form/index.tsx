@@ -10,6 +10,7 @@ import { signIn } from "@/entities/authentication";
 import { useAuthStore } from "@/shared/stores";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { ROUTES } from "@/shared/constants";
 import { SignInFormSchema } from "../../model/schema";
 import type { SignInFormValues } from "../../model/types";
@@ -44,11 +45,7 @@ export const SignInForm = () => {
 
       navigate("/");
     },
-    errorMessage: (err: unknown) =>
-      (err as { response?: { data?: { message?: string } }; message?: string })
-        ?.response?.data?.message ||
-      (err as { message?: string })?.message ||
-      "Ошибка входа",
+    errorMessage: (err: unknown) => getApiErrorMessage(err, "Ошибка входа"),
   });
 
   const onSubmit = (values: SignInFormValues) => {

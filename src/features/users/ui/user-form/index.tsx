@@ -12,6 +12,12 @@ import { getCompanies, type Company } from "@/entities/companies";
 import { useAuthStore } from "@/shared/stores";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import {
+  getApiErrorMessage,
+  availableUserRolesFor,
+  canSelectCompanyForRole,
+  hasRoleSuperAdmin,
+} from "@/shared/helpers";
 import type { Role } from "@/shared/types";
 import {
   createUser,
@@ -20,11 +26,6 @@ import {
   type UserRow,
 } from "@/entities/users";
 import { ROLE, ROLE_LABELS } from "@/shared/constants";
-import {
-  availableUserRolesFor,
-  canSelectCompanyForRole,
-  hasRoleSuperAdmin,
-} from "@/shared/helpers";
 import { createUserFormSchema } from "../../model/schema";
 import type { UserFormValues } from "../../model/types";
 
@@ -91,7 +92,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
     },
     onError: (error: AxiosError<{ message?: string; errors?: string[] }>) => {
       const messages = error.response?.data?.errors || [
-        error.response?.data?.message || "Ошибка при сохранении пользователя",
+        getApiErrorMessage(error, "Ошибка при сохранении пользователя"),
       ];
       messages.forEach((message) => toast.error(message));
     },

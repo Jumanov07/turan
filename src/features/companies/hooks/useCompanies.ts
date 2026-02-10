@@ -9,6 +9,7 @@ import {
   type Company,
 } from "@/entities/companies";
 import { useToastMutation } from "@/shared/hooks";
+import { getApiErrorMessage } from "@/shared/helpers";
 
 export const useCompanies = () => {
   const [isArchived, setIsArchived] = useState(false);
@@ -23,7 +24,7 @@ export const useCompanies = () => {
     invalidateKeys: [["companies"]],
     successMessage: "API ключ обновлён",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при обновлении API ключа",
+      getApiErrorMessage(error, "Ошибка при обновлении API ключа"),
   });
 
   const toggleArchiveMutation = useToastMutation({
@@ -39,8 +40,7 @@ export const useCompanies = () => {
     successMessage: (_, { archived }) =>
       archived ? "Компания разархивирована" : "Компания архивирована",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message ||
-      "Ошибка при изменении статуса компании",
+      getApiErrorMessage(error, "Ошибка при изменении статуса компании"),
   });
 
   const companies: Company[] = data ?? [];

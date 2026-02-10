@@ -8,6 +8,7 @@ import Paper from "@mui/material/Paper";
 import { sendForgotRequest } from "@/entities/authentication";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { ForgotFormSchema } from "../../model/schema";
 import type { ForgotFormValues } from "../../model/types";
 
@@ -27,10 +28,7 @@ export const ForgotForm = () => {
     mutationFn: ({ email }: ForgotFormValues) => sendForgotRequest(email),
     successMessage: "Инструкция для восстановления отправлена на почту.",
     errorMessage: (err: unknown) =>
-      (err as { response?: { data?: { message?: string } }; message?: string })
-        ?.response?.data?.message ||
-      (err as { message?: string })?.message ||
-      "Ошибка при восстановлении",
+      getApiErrorMessage(err, "Ошибка при восстановлении"),
   });
 
   const onSubmit = (values: ForgotFormValues) => {

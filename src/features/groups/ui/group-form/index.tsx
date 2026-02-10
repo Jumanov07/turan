@@ -8,6 +8,7 @@ import type { AxiosError } from "axios";
 import { createGroup, updateGroup, type Group } from "@/entities/groups";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { GroupFormSchema } from "../../model/schema";
 import type { GroupFormValues } from "../../model/types";
 
@@ -47,7 +48,7 @@ export const GroupForm = ({ groupToEdit, onClose }: Props) => {
     successMessage: (_, variables) =>
       variables.groupId ? "Группа обновлена" : "Группа создана",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при сохранении группы",
+      getApiErrorMessage(error, "Ошибка при сохранении группы"),
     onSuccess: () => {
       onClose();
     },

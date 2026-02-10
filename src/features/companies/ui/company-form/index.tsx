@@ -13,6 +13,7 @@ import {
 } from "@/entities/companies";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { getApiErrorMessage } from "@/shared/helpers";
 import { CompanyFormSchema } from "../../model/schema";
 import type { CompanyFormValues } from "../../model/types";
 
@@ -52,7 +53,7 @@ export const CompanyForm = ({ company, onClose }: Props) => {
       ? "Компания успешно обновлена"
       : "Компания успешно создана",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
-      error.response?.data?.message || "Ошибка при сохранении компании",
+      getApiErrorMessage(error, "Ошибка при сохранении компании"),
     onSuccess: () => {
       onClose();
     },
