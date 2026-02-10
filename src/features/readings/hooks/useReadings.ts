@@ -3,14 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { deleteReadings, getReadings, type Reading } from "@/entities/readings";
 import { useAuthStore } from "@/shared/stores";
-import { useToastMutation } from "@/shared/hooks";
+import { useSelection, useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage, hasRoleAdmin } from "@/shared/helpers";
 
 export const useReadings = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
-
   const user = useAuthStore((state) => state.user);
 
   const isAdmin = hasRoleAdmin(user?.role);
@@ -24,6 +22,20 @@ export const useReadings = () => {
   const hasReadings = readings.length > 0;
   const total = data?.total ?? 0;
   const emptyText = "Показания не найдены";
+
+  const {
+    selectedIds,
+    allSelected,
+    isIndeterminate,
+    toggleAll,
+    toggleOne,
+    removeSelected,
+  } = useSelection<Reading, string>({
+    items: readings,
+    getId: (reading) => reading.id,
+    enabled: isAdmin,
+    resetDeps: [page, limit],
+  });
 
   const deleteMutation = useToastMutation({
     mutationFn: (ids: string[]) => deleteReadings(ids),
@@ -40,7 +52,7 @@ export const useReadings = () => {
           : "Ошибка при удалении выбранных показаний",
       ),
     onSuccess: (_, ids) => {
-      setSelectedIds((prev) => prev.filter((x) => !ids.includes(x)));
+      removeSelected(ids);
     },
   });
 
@@ -54,24 +66,12 @@ export const useReadings = () => {
     deleteMutation.mutate(selectedIds);
   };
 
-  const allSelected =
-    isAdmin && hasReadings && selectedIds.length === readings.length;
-  const isIndeterminate = isAdmin && selectedIds.length > 0 && !allSelected;
-
   const handleToggleAll = (checked: boolean) => {
-    if (!isAdmin) return;
-    if (checked) {
-      setSelectedIds(readings.map((r) => r.id));
-    } else {
-      setSelectedIds([]);
-    }
+    toggleAll(checked);
   };
 
   const handleToggleOne = (id: string) => {
-    if (!isAdmin) return;
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    toggleOne(id);
   };
 
   return {

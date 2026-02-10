@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import {
@@ -7,15 +7,13 @@ import {
   verifyDevice,
   type Device,
 } from "@/entities/devices";
-import { useToastMutation } from "@/shared/hooks";
+import { useSelection, useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
 export const useDevices = () => {
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(10);
   const [verified, setVerified] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["devices", page, limit, verified],
     queryFn: () => getDevices(page + 1, limit, verified),
@@ -28,6 +26,19 @@ export const useDevices = () => {
   const emptyText = verified
     ? "Нет подтверждённых устройств"
     : "Нет неподтверждённых устройств";
+
+  const {
+    selectedIds,
+    allSelected,
+    isIndeterminate,
+    toggleAll,
+    toggleOne,
+    removeSelected,
+  } = useSelection<Device, number>({
+    items: devices,
+    getId: (device) => device.id,
+    resetDeps: [page, limit, verified],
+  });
 
   const verifyMutation = useToastMutation({
     mutationFn: (deviceId: number) => verifyDevice(deviceId),
@@ -52,7 +63,7 @@ export const useDevices = () => {
           : "Ошибка при удалении выбранных устройств",
       ),
     onSuccess: (_, deviceIds) => {
-      setSelectedIds((prev) => prev.filter((id) => !deviceIds.includes(id)));
+      removeSelected(deviceIds);
     },
   });
 
@@ -69,25 +80,12 @@ export const useDevices = () => {
     deleteMutation.mutate(selectedIds);
   };
 
-  const allSelected = hasDevices && selectedIds.length === devices.length;
-  const isIndeterminate = selectedIds.length > 0 && !allSelected;
-
-  useEffect(() => {
-    setSelectedIds([]);
-  }, [page, limit, verified]);
-
   const handleToggleAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedIds(devices.map((d) => d.id));
-    } else {
-      setSelectedIds([]);
-    }
+    toggleAll(checked);
   };
 
   const handleToggleOne = (id: number) => {
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    toggleOne(id);
   };
 
   return {

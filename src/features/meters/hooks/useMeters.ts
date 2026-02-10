@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import {
@@ -7,7 +7,7 @@ import {
   sendMeterCommand,
   type Meter,
 } from "@/entities/meters";
-import { useToastMutation } from "@/shared/hooks";
+import { useSelection, useToastMutation } from "@/shared/hooks";
 import {
   getApiErrorMessage,
   canEditMeters,
@@ -24,7 +24,6 @@ export const useMeters = () => {
   const [status, setStatus] = useState<string>("all");
   const [isArchived, setIsArchived] = useState(false);
   const [groupId, setGroupId] = useState<number | null>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [valveFilter, setValveFilter] = useState<"all" | "open" | "closed">(
     "all",
   );
@@ -76,6 +75,30 @@ export const useMeters = () => {
   const emptyText = "Счётчики не найдены";
   const total = data?.total ?? 0;
 
+  const {
+    selectedIds,
+    allSelected,
+    isIndeterminate,
+    toggleAll,
+    toggleOne,
+    clearSelection,
+    removeSelected,
+  } = useSelection<Meter, number>({
+    items: meters,
+    getId: (meter) => meter.id,
+    enabled: canManageMetersToGroups,
+    resetDeps: [
+      page,
+      limit,
+      status,
+      isArchived,
+      groupId,
+      customerId,
+      meterName,
+      valveFilter,
+    ],
+  });
+
   const deleteMutation = useToastMutation({
     mutationFn: (meterIds: number[]) => deleteMeters(meterIds),
     invalidateKeys: [["meters"]],
@@ -91,7 +114,7 @@ export const useMeters = () => {
           : "Ошибка при удалении выбранных счётчиков",
       ),
     onSuccess: (_, meterIds) => {
-      setSelectedIds((prev) => prev.filter((id) => !meterIds.includes(id)));
+      removeSelected(meterIds);
     },
   });
 
@@ -127,38 +150,12 @@ export const useMeters = () => {
     commandMutation.mutate({ meterId, command });
   };
 
-  const allSelected =
-    canManageMetersToGroups &&
-    hasMeters &&
-    selectedIds.length === meters.length;
-  const isIndeterminate =
-    canManageMetersToGroups && selectedIds.length > 0 && !allSelected;
-
-  useEffect(() => {
-    setSelectedIds([]);
-  }, [
-    page,
-    limit,
-    status,
-    isArchived,
-    groupId,
-    customerId,
-    meterName,
-    valveFilter,
-  ]);
-
   const handleToggleAll = (checked: boolean) => {
-    if (!canManageMetersToGroups) return;
-
-    setSelectedIds(checked ? meters.map((m) => m.id) : []);
+    toggleAll(checked);
   };
 
   const handleToggleOne = (id: number) => {
-    if (!canManageMetersToGroups) return;
-
-    setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
+    toggleOne(id);
   };
 
   const handleResetFilters = () => {
@@ -169,10 +166,6 @@ export const useMeters = () => {
     setCustomerId("");
     setMeterName("");
     setPage(0);
-  };
-
-  const clearSelection = () => {
-    setSelectedIds([]);
   };
 
   return {
