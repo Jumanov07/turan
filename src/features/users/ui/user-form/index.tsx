@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -8,7 +8,6 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
-import Alert from "@mui/material/Alert";
 import { getCompanies, type Company } from "@/entities/companies";
 import { useAuthStore } from "@/shared/stores";
 import type { Role } from "@/shared/types";
@@ -33,8 +32,6 @@ interface Props {
 }
 
 export const UserForm = ({ onClose, userToEdit }: Props) => {
-  const [apiErrors, setApiErrors] = useState<string[]>([]);
-
   const user = useAuthStore((state) => state.user);
 
   const queryClient = useQueryClient();
@@ -99,7 +96,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       const messages = error.response?.data?.errors || [
         error.response?.data?.message || "Ошибка при сохранении пользователя",
       ];
-      setApiErrors(messages);
+      messages.forEach((message) => toast.error(message));
     },
   });
 
@@ -108,8 +105,6 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
   const showCompanySelect = canSelectCompanyForRole(user?.role, watchedRole);
 
   const onSubmit = (values: UserFormValues) => {
-    setApiErrors([]);
-
     mutation.mutate({
       ...(!isEditing && { email: values.email }),
       firstName: values.firstName.trim(),
@@ -125,12 +120,6 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      {apiErrors.map((err, i) => (
-        <Alert key={i} severity="error">
-          {err}
-        </Alert>
-      ))}
-
       {!isEditing && (
         <TextField
           label="Email"

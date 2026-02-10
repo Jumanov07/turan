@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -14,8 +15,6 @@ import { SignInFormSchema } from "../../model/schema";
 import type { SignInFormValues } from "../../model/types";
 
 export const SignInForm = () => {
-  const [error, setError] = useState("");
-
   const setAuth = useAuthStore((state) => state.setAuth);
 
   const navigate = useNavigate();
@@ -35,9 +34,6 @@ export const SignInForm = () => {
   const mutation = useMutation({
     mutationFn: ({ email, password }: SignInFormValues) =>
       signIn(email, password),
-    onMutate: () => {
-      setError("");
-    },
     onSuccess: (data) => {
       const { accessToken, ...user } = data;
 
@@ -54,7 +50,7 @@ export const SignInForm = () => {
           ?.response?.data?.message ||
         (err as { message?: string })?.message ||
         "Ошибка входа";
-      setError(errorMessage);
+      toast.error(errorMessage);
     },
   });
 
@@ -111,12 +107,6 @@ export const SignInForm = () => {
           >
             {mutation.isPending ? "Вход..." : "Войти"}
           </Button>
-
-          {error && (
-            <Typography color="error" textAlign="center">
-              {error}
-            </Typography>
-          )}
 
           <Button
             variant="text"

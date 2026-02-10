@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,8 +7,6 @@ import type { AxiosError } from "axios";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import Alert from "@mui/material/Alert";
-
 import {
   createCompany,
   editCompany,
@@ -24,8 +22,6 @@ interface Props {
 }
 
 export const CompanyForm = ({ company, onClose }: Props) => {
-  const [errorMessage, setErrorMessage] = useState("");
-
   const queryClient = useQueryClient();
 
   const isEditing = !!company;
@@ -61,14 +57,13 @@ export const CompanyForm = ({ company, onClose }: Props) => {
       );
     },
     onError: (error: AxiosError<{ message?: string }>) => {
-      setErrorMessage(
+      toast.error(
         error.response?.data?.message || "Ошибка при сохранении компании",
       );
     },
   });
 
   const onSubmit = (values: CompanyFormValues) => {
-    setErrorMessage("");
     mutation.mutate({
       name: values.name.trim(),
       address: values.address.trim(),
@@ -89,8 +84,6 @@ export const CompanyForm = ({ company, onClose }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
-
       <TextField
         label="Название компании"
         {...register("name")}

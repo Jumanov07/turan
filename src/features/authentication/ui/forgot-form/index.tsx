@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -11,9 +12,6 @@ import { ForgotFormSchema } from "../../model/schema";
 import type { ForgotFormValues } from "../../model/types";
 
 export const ForgotForm = () => {
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -27,12 +25,8 @@ export const ForgotForm = () => {
 
   const mutation = useMutation({
     mutationFn: ({ email }: ForgotFormValues) => sendForgotRequest(email),
-    onMutate: () => {
-      setError("");
-      setSuccess("");
-    },
     onSuccess: () => {
-      setSuccess("Инструкция для восстановления отправлена на почту.");
+      toast.success("Инструкция для восстановления отправлена на почту.");
     },
     onError: (err: unknown) => {
       const errorMessage =
@@ -40,7 +34,7 @@ export const ForgotForm = () => {
           ?.response?.data?.message ||
         (err as { message?: string })?.message ||
         "Ошибка при восстановлении";
-      setError(errorMessage);
+      toast.error(errorMessage);
     },
   });
 
@@ -88,17 +82,6 @@ export const ForgotForm = () => {
             {mutation.isPending ? "Отправка..." : "Отправить"}
           </Button>
 
-          {error && (
-            <Typography color="error" textAlign="center">
-              {error}
-            </Typography>
-          )}
-
-          {success && (
-            <Typography color="primary" textAlign="center">
-              {success}
-            </Typography>
-          )}
         </Box>
       </Paper>
     </Box>
