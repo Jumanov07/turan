@@ -8,13 +8,14 @@ import {
   unarchiveUser,
   type UserRow,
 } from "@/entities/users";
-import { useToastMutation } from "@/shared/hooks";
+import { usePagination, useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
 export const useUsers = () => {
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [isArchived, setIsArchived] = useState(false);
+  const { page, limit, setPage, setLimit } = usePagination({
+    resetKey: isArchived ? "archived" : "active",
+  });
 
   const { data, isLoading, isError, isFetching } = useQuery({
     queryKey: ["users", page, limit, isArchived],

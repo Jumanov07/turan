@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useAuthStore } from "@/shared/stores";
@@ -9,7 +8,7 @@ import {
   removeMetersFromGroup,
   type Group,
 } from "@/entities/groups";
-import { useToastMutation } from "@/shared/hooks";
+import { usePagination, useToastMutation } from "@/shared/hooks";
 import {
   getApiErrorMessage,
   canManageMetersToGroups as canManageMetersToGroupsRole,
@@ -21,8 +20,7 @@ interface Props {
 }
 
 export const useGroups = ({ forFilter = false }: Props) => {
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const { page, limit, setPage, setLimit } = usePagination({});
 
   const { user } = useAuthStore();
 

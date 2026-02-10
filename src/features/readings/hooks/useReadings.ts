@@ -1,14 +1,12 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { deleteReadings, getReadings, type Reading } from "@/entities/readings";
 import { useAuthStore } from "@/shared/stores";
-import { useSelection, useToastMutation } from "@/shared/hooks";
+import { usePagination, useSelection, useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage, hasRoleAdmin } from "@/shared/helpers";
 
 export const useReadings = () => {
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
+  const { page, limit, setPage, setLimit } = usePagination({});
   const user = useAuthStore((state) => state.user);
 
   const isAdmin = hasRoleAdmin(user?.role);

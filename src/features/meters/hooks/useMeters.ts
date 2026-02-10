@@ -7,7 +7,7 @@ import {
   sendMeterCommand,
   type Meter,
 } from "@/entities/meters";
-import { useSelection, useToastMutation } from "@/shared/hooks";
+import { usePagination, useSelection, useToastMutation } from "@/shared/hooks";
 import {
   getApiErrorMessage,
   canEditMeters,
@@ -17,8 +17,6 @@ import {
 import { useAuthStore } from "@/shared/stores";
 
 export const useMeters = () => {
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10);
   const [meterName, setMeterName] = useState("");
   const [customerId, setCustomerId] = useState("");
   const [status, setStatus] = useState<string>("all");
@@ -27,6 +25,16 @@ export const useMeters = () => {
   const [valveFilter, setValveFilter] = useState<"all" | "open" | "closed">(
     "all",
   );
+  const { page, limit, setPage, setLimit } = usePagination({
+    resetKey: [
+      status,
+      isArchived ? "archived" : "active",
+      groupId ?? "null",
+      customerId,
+      meterName,
+      valveFilter,
+    ].join("|"),
+  });
 
   const user = useAuthStore((state) => state.user);
 
