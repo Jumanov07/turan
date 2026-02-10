@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useNavigate } from "react-router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -9,9 +12,14 @@ import { signIn } from "@/entities/authentication";
 import { useAuthStore } from "@/shared/stores";
 import { ROUTES } from "@/shared/constants";
 
+const SignInFormSchema = z.object({
+  email: z.string().min(1, "Введите логин"),
+  password: z.string().min(1, "Введите пароль"),
+});
+
+type SignInFormValues = z.infer<typeof SignInFormSchema>;
+
 export const SignInForm = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -19,12 +27,23 @@ export const SignInForm = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignInFormValues>({
+    resolver: zodResolver(SignInFormSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (values: SignInFormValues) => {
     setLoading(true);
     setError("");
 
-    signIn(email, password)
+    signIn(values.email, values.password)
       .then((data) => {
         const { accessToken, ...user } = data;
 
@@ -61,15 +80,16 @@ export const SignInForm = () => {
         <Box
           component="form"
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             label="Логин"
             type="text"
             fullWidth
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
           />
 
           <TextField
@@ -77,8 +97,9 @@ export const SignInForm = () => {
             type="password"
             fullWidth
             required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
           />
 
           <Button

@@ -1,5 +1,8 @@
 // src/features/meters/ui/meter-form.tsx
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -17,50 +20,65 @@ interface Props {
   canArchive: boolean;
 }
 
-export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
-  const [customerID, setCustomerID] = useState<string>("");
-  const [client, setClient] = useState("");
-  const [address, setAddress] = useState("");
-  const [descriptions, setDescriptions] = useState("");
-  const [isArchived, setIsArchived] = useState(false);
+const MeterFormSchema = z.object({
+  customerID: z.string().optional(),
+  client: z.string().optional(),
+  address: z.string().optional(),
+  descriptions: z.string().optional(),
+  isArchived: z.boolean(),
+});
 
+type MeterFormValues = z.infer<typeof MeterFormSchema>;
+
+export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
   const [loading, setLoading] = useState(false);
 
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (meterToEdit) {
-      setCustomerID(meterToEdit.customerID ?? "");
-      setClient(meterToEdit.client ?? "");
-      setAddress(meterToEdit.address ?? "");
-      setDescriptions(meterToEdit.descriptions ?? "");
-      setIsArchived(meterToEdit.isArchived);
-    } else {
-      setCustomerID("");
-      setClient("");
-      setAddress("");
-      setDescriptions("");
-      setIsArchived(false);
-    }
-  }, [meterToEdit]);
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+  } = useForm<MeterFormValues>({
+    resolver: zodResolver(MeterFormSchema),
+    defaultValues: {
+      customerID: meterToEdit?.customerID ?? "",
+      client: meterToEdit?.client ?? "",
+      address: meterToEdit?.address ?? "",
+      descriptions: meterToEdit?.descriptions ?? "",
+      isArchived: meterToEdit?.isArchived ?? false,
+    },
+  });
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  useEffect(() => {
+    reset({
+      customerID: meterToEdit?.customerID ?? "",
+      client: meterToEdit?.client ?? "",
+      address: meterToEdit?.address ?? "",
+      descriptions: meterToEdit?.descriptions ?? "",
+      isArchived: meterToEdit?.isArchived ?? false,
+    });
+  }, [meterToEdit, reset]);
+
+  const onSubmit = async (values: MeterFormValues) => {
     if (!meterToEdit) return;
 
     try {
       setLoading(true);
 
       const normalizedCustomerID =
-        customerID && customerID.trim().length > 0 ? customerID.trim() : null;
+        values.customerID && values.customerID.trim().length > 0
+          ? values.customerID.trim()
+          : null;
 
       await updateMeter({
         meterId: meterToEdit.id,
         customerID: normalizedCustomerID,
-        client,
-        address,
-        descriptions,
-        isArchived: canArchive ? isArchived : meterToEdit.isArchived,
+        client: values.client ?? "",
+        address: values.address ?? "",
+        descriptions: values.descriptions ?? "",
+        isArchived: canArchive ? values.isArchived : meterToEdit.isArchived,
       });
 
       toast.success("Счётчик обновлён");
@@ -79,33 +97,29 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       display="flex"
       flexDirection="column"
       gap={2}
     >
       <TextField
         label="ID Клиента"
-        value={customerID}
-        onChange={(e) => setCustomerID(e.target.value)}
+        {...register("customerID")}
       />
 
       <TextField
         label="Клиент"
-        value={client}
-        onChange={(e) => setClient(e.target.value)}
+        {...register("client")}
       />
 
       <TextField
         label="Адрес"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
+        {...register("address")}
       />
 
       <TextField
         label="Описание"
-        value={descriptions}
-        onChange={(e) => setDescriptions(e.target.value)}
+        {...register("descriptions")}
         multiline
         minRows={2}
       />
@@ -113,9 +127,15 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
       {canArchive && (
         <FormControlLabel
           control={
-            <Checkbox
-              checked={isArchived}
-              onChange={(e) => setIsArchived(e.target.checked)}
+            <Controller
+              name="isArchived"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+              )}
             />
           }
           label="Отправить в архив"

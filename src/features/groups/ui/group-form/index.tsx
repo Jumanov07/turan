@@ -1,4 +1,7 @@
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import toast from "react-hot-toast";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -12,36 +15,41 @@ interface Props {
   onClose: () => void;
 }
 
-export const GroupForm = ({ groupToEdit, onClose }: Props) => {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+const GroupFormSchema = z.object({
+  name: z.string().trim().min(1, "Введите название группы"),
+});
 
+type GroupFormValues = z.infer<typeof GroupFormSchema>;
+
+export const GroupForm = ({ groupToEdit, onClose }: Props) => {
   const queryClient = useQueryClient();
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<GroupFormValues>({
+    resolver: zodResolver(GroupFormSchema),
+    defaultValues: {
+      name: groupToEdit?.name ?? "",
+    },
+  });
+
   useEffect(() => {
-    if (groupToEdit) {
-      setName(groupToEdit.name);
-    } else {
-      setName("");
-    }
-  }, [groupToEdit]);
+    reset({
+      name: groupToEdit?.name ?? "",
+    });
+  }, [groupToEdit, reset]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim()) {
-      toast.error("Введите название группы");
-      return;
-    }
-
+  const onSubmit = async (values: GroupFormValues) => {
     try {
-      setLoading(true);
-
+      const name = values.name.trim();
       if (groupToEdit) {
-        await updateGroup(groupToEdit.id, name.trim());
+        await updateGroup(groupToEdit.id, name);
         toast.success("Группа обновлена");
       } else {
-        await createGroup(name.trim());
+        await createGroup(name);
         toast.success("Группа создана");
       }
 
@@ -52,28 +60,27 @@ export const GroupForm = ({ groupToEdit, onClose }: Props) => {
       toast.error(
         axiosError.response?.data?.message || "Ошибка при сохранении группы",
       );
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       display="flex"
       flexDirection="column"
       gap={2}
     >
       <TextField
         label="Название группы"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        {...register("name")}
         fullWidth
+        error={!!errors.name}
+        helperText={errors.name?.message}
       />
 
       <Box display="flex" justifyContent="flex-end" gap={1}>
-        <Button type="submit" variant="contained" disabled={loading}>
+        <Button type="submit" variant="contained" disabled={isSubmitting}>
           {groupToEdit ? "Сохранить" : "Создать"}
         </Button>
       </Box>

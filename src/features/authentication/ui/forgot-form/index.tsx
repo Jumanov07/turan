@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -6,19 +9,34 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { sendForgotRequest } from "@/entities/authentication";
 
+const ForgotFormSchema = z.object({
+  email: z.string().min(1, "Введите email"),
+});
+
+type ForgotFormValues = z.infer<typeof ForgotFormSchema>;
+
 export const ForgotForm = () => {
-  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ForgotFormValues>({
+    resolver: zodResolver(ForgotFormSchema),
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const onSubmit = (values: ForgotFormValues) => {
     setLoading(true);
     setError("");
     setSuccess("");
 
-    sendForgotRequest(email)
+    sendForgotRequest(values.email)
       .then(() => {
         setSuccess("Инструкция для восстановления отправлена на почту.");
       })
@@ -52,15 +70,16 @@ export const ForgotForm = () => {
         <Box
           component="form"
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             label="Email"
             type="email"
             fullWidth
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
           />
 
           <Button

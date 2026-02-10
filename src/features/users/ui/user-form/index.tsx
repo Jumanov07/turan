@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -29,21 +32,96 @@ interface Props {
   userToEdit?: UserRow | null;
 }
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const createUserFormSchema = (actorRole: Role | undefined, isEditing: boolean) =>
+  z
+    .object({
+      email: z.string().optional(),
+      firstName: z.string().trim().min(3, "Имя должно быть не менее 3 символов"),
+      lastName: z
+        .string()
+        .trim()
+        .min(3, "Фамилия должно быть не менее 3 символов"),
+      role: z.string(),
+      companyId: z.number().nullable().optional(),
+    })
+    .superRefine((values, ctx) => {
+      if (!isEditing) {
+        if (!values.email || values.email.length < 3) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Email должен быть не менее 3 символов",
+            path: ["email"],
+          });
+        } else if (!EMAIL_REGEX.test(values.email)) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Email должен быть валидным",
+            path: ["email"],
+          });
+        }
+      }
+
+      const shouldSelectCompany = canSelectCompanyForRole(
+        actorRole,
+        values.role as Role,
+      );
+
+      if (shouldSelectCompany && !values.companyId) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Выберите компанию",
+          path: ["companyId"],
+        });
+      }
+    });
+
+type UserFormValues = z.infer<ReturnType<typeof createUserFormSchema>>;
+
 export const UserForm = ({ onClose, userToEdit }: Props) => {
-  const [email, setEmail] = useState(userToEdit?.email || "");
-  const [firstName, setFirstName] = useState(userToEdit?.firstName || "");
-  const [lastName, setLastName] = useState(userToEdit?.lastName || "");
-  const [role, setRole] = useState<Role>(userToEdit?.role || ROLE.ADMIN);
-  const [companyId, setCompanyId] = useState<number | null>(
-    userToEdit?.company?.id ?? null,
-  );
-  const [errors, setErrors] = useState<string[]>([]);
+  const [apiErrors, setApiErrors] = useState<string[]>([]);
 
   const user = useAuthStore((state) => state.user);
 
   const queryClient = useQueryClient();
 
   const isEditing = !!userToEdit;
+
+  const schema = useMemo(
+    () => createUserFormSchema(user?.role, isEditing),
+    [user?.role, isEditing],
+  );
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm<UserFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: userToEdit?.email ?? "",
+      firstName: userToEdit?.firstName ?? "",
+      lastName: userToEdit?.lastName ?? "",
+      role: userToEdit?.role ?? ROLE.ADMIN,
+      companyId: userToEdit?.company?.id ?? null,
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      email: userToEdit?.email ?? "",
+      firstName: userToEdit?.firstName ?? "",
+      lastName: userToEdit?.lastName ?? "",
+      role: userToEdit?.role ?? ROLE.ADMIN,
+      companyId: userToEdit?.company?.id ?? null,
+    });
+  }, [userToEdit, reset]);
+
+  const watchedRole = watch("role") as Role;
 
   const { data: companies, isLoading: isCompaniesLoading } = useQuery({
     queryKey: ["companies"],
@@ -57,6 +135,7 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       onClose();
+      const role = watchedRole ?? ROLE.ADMIN;
       toast.success(
         isEditing
           ? `${ROLE_LABELS[role]} успешно обновлён`
@@ -67,59 +146,33 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       const messages = error.response?.data?.errors || [
         error.response?.data?.message || "Ошибка при сохранении пользователя",
       ];
-      setErrors(messages);
+      setApiErrors(messages);
     },
   });
 
   const availableRoles = availableUserRolesFor(user?.role);
 
-  const showCompanySelect = canSelectCompanyForRole(user?.role, role);
+  const showCompanySelect = canSelectCompanyForRole(user?.role, watchedRole);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const validationErrors: string[] = [];
-
-    if (!isEditing) {
-      if (!email || email.length < 3) {
-        validationErrors.push("Email должен быть не менее 3 символов");
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        validationErrors.push("Email должен быть валидным");
-      }
-    }
-
-    if (!firstName || firstName.length < 3) {
-      validationErrors.push("Имя должно быть не менее 3 символов");
-    }
-    if (!lastName || lastName.length < 3) {
-      validationErrors.push("Фамилия должно быть не менее 3 символов");
-    }
-    if (showCompanySelect && !companyId) {
-      validationErrors.push("Выберите компанию");
-    }
-
-    if (validationErrors.length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    setErrors([]);
+  const onSubmit = (values: UserFormValues) => {
+    setApiErrors([]);
 
     mutation.mutate({
-      ...(!isEditing && { email }),
-      firstName,
-      lastName,
-      role,
-      ...(showCompanySelect ? { companyId: companyId! } : {}),
+      ...(!isEditing && { email: values.email }),
+      firstName: values.firstName.trim(),
+      lastName: values.lastName.trim(),
+      role: values.role as Role,
+      ...(showCompanySelect ? { companyId: values.companyId! } : {}),
     });
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      {errors.map((err, i) => (
+      {apiErrors.map((err, i) => (
         <Alert key={i} severity="error">
           {err}
         </Alert>
@@ -128,61 +181,82 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       {!isEditing && (
         <TextField
           label="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          {...register("email")}
           fullWidth
           required
           type="email"
+          error={!!errors.email}
+          helperText={errors.email?.message}
         />
       )}
 
       <TextField
         label="Имя"
-        value={firstName}
-        onChange={(e) => setFirstName(e.target.value)}
+        {...register("firstName")}
         fullWidth
         required
+        error={!!errors.firstName}
+        helperText={errors.firstName?.message}
       />
 
       <TextField
         label="Фамилия"
-        value={lastName}
-        onChange={(e) => setLastName(e.target.value)}
+        {...register("lastName")}
         fullWidth
         required
+        error={!!errors.lastName}
+        helperText={errors.lastName?.message}
       />
 
-      <TextField
-        select
-        label="Роль"
-        value={role}
-        onChange={(e) => setRole(e.target.value as Role)}
-        fullWidth
-        required
-      >
-        {availableRoles.map((r) => (
-          <MenuItem key={r} value={r}>
-            {ROLE_LABELS[r]}
-          </MenuItem>
-        ))}
-      </TextField>
+      <Controller
+        name="role"
+        control={control}
+        render={({ field }) => (
+          <TextField
+            select
+            label="Роль"
+            value={field.value}
+            onChange={(e) => field.onChange(e.target.value)}
+            fullWidth
+            required
+          >
+            {availableRoles.map((r) => (
+              <MenuItem key={r} value={r}>
+                {ROLE_LABELS[r]}
+              </MenuItem>
+            ))}
+          </TextField>
+        )}
+      />
 
       {showCompanySelect && (
-        <TextField
-          select
-          label="Компания"
-          value={companyId ?? ""}
-          onChange={(e) => setCompanyId(+e.target.value)}
-          fullWidth
-          required
-          disabled={isCompaniesLoading}
-        >
-          {companies?.map(({ id, name }: Company) => (
-            <MenuItem key={id} value={id}>
-              {name}
-            </MenuItem>
-          ))}
-        </TextField>
+        <Controller
+          name="companyId"
+          control={control}
+          render={({ field }) => (
+            <TextField
+              select
+              label="Компания"
+              value={field.value ?? ""}
+              onChange={(e) =>
+                field.onChange(
+                  e.target.value ? Number(e.target.value) : null,
+                )
+              }
+              fullWidth
+              required
+              disabled={isCompaniesLoading}
+              error={!!errors.companyId}
+              helperText={errors.companyId?.message}
+            >
+              {companies?.map(({ id, name }: Company) => (
+                <MenuItem key={id} value={id}>
+                  {name}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       )}
 
       <Button

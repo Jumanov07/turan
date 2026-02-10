@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -11,23 +14,32 @@ interface Props {
   onClose: () => void;
 }
 
+const WebhookFormSchema = z.object({
+  url: z.string().trim().min(1, "Введите URL вебхука"),
+});
+
+type WebhookFormValues = z.infer<typeof WebhookFormSchema>;
+
 export const WebhookForm = ({ onClose }: Props) => {
-  const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
   const queryClient = useQueryClient();
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<WebhookFormValues>({
+    resolver: zodResolver(WebhookFormSchema),
+    defaultValues: {
+      url: "",
+    },
+  });
 
-    if (!url.trim()) {
-      toast.error("Введите URL вебхука");
-      return;
-    }
-
+  const onSubmit = async (values: WebhookFormValues) => {
     try {
       setLoading(true);
-      await createWebhook(url.trim());
+      await createWebhook(values.url.trim());
       toast.success("Вебхук создан");
 
       await queryClient.invalidateQueries({ queryKey: ["webhooks"] });
@@ -45,16 +57,17 @@ export const WebhookForm = ({ onClose }: Props) => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       display="flex"
       flexDirection="column"
       gap={2}
     >
       <TextField
         label="URL вебхука"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
+        {...register("url")}
         fullWidth
+        error={!!errors.url}
+        helperText={errors.url?.message}
       />
 
       <Box display="flex" justifyContent="flex-end" gap={1}>

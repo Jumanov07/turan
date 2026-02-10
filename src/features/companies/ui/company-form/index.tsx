@@ -1,4 +1,7 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -19,14 +22,42 @@ interface Props {
   onClose: () => void;
 }
 
+const CompanyFormSchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(3, "Название должно быть не менее 3 символов"),
+  address: z.string().trim().min(1, "Адрес обязателен"),
+});
+
+type CompanyFormValues = z.infer<typeof CompanyFormSchema>;
+
 export const CompanyForm = ({ company, onClose }: Props) => {
-  const [name, setName] = useState(company?.name || "");
-  const [address, setAddress] = useState(company?.address || "");
   const [errorMessage, setErrorMessage] = useState("");
 
   const queryClient = useQueryClient();
 
   const isEditing = !!company;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CompanyFormValues>({
+    resolver: zodResolver(CompanyFormSchema),
+    defaultValues: {
+      name: company?.name ?? "",
+      address: company?.address ?? "",
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      name: company?.name ?? "",
+      address: company?.address ?? "",
+    });
+  }, [company, reset]);
 
   const mutation = useMutation({
     mutationFn: (payload: CompanyPayload) =>
@@ -45,16 +76,12 @@ export const CompanyForm = ({ company, onClose }: Props) => {
     },
   });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (values: CompanyFormValues) => {
     setErrorMessage("");
-
-    if (name.trim().length < 3) {
-      setErrorMessage("Название должно быть не менее 3 символов");
-      return;
-    }
-
-    mutation.mutate({ name: name.trim(), address: address.trim() });
+    mutation.mutate({
+      name: values.name.trim(),
+      address: values.address.trim(),
+    });
   };
 
   const buttonText = mutation.isPending
@@ -68,25 +95,27 @@ export const CompanyForm = ({ company, onClose }: Props) => {
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
 
       <TextField
         label="Название компании"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
+        {...register("name")}
         fullWidth
         required
+        error={!!errors.name}
+        helperText={errors.name?.message}
       />
 
       <TextField
         label="Адрес"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
+        {...register("address")}
         fullWidth
         required
+        error={!!errors.address}
+        helperText={errors.address?.message}
       />
 
       <Button
