@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -9,16 +8,12 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { createWebhook } from "@/entities/webhooks";
+import { WebhookFormSchema } from "../../model/schema";
+import type { WebhookFormValues } from "../../model/types";
 
 interface Props {
   onClose: () => void;
 }
-
-const WebhookFormSchema = z.object({
-  url: z.string().trim().min(1, "Введите URL вебхука"),
-});
-
-type WebhookFormValues = z.infer<typeof WebhookFormSchema>;
 
 export const WebhookForm = ({ onClose }: Props) => {
   const [loading, setLoading] = useState(false);

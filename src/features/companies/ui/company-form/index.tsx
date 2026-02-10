@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -16,21 +15,13 @@ import {
   type CompanyPayload,
 } from "@/entities/companies";
 import type { Company } from "@/shared/types";
+import { CompanyFormSchema } from "../../model/schema";
+import type { CompanyFormValues } from "../../model/types";
 
 interface Props {
   company?: Company | null;
   onClose: () => void;
 }
-
-const CompanyFormSchema = z.object({
-  name: z
-    .string()
-    .trim()
-    .min(3, "Название должно быть не менее 3 символов"),
-  address: z.string().trim().min(1, "Адрес обязателен"),
-});
-
-type CompanyFormValues = z.infer<typeof CompanyFormSchema>;
 
 export const CompanyForm = ({ company, onClose }: Props) => {
   const [errorMessage, setErrorMessage] = useState("");

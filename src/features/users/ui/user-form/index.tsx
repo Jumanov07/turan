@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -26,58 +25,13 @@ import {
   canSelectCompanyForRole,
   hasRoleSuperAdmin,
 } from "@/shared/helpers";
+import { createUserFormSchema } from "../../model/schema";
+import type { UserFormValues } from "../../model/types";
 
 interface Props {
   onClose: () => void;
   userToEdit?: UserRow | null;
 }
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const createUserFormSchema = (actorRole: Role | undefined, isEditing: boolean) =>
-  z
-    .object({
-      email: z.string().optional(),
-      firstName: z.string().trim().min(3, "Имя должно быть не менее 3 символов"),
-      lastName: z
-        .string()
-        .trim()
-        .min(3, "Фамилия должно быть не менее 3 символов"),
-      role: z.string(),
-      companyId: z.number().nullable().optional(),
-    })
-    .superRefine((values, ctx) => {
-      if (!isEditing) {
-        if (!values.email || values.email.length < 3) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Email должен быть не менее 3 символов",
-            path: ["email"],
-          });
-        } else if (!EMAIL_REGEX.test(values.email)) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: "Email должен быть валидным",
-            path: ["email"],
-          });
-        }
-      }
-
-      const shouldSelectCompany = canSelectCompanyForRole(
-        actorRole,
-        values.role as Role,
-      );
-
-      if (shouldSelectCompany && !values.companyId) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Выберите компанию",
-          path: ["companyId"],
-        });
-      }
-    });
-
-type UserFormValues = z.infer<ReturnType<typeof createUserFormSchema>>;
 
 export const UserForm = ({ onClose, userToEdit }: Props) => {
   const [apiErrors, setApiErrors] = useState<string[]>([]);

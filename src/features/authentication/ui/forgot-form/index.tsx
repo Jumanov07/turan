@@ -1,19 +1,14 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { sendForgotRequest } from "@/entities/authentication";
-
-const ForgotFormSchema = z.object({
-  email: z.string().min(1, "Введите email"),
-});
-
-type ForgotFormValues = z.infer<typeof ForgotFormSchema>;
+import { ForgotFormSchema } from "../../model/schema";
+import type { ForgotFormValues } from "../../model/types";
 
 export const ForgotForm = () => {
   const [loading, setLoading] = useState(false);

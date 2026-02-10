@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import toast from "react-hot-toast";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -9,17 +8,13 @@ import Button from "@mui/material/Button";
 import type { AxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { createGroup, updateGroup, type Group } from "@/entities/groups";
+import { GroupFormSchema } from "../../model/schema";
+import type { GroupFormValues } from "../../model/types";
 
 interface Props {
   groupToEdit: Group | null;
   onClose: () => void;
 }
-
-const GroupFormSchema = z.object({
-  name: z.string().trim().min(1, "Введите название группы"),
-});
-
-type GroupFormValues = z.infer<typeof GroupFormSchema>;
 
 export const GroupForm = ({ groupToEdit, onClose }: Props) => {
   const queryClient = useQueryClient();

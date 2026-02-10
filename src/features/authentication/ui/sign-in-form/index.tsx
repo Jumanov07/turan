@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useNavigate } from "react-router";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -11,13 +10,8 @@ import Paper from "@mui/material/Paper";
 import { signIn } from "@/entities/authentication";
 import { useAuthStore } from "@/shared/stores";
 import { ROUTES } from "@/shared/constants";
-
-const SignInFormSchema = z.object({
-  email: z.string().min(1, "Введите логин"),
-  password: z.string().min(1, "Введите пароль"),
-});
-
-type SignInFormValues = z.infer<typeof SignInFormSchema>;
+import { SignInFormSchema } from "../../model/schema";
+import type { SignInFormValues } from "../../model/types";
 
 export const SignInForm = () => {
   const [loading, setLoading] = useState(false);

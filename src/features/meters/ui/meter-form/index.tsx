@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
@@ -13,22 +12,14 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import { updateMeter } from "@/entities/meters";
 import type { Meter } from "@/shared/types";
+import { MeterFormSchema } from "../../model/schema";
+import type { MeterFormValues } from "../../model/types";
 
 interface Props {
   meterToEdit: Meter | null;
   onClose: () => void;
   canArchive: boolean;
 }
-
-const MeterFormSchema = z.object({
-  customerID: z.string().optional(),
-  client: z.string().optional(),
-  address: z.string().optional(),
-  descriptions: z.string().optional(),
-  isArchived: z.boolean(),
-});
-
-type MeterFormValues = z.infer<typeof MeterFormSchema>;
 
 export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
   const [loading, setLoading] = useState(false);
