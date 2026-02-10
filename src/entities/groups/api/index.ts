@@ -1,7 +1,8 @@
 import { api } from "@/shared/api";
+import { API_ROUTES } from "@/shared/constants";
 
 export const getGroups = async (page = 1, limit = 10) => {
-  const { data } = await api.get("/group", {
+  const { data } = await api.get(API_ROUTES.GROUPS, {
     params: { page, limit },
   });
 
@@ -9,26 +10,26 @@ export const getGroups = async (page = 1, limit = 10) => {
 };
 
 export const createGroup = async (groupName: string) => {
-  const { data } = await api.post("/group/create", null, {
+  const { data } = await api.post(API_ROUTES.GROUPS_CREATE, null, {
     params: { groupName },
   });
   return data;
 };
 
 export const updateGroup = async (groupId: number, newName: string) => {
-  const { data } = await api.patch(`/group`, null, {
+  const { data } = await api.patch(API_ROUTES.GROUPS, null, {
     params: { groupId, newName },
   });
   return data;
 };
 
 export const deleteGroup = async (groupId: number) => {
-  const { data } = await api.delete(`/group/${groupId}`);
+  const { data } = await api.delete(`${API_ROUTES.GROUPS}/${groupId}`);
   return data;
 };
 
 export const addMetersToGroup = async (groupId: number, meterIds: number[]) => {
-  const { data } = await api.post("/group/add", {
+  const { data } = await api.post(API_ROUTES.GROUPS_ADD, {
     groupId,
     meterIds,
   });
@@ -40,7 +41,7 @@ export const removeMetersFromGroup = async (
   groupId: number,
   meterIds: number[],
 ) => {
-  const { data } = await api.post("/group/remove", {
+  const { data } = await api.post(API_ROUTES.GROUPS_REMOVE, {
     groupId,
     meterIds,
   });

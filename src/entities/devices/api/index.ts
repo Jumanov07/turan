@@ -1,21 +1,22 @@
 import { api } from "@/shared/api";
+import { API_ROUTES } from "@/shared/constants";
 
 export const getDevices = async (page = 1, limit = 10, verified = false) => {
-  const { data } = await api.get("/devices", {
+  const { data } = await api.get(API_ROUTES.DEVICES, {
     params: { page, limit, verified, isArchived: false },
   });
   return data;
 };
 
 export const verifyDevice = async (deviceId: number) => {
-  const { data } = await api.patch(`/devices/verify`, null, {
+  const { data } = await api.patch(API_ROUTES.DEVICES_VERIFY, null, {
     params: { deviceId },
   });
   return data;
 };
 
 export const deleteDevice = async (deviceIds: number[]) => {
-  const { data } = await api.delete(`/devices/remove`, {
+  const { data } = await api.delete(API_ROUTES.DEVICES_REMOVE, {
     data: { deviceIds },
   });
   return data;

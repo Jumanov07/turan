@@ -1,4 +1,5 @@
 import { api } from "@/shared/api";
+import { API_ROUTES } from "@/shared/constants";
 
 export const getMeters = async (
   page = 1,
@@ -31,13 +32,13 @@ export const getMeters = async (
     params.meterName = meterName.trim();
   }
 
-  const { data } = await api.get("/meters", { params });
+  const { data } = await api.get(API_ROUTES.METERS, { params });
 
   return data;
 };
 
 export const deleteMeters = async (meterIds: number[]) => {
-  const { data } = await api.delete("/meters", {
+  const { data } = await api.delete(API_ROUTES.METERS, {
     data: { meterIds },
   });
 
@@ -54,7 +55,7 @@ export const updateMeter = async (params: {
 }) => {
   const { meterId, ...rest } = params;
 
-  const { data } = await api.patch(`/meters/${meterId}`, null, {
+  const { data } = await api.patch(`${API_ROUTES.METERS}/${meterId}`, null, {
     params: {
       meterId,
       ...rest,
@@ -68,12 +69,16 @@ export const sendMeterCommand = async (
   meterId: number,
   command: "open" | "close",
 ) => {
-  const { data } = await api.patch(`/meters/command/${meterId}`, null, {
+  const { data } = await api.patch(
+    `${API_ROUTES.METERS_COMMAND}/${meterId}`,
+    null,
+    {
     params: {
       meterId,
       command,
     },
-  });
+    },
+  );
 
   return data;
 };

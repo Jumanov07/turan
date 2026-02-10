@@ -1,13 +1,14 @@
 import { api } from "@/shared/api";
+import { API_ROUTES } from "@/shared/constants";
 
 export const getReadings = async (page = 1, limit = 10) => {
-  const { data } = await api.get("/readings", {
+  const { data } = await api.get(API_ROUTES.READINGS, {
     params: { page, limit },
   });
   return data;
 };
 
 export const deleteReadings = async (readingIds: string[]) => {
-  const { data } = await api.post("/readings/delete", { readingIds });
+  const { data } = await api.post(API_ROUTES.READINGS_DELETE, { readingIds });
   return data;
 };
