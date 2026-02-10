@@ -78,25 +78,38 @@ export const SignInForm = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextField
-            label="Логин"
-            type="text"
-            fullWidth
-            required
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
+          <Box
+            component="fieldset"
+            disabled={mutation.isPending}
+            sx={{
+              border: "none",
+              p: 0,
+              m: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <TextField
+              label="Логин"
+              type="text"
+              fullWidth
+              required
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
 
-          <TextField
-            label="Пароль"
-            type="password"
-            fullWidth
-            required
-            {...register("password")}
-            error={!!errors.password}
-            helperText={errors.password?.message}
-          />
+            <TextField
+              label="Пароль"
+              type="password"
+              fullWidth
+              required
+              {...register("password")}
+              error={!!errors.password}
+              helperText={errors.password?.message}
+            />
+          </Box>
 
           <Button
             type="submit"

@@ -55,13 +55,26 @@ export const WebhookForm = ({ onClose }: Props) => {
       flexDirection="column"
       gap={2}
     >
-      <TextField
-        label="URL вебхука"
-        {...register("url")}
-        fullWidth
-        error={!!errors.url}
-        helperText={errors.url?.message}
-      />
+      <Box
+        component="fieldset"
+        disabled={mutation.isPending}
+        sx={{
+          border: "none",
+          p: 0,
+          m: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <TextField
+          label="URL вебхука"
+          {...register("url")}
+          fullWidth
+          error={!!errors.url}
+          helperText={errors.url?.message}
+        />
+      </Box>
 
       <Box display="flex" justifyContent="flex-end" gap={1}>
         <Button type="submit" variant="contained" disabled={mutation.isPending}>

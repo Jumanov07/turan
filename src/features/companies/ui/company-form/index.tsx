@@ -84,23 +84,36 @@ export const CompanyForm = ({ company, onClose }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      <TextField
-        label="Название компании"
-        {...register("name")}
-        fullWidth
-        required
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
+      <Box
+        component="fieldset"
+        disabled={mutation.isPending}
+        sx={{
+          border: "none",
+          p: 0,
+          m: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <TextField
+          label="Название компании"
+          {...register("name")}
+          fullWidth
+          required
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        />
 
-      <TextField
-        label="Адрес"
-        {...register("address")}
-        fullWidth
-        required
-        error={!!errors.address}
-        helperText={errors.address?.message}
-      />
+        <TextField
+          label="Адрес"
+          {...register("address")}
+          fullWidth
+          required
+          error={!!errors.address}
+          helperText={errors.address?.message}
+        />
+      </Box>
 
       <Button
         type="submit"

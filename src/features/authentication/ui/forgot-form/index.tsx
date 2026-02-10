@@ -62,15 +62,28 @@ export const ForgotForm = () => {
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
           onSubmit={handleSubmit(onSubmit)}
         >
-          <TextField
-            label="Email"
-            type="email"
-            fullWidth
-            required
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-          />
+          <Box
+            component="fieldset"
+            disabled={mutation.isPending}
+            sx={{
+              border: "none",
+              p: 0,
+              m: 0,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <TextField
+              label="Email"
+              type="email"
+              fullWidth
+              required
+              {...register("email")}
+              error={!!errors.email}
+              helperText={errors.email?.message}
+            />
+          </Box>
 
           <Button
             type="submit"

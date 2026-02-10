@@ -97,45 +97,58 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
       flexDirection="column"
       gap={2}
     >
-      <TextField
-        label="ID Клиента"
-        {...register("customerID")}
-      />
-
-      <TextField
-        label="Клиент"
-        {...register("client")}
-      />
-
-      <TextField
-        label="Адрес"
-        {...register("address")}
-      />
-
-      <TextField
-        label="Описание"
-        {...register("descriptions")}
-        multiline
-        minRows={2}
-      />
-
-      {canArchive && (
-        <FormControlLabel
-          control={
-            <Controller
-              name="isArchived"
-              control={control}
-              render={({ field }) => (
-                <Checkbox
-                  checked={field.value}
-                  onChange={(e) => field.onChange(e.target.checked)}
-                />
-              )}
-            />
-          }
-          label="Отправить в архив"
+      <Box
+        component="fieldset"
+        disabled={mutation.isPending}
+        sx={{
+          border: "none",
+          p: 0,
+          m: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <TextField
+          label="ID Клиента"
+          {...register("customerID")}
         />
-      )}
+
+        <TextField
+          label="Клиент"
+          {...register("client")}
+        />
+
+        <TextField
+          label="Адрес"
+          {...register("address")}
+        />
+
+        <TextField
+          label="Описание"
+          {...register("descriptions")}
+          multiline
+          minRows={2}
+        />
+
+        {canArchive && (
+          <FormControlLabel
+            control={
+              <Controller
+                name="isArchived"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  />
+                )}
+              />
+            }
+            label="Отправить в архив"
+          />
+        )}
+      </Box>
 
       <Box display="flex" justifyContent="flex-end" gap={1}>
         <Button

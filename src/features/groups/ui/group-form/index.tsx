@@ -71,13 +71,26 @@ export const GroupForm = ({ groupToEdit, onClose }: Props) => {
       flexDirection="column"
       gap={2}
     >
-      <TextField
-        label="Название группы"
-        {...register("name")}
-        fullWidth
-        error={!!errors.name}
-        helperText={errors.name?.message}
-      />
+      <Box
+        component="fieldset"
+        disabled={mutation.isPending}
+        sx={{
+          border: "none",
+          p: 0,
+          m: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <TextField
+          label="Название группы"
+          {...register("name")}
+          fullWidth
+          error={!!errors.name}
+          helperText={errors.name?.message}
+        />
+      </Box>
 
       <Box display="flex" justifyContent="flex-end" gap={1}>
         <Button

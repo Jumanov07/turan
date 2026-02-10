@@ -120,86 +120,99 @@ export const UserForm = ({ onClose, userToEdit }: Props) => {
       onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      {!isEditing && (
-        <TextField
-          label="Email"
-          {...register("email")}
-          fullWidth
-          required
-          type="email"
-          error={!!errors.email}
-          helperText={errors.email?.message}
-        />
-      )}
-
-      <TextField
-        label="Имя"
-        {...register("firstName")}
-        fullWidth
-        required
-        error={!!errors.firstName}
-        helperText={errors.firstName?.message}
-      />
-
-      <TextField
-        label="Фамилия"
-        {...register("lastName")}
-        fullWidth
-        required
-        error={!!errors.lastName}
-        helperText={errors.lastName?.message}
-      />
-
-      <Controller
-        name="role"
-        control={control}
-        render={({ field }) => (
+      <Box
+        component="fieldset"
+        disabled={mutation.isPending}
+        sx={{
+          border: "none",
+          p: 0,
+          m: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {!isEditing && (
           <TextField
-            select
-            label="Роль"
-            value={field.value}
-            onChange={(e) => field.onChange(e.target.value)}
+            label="Email"
+            {...register("email")}
             fullWidth
             required
-          >
-            {availableRoles.map((r) => (
-              <MenuItem key={r} value={r}>
-                {ROLE_LABELS[r]}
-              </MenuItem>
-            ))}
-          </TextField>
+            type="email"
+            error={!!errors.email}
+            helperText={errors.email?.message}
+          />
         )}
-      />
 
-      {showCompanySelect && (
+        <TextField
+          label="Имя"
+          {...register("firstName")}
+          fullWidth
+          required
+          error={!!errors.firstName}
+          helperText={errors.firstName?.message}
+        />
+
+        <TextField
+          label="Фамилия"
+          {...register("lastName")}
+          fullWidth
+          required
+          error={!!errors.lastName}
+          helperText={errors.lastName?.message}
+        />
+
         <Controller
-          name="companyId"
+          name="role"
           control={control}
           render={({ field }) => (
             <TextField
               select
-              label="Компания"
-              value={field.value ?? ""}
-              onChange={(e) =>
-                field.onChange(
-                  e.target.value ? Number(e.target.value) : null,
-                )
-              }
+              label="Роль"
+              value={field.value}
+              onChange={(e) => field.onChange(e.target.value)}
               fullWidth
               required
-              disabled={isCompaniesLoading}
-              error={!!errors.companyId}
-              helperText={errors.companyId?.message}
             >
-              {companies?.map(({ id, name }: Company) => (
-                <MenuItem key={id} value={id}>
-                  {name}
+              {availableRoles.map((r) => (
+                <MenuItem key={r} value={r}>
+                  {ROLE_LABELS[r]}
                 </MenuItem>
               ))}
             </TextField>
           )}
         />
-      )}
+
+        {showCompanySelect && (
+          <Controller
+            name="companyId"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                select
+                label="Компания"
+                value={field.value ?? ""}
+                onChange={(e) =>
+                  field.onChange(
+                    e.target.value ? Number(e.target.value) : null,
+                  )
+                }
+                fullWidth
+                required
+                disabled={isCompaniesLoading || mutation.isPending}
+                error={!!errors.companyId}
+                helperText={errors.companyId?.message}
+              >
+                {companies?.map(({ id, name }: Company) => (
+                  <MenuItem key={id} value={id}>
+                    {name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
+        )}
+      </Box>
 
       <Button
         type="submit"
