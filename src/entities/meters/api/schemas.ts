@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const ValveStatusSchema = z.enum(["open", "closed"]);
 const MeterStatusSchema = z.enum(["normal", "warning", "error"]);
+const NullableNumberSchema = z.coerce.number().finite().nullable();
 
 export const MeterSchema = z
   .object({
@@ -14,8 +15,8 @@ export const MeterSchema = z
     descriptions: z.string().nullable(),
     valveStatus: ValveStatusSchema,
     valveStatusChange: z.string().nullable(),
-    batteryStatus: z.string().nullable(),
-    lastReading: z.number().nullable(),
+    batteryStatus: NullableNumberSchema,
+    lastReading: NullableNumberSchema,
     pendingCommand: z.string().nullable(),
     status: MeterStatusSchema,
     errorMessage: z.string().nullable(),

@@ -61,7 +61,7 @@ export interface Meter {
   descriptions: string | null;
   valveStatus: "open" | "closed";
   valveStatusChange: string | null;
-  batteryStatus: string | null;
+  batteryStatus: number | null;
   lastReading: number | null;
   pendingCommand: string | null;
   status: "normal" | "warning" | "error";
