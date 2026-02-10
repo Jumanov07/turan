@@ -37,7 +37,7 @@ export const useDevices = () => {
   } = useSelection<Device, number>({
     items: devices,
     getId: (device) => device.id,
-    resetDeps: [page, limit, verified],
+    resetKey: [page, limit, verified].join("|"),
   });
 
   const verifyMutation = useToastMutation({

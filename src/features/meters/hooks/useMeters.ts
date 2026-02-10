@@ -87,16 +87,16 @@ export const useMeters = () => {
     items: meters,
     getId: (meter) => meter.id,
     enabled: canManageMetersToGroups,
-    resetDeps: [
+    resetKey: [
       page,
       limit,
       status,
       isArchived,
-      groupId,
+      groupId ?? "null",
       customerId,
       meterName,
       valveFilter,
-    ],
+    ].join("|"),
   });
 
   const deleteMutation = useToastMutation({

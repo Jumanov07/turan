@@ -34,16 +34,14 @@ export const useReadings = () => {
     items: readings,
     getId: (reading) => reading.id,
     enabled: isAdmin,
-    resetDeps: [page, limit],
+    resetKey: [page, limit].join("|"),
   });
 
   const deleteMutation = useToastMutation({
     mutationFn: (ids: string[]) => deleteReadings(ids),
     invalidateKeys: [["readings"]],
     successMessage: (_, ids) =>
-      ids.length === 1
-        ? "Показание удалено"
-        : "Выбранные показания удалены",
+      ids.length === 1 ? "Показание удалено" : "Выбранные показания удалены",
     errorMessage: (error: AxiosError<{ message?: string }>, ids) =>
       getApiErrorMessage(
         error,

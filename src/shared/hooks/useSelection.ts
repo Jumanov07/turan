@@ -1,17 +1,17 @@
-import { useEffect, useMemo, useState, type DependencyList } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface Params<T, Id extends string | number> {
   items: T[];
   getId: (item: T) => Id;
   enabled?: boolean;
-  resetDeps?: DependencyList;
+  resetKey?: string | number;
 }
 
 export const useSelection = <T, Id extends string | number>({
   items,
   getId,
   enabled = true,
-  resetDeps = [],
+  resetKey,
 }: Params<T, Id>) => {
   const [selectedIds, setSelectedIds] = useState<Id[]>([]);
 
@@ -44,12 +44,13 @@ export const useSelection = <T, Id extends string | number>({
   };
 
   useEffect(() => {
-    setSelectedIds([]);
-  }, [resetDeps]);
+    if (resetKey === undefined) return;
+    setSelectedIds((prev) => (prev.length ? [] : prev));
+  }, [resetKey]);
 
   useEffect(() => {
     if (!enabled) {
-      setSelectedIds([]);
+      setSelectedIds((prev) => (prev.length ? [] : prev));
     }
   }, [enabled]);
 
