@@ -72,7 +72,7 @@ export const useMeters = () => {
 
   const hasMeters = meters.length > 0;
   const emptyText = "Счётчики не найдены";
-  const total = data?.total;
+  const total = data?.total ?? 0;
 
   const invalidate = async () => {
     await queryClient.invalidateQueries({ queryKey: ["meters"] });

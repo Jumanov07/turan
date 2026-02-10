@@ -37,7 +37,7 @@ export interface Company {
   key: {
     key: string;
     createdAt: string;
-  };
+  } | null;
   createdAt: string;
   updatedAt: string;
   isArchived: boolean;

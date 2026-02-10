@@ -25,7 +25,7 @@ export const useReadings = () => {
 
   const readings: Reading[] = data?.data ?? [];
   const hasReadings = readings.length > 0;
-  const total = data?.total;
+  const total = data?.total ?? 0;
   const emptyText = "Показания не найдены";
 
   const invalidate = async () => {

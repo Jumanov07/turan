@@ -1,22 +1,25 @@
 import { z } from "zod";
 
+const ValveStatusSchema = z.enum(["open", "closed"]);
+const MeterStatusSchema = z.enum(["normal", "warning", "error"]);
+
 export const MeterSchema = z
   .object({
     id: z.number(),
     name: z.string(),
     password: z.string(),
-    customerID: z.string().nullable().optional(),
-    client: z.string().nullable().optional(),
-    address: z.string().nullable().optional(),
-    descriptions: z.string().nullable().optional(),
-    valveStatus: z.string().nullable().optional(),
-    valveStatusChange: z.string().nullable().optional(),
-    batteryStatus: z.string().nullable().optional(),
-    lastReading: z.number().nullable().optional(),
-    pendingCommand: z.string().nullable().optional(),
-    status: z.string(),
-    errorMessage: z.string().nullable().optional(),
-    isArchived: z.boolean(),
+    customerID: z.string().nullable().default(null),
+    client: z.string().nullable().default(null),
+    address: z.string().nullable().default(null),
+    descriptions: z.string().nullable().default(null),
+    valveStatus: ValveStatusSchema,
+    valveStatusChange: z.string().nullable().default(null),
+    batteryStatus: z.string().nullable().default(null),
+    lastReading: z.number().nullable().default(null),
+    pendingCommand: z.string().nullable().default(null),
+    status: MeterStatusSchema,
+    errorMessage: z.string().nullable().default(null),
+    isArchived: z.boolean().default(false),
     createdAt: z.string(),
     updatedAt: z.string(),
   })
