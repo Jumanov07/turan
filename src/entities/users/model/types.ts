@@ -1,12 +1,24 @@
-import type { Role, User } from "@/shared/types";
+import type { Role } from "@/shared/types";
 
-export type UserRow = Omit<User, "devices">;
+export interface UserCompany {
+  id: number;
+  name: string;
+}
+
+export interface UserRow {
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  role: Role;
+  company: UserCompany | null;
+  createdAt: string;
+  isArchived: boolean;
+}
 
 export interface GetUsersResponse {
   data: UserRow[];
   total: number;
-  page: number;
-  limit: number;
 }
 
 export interface CreateUserPayload {

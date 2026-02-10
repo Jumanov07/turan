@@ -4,7 +4,6 @@ export const GroupSchema = z
   .object({
     id: z.number(),
     name: z.string(),
-    position: z.number().default(0),
     createdAt: z.string(),
   })
   .passthrough();

@@ -1,10 +1,7 @@
 import { z } from "zod";
 
 const ValveStateSchema = z.enum(["open", "closed"]);
-const BatteryStatusSchema = z
-  .number()
-  .nullable()
-  .transform((value) => value ?? 0);
+const BatteryStatusSchema = z.number().nullable();
 
 const ReadingMeterSchema = z
   .object({

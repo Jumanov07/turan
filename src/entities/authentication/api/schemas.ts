@@ -12,20 +12,6 @@ const AuthCompanySchema = z
   .object({
     id: z.number(),
     name: z.string(),
-    address: z.string().default(""),
-    createdAt: z.string().default(""),
-    updatedAt: z.string().default(""),
-    isArchived: z.boolean().default(false),
-  })
-  .passthrough();
-
-const AuthDeviceSchema = z
-  .object({
-    id: z.number(),
-    deviceId: z.string(),
-    verified: z.boolean(),
-    createdAt: z.string(),
-    isArchived: z.boolean().default(false),
   })
   .passthrough();
 
@@ -37,11 +23,7 @@ export const SignInResponseSchema = z
     firstName: z.string(),
     lastName: z.string(),
     role: RoleSchema,
-    passwordChange: z.boolean().default(false),
-    company: AuthCompanySchema.nullable().default(null),
-    devices: z.array(AuthDeviceSchema).default([]),
-    createdAt: z.string().default(""),
-    updatedAt: z.string().default(""),
-    isArchived: z.boolean().default(false),
+    passwordChange: z.boolean(),
+    company: AuthCompanySchema.nullable(),
   })
   .passthrough();

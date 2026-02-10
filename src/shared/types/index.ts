@@ -9,12 +9,8 @@ export interface User {
   firstName: string;
   lastName: string;
   role: Role;
-  company: Omit<Company, "users" | "key"> | null;
-  devices: Device[] | [];
+  company: { id: number; name: string } | null;
   passwordChange: boolean;
-  createdAt: string;
-  updatedAt: string;
-  isArchived: boolean;
 }
 
 export interface AuthSession {
@@ -33,14 +29,18 @@ export interface Company {
   id: number;
   name: string;
   address: string;
-  users: Omit<User, "company" | "devices">[];
   key: {
     key: string;
     createdAt: string;
   } | null;
   createdAt: string;
-  updatedAt: string;
   isArchived: boolean;
+}
+
+export interface DeviceUser {
+  firstName: string | null;
+  lastName: string | null;
+  email: string | null;
 }
 
 export interface Device {
@@ -48,8 +48,7 @@ export interface Device {
   deviceId: string;
   verified: boolean;
   createdAt: string;
-  isArchived: boolean;
-  user?: Omit<User, "company" | "devices"> | null;
+  user?: DeviceUser | null;
 }
 
 export interface Meter {

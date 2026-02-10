@@ -12,10 +12,6 @@ const UserCompanySchema = z
   .object({
     id: z.number(),
     name: z.string(),
-    address: z.string().default(""),
-    createdAt: z.string().default(""),
-    updatedAt: z.string().default(""),
-    isArchived: z.boolean().default(false),
   })
   .passthrough();
 
@@ -26,11 +22,9 @@ export const UserRowSchema = z
     firstName: z.string(),
     lastName: z.string(),
     role: RoleSchema,
-    company: UserCompanySchema.nullable().default(null),
-    passwordChange: z.boolean().default(false),
-    createdAt: z.string().default(""),
-    updatedAt: z.string().default(""),
-    isArchived: z.boolean().default(false),
+    company: UserCompanySchema.nullable(),
+    createdAt: z.string(),
+    isArchived: z.boolean(),
   })
   .passthrough();
 
