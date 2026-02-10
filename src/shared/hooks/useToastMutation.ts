@@ -6,62 +6,72 @@ import {
   type UseMutationOptions,
   type UseMutationResult,
 } from "@tanstack/react-query";
+import type { MutationFunctionContext } from "@tanstack/query-core";
 import toast from "react-hot-toast";
 
-type SuccessMessage<TData, TVariables, TContext> =
+type SuccessMessage<TData, TVariables, TOnMutateResult> =
   | string
   | ((
       data: TData,
       variables: TVariables,
-      context: TContext | undefined,
+      onMutateResult: TOnMutateResult | undefined,
+      context: MutationFunctionContext,
     ) => string | null | undefined);
 
-type ErrorMessage<TError, TVariables, TContext> =
+type ErrorMessage<TError, TVariables, TOnMutateResult> =
   | string
   | ((
       error: TError,
       variables: TVariables,
-      context: TContext | undefined,
+      onMutateResult: TOnMutateResult | undefined,
+      context: MutationFunctionContext,
     ) => string | null | undefined);
 
-type ToastMutationOptions<TData, TError, TVariables, TContext> = Omit<
-  UseMutationOptions<TData, TError, TVariables, TContext>,
+type ToastMutationOptions<TData, TError, TVariables, TOnMutateResult> = Omit<
+  UseMutationOptions<TData, TError, TVariables, TOnMutateResult>,
   "mutationFn" | "onSuccess" | "onError"
 > & {
   mutationFn: MutationFunction<TData, TVariables>;
   invalidateKeys?: QueryKey[];
-  successMessage?: SuccessMessage<TData, TVariables, TContext>;
-  errorMessage?: ErrorMessage<TError, TVariables, TContext>;
+  successMessage?: SuccessMessage<TData, TVariables, TOnMutateResult>;
+  errorMessage?: ErrorMessage<TError, TVariables, TOnMutateResult>;
   onSuccess?: UseMutationOptions<
     TData,
     TError,
     TVariables,
-    TContext
+    TOnMutateResult
   >["onSuccess"];
-  onError?: UseMutationOptions<TData, TError, TVariables, TContext>["onError"];
+  onError?: UseMutationOptions<
+    TData,
+    TError,
+    TVariables,
+    TOnMutateResult
+  >["onError"];
 };
 
-const resolveMessage = <TData, TVariables, TContext>(
-  message: SuccessMessage<TData, TVariables, TContext> | undefined,
+const resolveMessage = <TData, TVariables, TOnMutateResult>(
+  message: SuccessMessage<TData, TVariables, TOnMutateResult> | undefined,
   data: TData,
   variables: TVariables,
-  context: TContext | undefined,
+  onMutateResult: TOnMutateResult | undefined,
+  context: MutationFunctionContext,
 ) => {
   if (!message) return null;
   return typeof message === "function"
-    ? message(data, variables, context)
+    ? message(data, variables, onMutateResult, context)
     : message;
 };
 
-const resolveErrorMessage = <TError, TVariables, TContext>(
-  message: ErrorMessage<TError, TVariables, TContext> | undefined,
+const resolveErrorMessage = <TError, TVariables, TOnMutateResult>(
+  message: ErrorMessage<TError, TVariables, TOnMutateResult> | undefined,
   error: TError,
   variables: TVariables,
-  context: TContext | undefined,
+  onMutateResult: TOnMutateResult | undefined,
+  context: MutationFunctionContext,
 ) => {
   if (!message) return null;
   return typeof message === "function"
-    ? message(error, variables, context)
+    ? message(error, variables, onMutateResult, context)
     : message;
 };
 
@@ -69,10 +79,10 @@ export const useToastMutation = <
   TData = unknown,
   TError = unknown,
   TVariables = void,
-  TContext = unknown,
+  TOnMutateResult = unknown,
 >(
-  options: ToastMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationResult<TData, TError, TVariables, TContext> => {
+  options: ToastMutationOptions<TData, TError, TVariables, TOnMutateResult>,
+): UseMutationResult<TData, TError, TVariables, TOnMutateResult> => {
   const queryClient = useQueryClient();
 
   const {
@@ -85,31 +95,38 @@ export const useToastMutation = <
     ...rest
   } = options;
 
-  return useMutation<TData, TError, TVariables, TContext>({
+  return useMutation<TData, TError, TVariables, TOnMutateResult>({
     mutationFn,
     ...rest,
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, variables, onMutateResult, context) => {
       if (invalidateKeys?.length) {
         invalidateKeys.forEach((queryKey) => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
 
-      const message = resolveMessage(successMessage, data, variables, context);
+      const message = resolveMessage(
+        successMessage,
+        data,
+        variables,
+        onMutateResult,
+        context,
+      );
       if (message) toast.success(message);
 
-      onSuccess?.(data, variables, context);
+      onSuccess?.(data, variables, onMutateResult, context);
     },
-    onError: (error, variables, context) => {
+    onError: (error, variables, onMutateResult, context) => {
       const message = resolveErrorMessage(
         errorMessage,
         error,
         variables,
+        onMutateResult,
         context,
       );
       if (message) toast.error(message);
 
-      onError?.(error, variables, context);
+      onError?.(error, variables, onMutateResult, context);
     },
   });
 };
