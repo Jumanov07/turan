@@ -7,7 +7,7 @@ const CompanyApiKeySchema = z
   })
   .passthrough();
 
-export const CompanySchema = z
+const CompanySchema = z
   .object({
     id: z.number(),
     name: z.string(),

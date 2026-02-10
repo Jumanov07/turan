@@ -8,7 +8,7 @@ const DeviceUserSchema = z
   })
   .passthrough();
 
-export const DeviceSchema = z
+const DeviceSchema = z
   .object({
     id: z.number(),
     deviceId: z.string(),

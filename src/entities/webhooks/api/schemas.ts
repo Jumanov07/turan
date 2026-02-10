@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const WebhookSchema = z
+const WebhookSchema = z
   .object({
     id: z.number(),
     url: z.string(),

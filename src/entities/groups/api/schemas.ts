@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const GroupSchema = z
+const GroupSchema = z
   .object({
     id: z.number(),
     name: z.string(),

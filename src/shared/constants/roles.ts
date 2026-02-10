@@ -7,13 +7,6 @@ export const ROLE = {
   CONTROLLER: "controller",
 };
 
-export const ROLES: Role[] = [
-  ROLE.SUPER_ADMIN,
-  ROLE.ADMIN,
-  ROLE.USER,
-  ROLE.CONTROLLER,
-];
-
 export const ROLE_LABELS: Record<Role, string> = {
   [ROLE.SUPER_ADMIN]: "Супер админ",
   [ROLE.ADMIN]: "Админ",

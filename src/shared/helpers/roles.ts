@@ -7,7 +7,7 @@ export const hasRoleSuperAdmin = (role: Role | undefined) => {
   return role === ROLE.SUPER_ADMIN;
 };
 
-export const hasAnyRole = (role: Role | undefined, roles: Role[]) => {
+const hasAnyRole = (role: Role | undefined, roles: Role[]) => {
   if (!role) return false;
 
   return roles.includes(role);

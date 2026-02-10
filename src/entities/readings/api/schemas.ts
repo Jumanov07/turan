@@ -9,7 +9,7 @@ const ReadingMeterSchema = z
   })
   .passthrough();
 
-export const ReadingSchema = z
+const ReadingSchema = z
   .object({
     id: z.string(),
     value: z.string(),

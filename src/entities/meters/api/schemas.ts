@@ -4,7 +4,7 @@ const ValveStatusSchema = z.enum(["open", "closed"]);
 const MeterStatusSchema = z.enum(["normal", "warning", "error"]);
 const NullableNumberSchema = z.coerce.number().finite().nullable();
 
-export const MeterSchema = z
+const MeterSchema = z
   .object({
     id: z.number(),
     name: z.string(),

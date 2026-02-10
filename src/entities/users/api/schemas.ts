@@ -15,7 +15,7 @@ const UserCompanySchema = z
   })
   .passthrough();
 
-export const UserRowSchema = z
+const UserRowSchema = z
   .object({
     id: z.number(),
     email: z.string(),

@@ -3,7 +3,7 @@ import type { ROLE } from "../constants";
 
 export type Role = (typeof ROLE)[keyof typeof ROLE];
 
-export interface User {
+interface User {
   id: number;
   email: string;
   firstName: string;
@@ -37,7 +37,7 @@ export interface Company {
   isArchived: boolean;
 }
 
-export interface DeviceUser {
+interface DeviceUser {
   firstName: string | null;
   lastName: string | null;
   email: string | null;
