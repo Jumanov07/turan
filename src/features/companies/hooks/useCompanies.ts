@@ -7,8 +7,8 @@ import {
   getCompanies,
   refreshCompanyToken,
   unarchiveCompany,
+  type Company,
 } from "@/entities/companies";
-import type { Company } from "@/shared/types";
 
 export const useCompanies = () => {
   const [isArchived, setIsArchived] = useState(false);

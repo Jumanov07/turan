@@ -9,10 +9,10 @@ import {
   createCompanyColumns,
   useCompanies,
 } from "@/features/companies";
+import type { Company } from "@/entities/companies";
 import { Modal } from "@/shared/ui/modal";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
-import type { Company } from "@/shared/types";
 
 export const CompaniesWidget = () => {
   const [isModalOpen, setModalOpen] = useState(false);

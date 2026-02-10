@@ -5,7 +5,8 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import type { Column, Company } from "@/shared/types";
+import type { Company } from "@/entities/companies";
+import type { Column } from "@/shared/types";
 import { formatDateTime } from "@/shared/helpers";
 import { copyToClipboard } from "../utils/helpers";
 

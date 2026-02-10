@@ -11,11 +11,11 @@ import {
   useMeters,
 } from "@/features/meters";
 import { useGroups } from "@/features/groups";
+import type { Meter } from "@/entities/meters";
 import { DataTable } from "@/shared/ui/data-table";
 import { Loader } from "@/shared/ui/loader";
 import { Pagination } from "@/shared/ui/pagination";
 import { Modal } from "@/shared/ui/modal";
-import type { Meter } from "@/shared/types";
 
 export const MetersWidget = () => {
   const [editingMeter, setEditingMeter] = useState<Meter | null>(null);

@@ -1,12 +1,5 @@
-interface ReadingMeter {
-  name: string;
-}
+import type { z } from "zod";
+import { ReadingsResponseSchema } from "./schemas";
 
-export interface Reading {
-  id: string;
-  value: string;
-  valveState: "open" | "closed";
-  batteryStatus: number | null;
-  meter: ReadingMeter;
-  readingAt: string;
-}
+export type ReadingsResponse = z.infer<typeof ReadingsResponseSchema>;
+export type Reading = ReadingsResponse["data"][number];

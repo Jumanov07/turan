@@ -12,9 +12,9 @@ import Alert from "@mui/material/Alert";
 import {
   createCompany,
   editCompany,
+  type Company,
   type CompanyPayload,
 } from "@/entities/companies";
-import type { Company } from "@/shared/types";
 import { CompanyFormSchema } from "../../model/schema";
 import type { CompanyFormValues } from "../../model/types";
 

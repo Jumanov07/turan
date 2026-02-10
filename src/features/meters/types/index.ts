@@ -1,4 +1,4 @@
-import type { Meter } from "@/shared/types";
+import type { Meter } from "@/entities/meters";
 
 export interface CreateMeterColumnsParams {
   isAdmin: boolean;

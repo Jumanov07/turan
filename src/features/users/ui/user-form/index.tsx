@@ -9,10 +9,9 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Alert from "@mui/material/Alert";
-import { getCompanies } from "@/entities/companies";
+import { getCompanies, type Company } from "@/entities/companies";
 import { useAuthStore } from "@/shared/stores";
-
-import type { Company, Role } from "@/shared/types";
+import type { Role } from "@/shared/types";
 import {
   createUser,
   editUser,

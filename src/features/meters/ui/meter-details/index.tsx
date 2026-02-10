@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
-import type { Meter } from "@/shared/types";
+import type { Meter } from "@/entities/meters";
 import { formatDateTime } from "@/shared/helpers";
 import { Field } from "../field";
 import { STATUS_LABELS, VALVE_LABELS } from "../../utils/constants";

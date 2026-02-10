@@ -25,52 +25,6 @@ export interface AuthState {
   logout: () => void;
 }
 
-export interface Company {
-  id: number;
-  name: string;
-  address: string;
-  key: {
-    key: string;
-    createdAt: string;
-  } | null;
-  createdAt: string;
-  isArchived: boolean;
-}
-
-interface DeviceUser {
-  firstName: string | null;
-  lastName: string | null;
-  email: string | null;
-}
-
-export interface Device {
-  id: number;
-  deviceId: string;
-  verified: boolean;
-  createdAt: string;
-  user?: DeviceUser | null;
-}
-
-export interface Meter {
-  id: number;
-  name: string;
-  password: string;
-  customerID: string | null;
-  client: string | null;
-  address: string | null;
-  descriptions: string | null;
-  valveStatus: "open" | "closed";
-  valveStatusChange: string | null;
-  batteryStatus: number | null;
-  lastReading: number | null;
-  pendingCommand: string | null;
-  status: "normal" | "warning" | "error";
-  errorMessage: string | null;
-  createdAt: string;
-  updatedAt: string;
-  isArchived: boolean;
-}
-
 export interface SidebarLink {
   label: string;
   to: string;
