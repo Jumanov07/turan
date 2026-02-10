@@ -112,7 +112,10 @@ export const useToastMutation = <
         onMutateResult,
         context,
       );
-      if (message) toast.success(message);
+
+      if (message) {
+        toast.success(message);
+      }
 
       onSuccess?.(data, variables, onMutateResult, context);
     },
@@ -124,7 +127,10 @@ export const useToastMutation = <
         onMutateResult,
         context,
       );
-      if (message) toast.error(message);
+
+      if (message) {
+        toast.error(message);
+      }
 
       onError?.(error, variables, onMutateResult, context);
     },
