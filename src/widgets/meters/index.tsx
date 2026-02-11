@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { createMeterColumns, useMeters } from "@/features/meters";
-import { useGroups } from "@/features/groups";
+import { useGroupActions, useGroupsQuery } from "@/features/groups";
 import { MetersHeader } from "./ui/meters-header";
 import { MetersModals } from "./ui/meters-modals";
 import { MetersTableSection } from "./ui/meters-table-section";
@@ -45,9 +45,16 @@ export const MetersWidget = () => {
     clearSelection,
   } = useMeters();
 
-  const { groups, handleAddMetersToGroup, handleRemoveMetersFromGroup } =
-    useGroups({
-      forFilter: true,
+  const { groups } = useGroupsQuery({
+    page: 0,
+    limit: 0,
+    forFilter: true,
+  });
+
+  const { handleAddMetersToGroup, handleRemoveMetersFromGroup } =
+    useGroupActions({
+      isAdmin,
+      canManageMetersToGroups,
     });
 
   const {

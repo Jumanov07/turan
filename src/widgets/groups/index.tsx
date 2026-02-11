@@ -1,24 +1,31 @@
-import { createGroupColumns, useGroups } from "@/features/groups";
+import {
+  createGroupColumns,
+  useGroupAccess,
+  useGroupActions,
+  useGroupsQuery,
+} from "@/features/groups";
+import { usePagination } from "@/shared/hooks";
 import { GroupsHeader } from "./ui/groups-header";
 import { GroupsModals } from "./ui/groups-modals";
 import { GroupsTableSection } from "./ui/groups-table-section";
 import { useGroupsUiState } from "./hooks/useGroupsUiState";
 
 export const GroupsWidget = () => {
-  const {
-    groups,
-    total,
-    hasGroups,
-    emptyText,
-    isLoading,
-    isError,
-    page,
-    limit,
-    setPage,
-    setLimit,
+  const { page, limit, setPage, setLimit } = usePagination({});
+
+  const { isAdmin, canManageMetersToGroups } = useGroupAccess();
+
+  const { groups, total, hasGroups, emptyText, isLoading, isError } =
+    useGroupsQuery({
+      page,
+      limit,
+      forFilter: false,
+    });
+
+  const { handleDelete } = useGroupActions({
     isAdmin,
-    handleDelete,
-  } = useGroups({});
+    canManageMetersToGroups,
+  });
 
   const {
     isModalOpen,

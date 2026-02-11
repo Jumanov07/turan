@@ -1,3 +1,5 @@
-export { useGroups } from "./hooks/useGroups";
 export { GroupForm } from "./ui/group-form";
 export { createGroupColumns } from "./columns";
+export { useGroupAccess } from "./hooks/useGroupAccess";
+export { useGroupActions } from "./hooks/useGroupActions";
+export { useGroupsQuery } from "./hooks/useGroupsQuery";

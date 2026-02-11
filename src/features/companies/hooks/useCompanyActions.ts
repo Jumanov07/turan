@@ -1,24 +1,13 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import {
   archiveCompany,
-  getCompanies,
   refreshCompanyToken,
   unarchiveCompany,
-  type Company,
 } from "@/entities/companies";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
-export const useCompanies = () => {
-  const [isArchived, setIsArchived] = useState(false);
-
-  const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["companies", isArchived],
-    queryFn: () => getCompanies(isArchived),
-  });
-
+export const useCompanyActions = () => {
   const refreshTokenMutation = useToastMutation({
     mutationFn: (id: number) => refreshCompanyToken(id),
     invalidateKeys: [["companies"]],
@@ -43,13 +32,6 @@ export const useCompanies = () => {
       getApiErrorMessage(error, "Ошибка при изменении статуса компании"),
   });
 
-  const companies: Company[] = data ?? [];
-  const hasCompanies = companies.length > 0;
-
-  const emptyText = isArchived
-    ? "Нет архивных компаний"
-    : "Нет активных компаний";
-
   const handleRefreshToken = (companyId: number) => {
     refreshTokenMutation.mutate(companyId);
   };
@@ -59,14 +41,6 @@ export const useCompanies = () => {
   };
 
   return {
-    companies,
-    hasCompanies,
-    emptyText,
-    isArchived,
-    setIsArchived,
-    isLoading,
-    isError,
-    isFetching,
     handleRefreshToken,
     handleToggleArchive,
   };

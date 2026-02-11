@@ -1,6 +1,12 @@
-import { createUserColumns, useUsers } from "@/features/users";
+import {
+  createUserColumns,
+  useUserActions,
+  useUserFilters,
+  useUsersQuery,
+} from "@/features/users";
 import { useAuthStore } from "@/shared/stores";
 import { canDeleteUsers } from "@/shared/helpers";
+import { usePagination } from "@/shared/hooks";
 import { UsersHeader } from "./ui/users-header";
 import { UsersModals } from "./ui/users-modals";
 import { UsersTableSection } from "./ui/users-table-section";
@@ -9,22 +15,16 @@ import { useUsersUiState } from "./hooks/useUsersUiState";
 export const UsersWidget = () => {
   const { user } = useAuthStore();
 
-  const {
-    users,
-    total,
-    hasUsers,
-    emptyText,
-    isLoading,
-    isError,
-    page,
-    limit,
-    setPage,
-    setLimit,
-    isArchived,
-    setIsArchived,
-    handleToggleArchive,
-    handleDeleteUser,
-  } = useUsers();
+  const { isArchived, setIsArchived, filtersKey } = useUserFilters();
+
+  const { page, limit, setPage, setLimit } = usePagination({
+    resetKey: filtersKey,
+  });
+
+  const { users, total, hasUsers, emptyText, isLoading, isError } =
+    useUsersQuery({ page, limit, isArchived });
+
+  const { handleToggleArchive, handleDeleteUser } = useUserActions();
 
   const {
     isModalOpen,

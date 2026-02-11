@@ -1,18 +1,18 @@
-import { createWebhookColumns, useWebhooks } from "@/features/webhooks";
+import {
+  createWebhookColumns,
+  useWebhookActions,
+  useWebhooksQuery,
+} from "@/features/webhooks";
 import { WebhooksHeader } from "./ui/webhooks-header";
 import { WebhooksModals } from "./ui/webhooks-modals";
 import { WebhooksTableSection } from "./ui/webhooks-table-section";
 import { useWebhooksUiState } from "./hooks/useWebhooksUiState";
 
 export const WebhooksWidget = () => {
-  const {
-    webhooks,
-    hasWebhooks,
-    emptyText,
-    isLoading,
-    isError,
-    handleDelete,
-  } = useWebhooks();
+  const { webhooks, hasWebhooks, emptyText, isLoading, isError } =
+    useWebhooksQuery();
+
+  const { handleDelete } = useWebhookActions();
 
   const { isModalOpen, openModal, closeModal } = useWebhooksUiState();
 

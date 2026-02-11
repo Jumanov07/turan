@@ -1,32 +1,43 @@
-import { useReadings, createReadingColumns } from "@/features/readings";
+import {
+  createReadingColumns,
+  useReadingsAccess,
+  useReadingsActions,
+  useReadingsQuery,
+  useReadingsSelection,
+} from "@/features/readings";
+import { usePagination } from "@/shared/hooks";
 import { ReadingsHeader } from "./ui/readings-header";
 import { ReadingsTableSection } from "./ui/readings-table-section";
 
 export const ReadingsWidget = () => {
+  const { page, limit, setPage, setLimit } = usePagination({});
+
+  const { isAdmin } = useReadingsAccess();
+
+  const { readings, total, hasReadings, emptyText, isLoading, isError } =
+    useReadingsQuery({ page, limit });
+
   const {
-    readings,
-    total,
-    hasReadings,
-    emptyText,
-    isLoading,
-    isError,
-
-    page,
-    limit,
-    setPage,
-    setLimit,
-
-    isAdmin,
-
     selectedIds,
     allSelected,
     isIndeterminate,
     handleToggleAll,
     handleToggleOne,
+    removeSelected,
+  } = useReadingsSelection({
+    readings,
+    isAdmin,
+    resetKey: [page, limit].join("|"),
+  });
 
-    handleDeleteOne,
-    handleDeleteSelected,
-  } = useReadings();
+  const { handleDeleteOne, handleDeleteSelected } = useReadingsActions({
+    isAdmin,
+    onRemoved: removeSelected,
+  });
+
+  const handleDeleteSelectedWithIds = () => {
+    handleDeleteSelected(selectedIds);
+  };
 
   const columns = createReadingColumns({
     isAdmin,
@@ -55,7 +66,7 @@ export const ReadingsWidget = () => {
         <ReadingsHeader
           isAdmin={isAdmin}
           selectedCount={selectedIds.length}
-          onDeleteSelected={handleDeleteSelected}
+          onDeleteSelected={handleDeleteSelectedWithIds}
         />
       }
     />

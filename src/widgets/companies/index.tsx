@@ -1,21 +1,21 @@
-import { createCompanyColumns, useCompanies } from "@/features/companies";
+import {
+  createCompanyColumns,
+  useCompaniesQuery,
+  useCompanyActions,
+  useCompanyFilters,
+} from "@/features/companies";
 import { CompaniesHeader } from "./ui/companies-header";
 import { CompaniesModals } from "./ui/companies-modals";
 import { CompaniesTableSection } from "./ui/companies-table-section";
 import { useCompaniesUiState } from "./hooks/useCompaniesUiState";
 
 export const CompaniesWidget = () => {
-  const {
-    companies,
-    hasCompanies,
-    emptyText,
-    isArchived,
-    setIsArchived,
-    isLoading,
-    isError,
-    handleRefreshToken,
-    handleToggleArchive,
-  } = useCompanies();
+  const { isArchived, setIsArchived } = useCompanyFilters();
+
+  const { companies, hasCompanies, emptyText, isLoading, isError } =
+    useCompaniesQuery({ isArchived });
+
+  const { handleRefreshToken, handleToggleArchive } = useCompanyActions();
 
   const {
     isModalOpen,
