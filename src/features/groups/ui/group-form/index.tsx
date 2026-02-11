@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
@@ -9,7 +8,7 @@ import {
   groupsKeys,
   type Group,
 } from "@/entities/groups";
-import { useToastMutation } from "@/shared/hooks";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
 import { FormActions } from "@/shared/ui/form-actions";
@@ -23,22 +22,20 @@ interface Props {
 }
 
 export const GroupForm = ({ groupToEdit, onClose }: Props) => {
+  const defaultValues = {
+    name: groupToEdit?.name ?? "",
+  };
+
   const {
     control,
     handleSubmit,
     reset,
   } = useForm<GroupFormValues>({
     resolver: zodResolver(GroupFormSchema),
-    defaultValues: {
-      name: groupToEdit?.name ?? "",
-    },
+    defaultValues,
   });
 
-  useEffect(() => {
-    reset({
-      name: groupToEdit?.name ?? "",
-    });
-  }, [groupToEdit, reset]);
+  useFormReset(reset, defaultValues, [groupToEdit, reset]);
 
   const mutation = useToastMutation({
     mutationFn: ({

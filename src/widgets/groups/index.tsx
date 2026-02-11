@@ -5,12 +5,12 @@ import {
   useGroupActions,
   useGroupsQuery,
 } from "@/features/groups";
-import { usePagination } from "@/shared/hooks";
+import { useEntityModal, usePagination } from "@/shared/hooks";
 import { TableSection } from "@/shared/ui/table-section";
 import { ERROR_TEXTS, ROWS_PER_PAGE_LABELS } from "@/shared/constants";
 import { GroupsHeader } from "./ui/groups-header";
 import { GroupsModals } from "./ui/groups-modals";
-import { useGroupsUiState } from "./hooks/useGroupsUiState";
+import type { Group } from "@/entities/groups";
 
 export const GroupsWidget = () => {
   const { page, limit, setPage, setLimit } = usePagination({});
@@ -30,12 +30,12 @@ export const GroupsWidget = () => {
   });
 
   const {
-    isModalOpen,
-    editingGroup,
-    openCreateModal,
-    openEditModal,
-    closeModal,
-  } = useGroupsUiState();
+    isOpen: isModalOpen,
+    editingItem: editingGroup,
+    openCreate: openCreateModal,
+    openEdit: openEditModal,
+    close: closeModal,
+  } = useEntityModal<Group>();
 
   const handleOpenCreateModal = useCallback(() => {
     if (!isAdmin) return;
@@ -71,7 +71,6 @@ export const GroupsWidget = () => {
           limit,
           total,
           onPageChange: setPage,
-          rowsPerPageOptions: [5, 10, 20],
           labelRowsPerPage: ROWS_PER_PAGE_LABELS.groups,
           onLimitChange: setLimit,
         }}

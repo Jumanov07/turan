@@ -4,8 +4,9 @@ import { createMeterColumns, useMeters } from "@/features/meters";
 import { useGroupActions, useGroupsQuery } from "@/features/groups";
 import { MetersHeader } from "./ui/meters-header";
 import { MetersModals } from "./ui/meters-modals";
-import { MetersTableSection } from "./ui/meters-table-section";
 import { useMetersUiState } from "./hooks/useMetersUiState";
+import { TableSection } from "@/shared/ui/table-section";
+import { ERROR_TEXTS, ROWS_PER_PAGE_LABELS } from "@/shared/constants";
 
 export const MetersWidget = () => {
   const {
@@ -124,7 +125,6 @@ export const MetersWidget = () => {
     <>
       <Box>
         <MetersHeader
-          isError={isError}
           isAdmin={isAdmin}
           canManageMetersToGroups={canManageMetersToGroups}
           selectedCount={selectedIds.length}
@@ -136,18 +136,23 @@ export const MetersWidget = () => {
           onResetFilters={handleResetFilters}
         />
 
-        <MetersTableSection
+        <TableSection
           isLoading={isLoading}
           isError={isError}
-          hasMeters={hasMeters}
+          errorText={ERROR_TEXTS.meters}
+          hasItems={hasMeters}
           emptyText={emptyText}
-          meters={meters}
+          rows={meters}
           columns={columns}
-          page={page}
-          limit={limit}
-          total={total}
-          onPageChange={setPage}
-          onLimitChange={setLimit}
+          getRowId={(m) => m.id}
+          pagination={{
+            page,
+            limit,
+            total,
+            onPageChange: setPage,
+            labelRowsPerPage: ROWS_PER_PAGE_LABELS.meters,
+            onLimitChange: setLimit,
+          }}
         />
       </Box>
 

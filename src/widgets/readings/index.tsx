@@ -82,7 +82,6 @@ export const ReadingsWidget = () => {
         limit,
         total,
         onPageChange: setPage,
-        rowsPerPageOptions: [5, 10, 20],
         labelRowsPerPage: ROWS_PER_PAGE_LABELS.readings,
         onLimitChange: setLimit,
       }}

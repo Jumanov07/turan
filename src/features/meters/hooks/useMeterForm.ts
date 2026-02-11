@@ -1,9 +1,8 @@
-import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
 import { updateMeter, metersKeys, type Meter } from "@/entities/meters";
-import { useToastMutation } from "@/shared/hooks";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 import { MeterFormSchema } from "../model/schema";
 import type { MeterFormValues } from "../model/types";
@@ -32,9 +31,7 @@ export const useMeterForm = ({
     defaultValues: getDefaultValues(meterToEdit),
   });
 
-  useEffect(() => {
-    reset(getDefaultValues(meterToEdit));
-  }, [meterToEdit, reset]);
+  useFormReset(reset, getDefaultValues(meterToEdit), [meterToEdit, reset]);
 
   const mutation = useToastMutation({
     mutationFn: (payload: {

@@ -84,7 +84,6 @@ export const DevicesWidget = () => {
         limit,
         total,
         onPageChange: setPage,
-        rowsPerPageOptions: [5, 10, 20],
         labelRowsPerPage: ROWS_PER_PAGE_LABELS.devices,
         onLimitChange: setLimit,
       }}

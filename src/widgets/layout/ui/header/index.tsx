@@ -4,12 +4,11 @@ import Toolbar from "@mui/material/Toolbar";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useAuthStore } from "@/shared/stores";
 import { ROLE_LABELS, ROUTES } from "@/shared/constants";
-import { hasRoleSuperAdmin } from "@/shared/helpers";
+import { useRoleAccess } from "@/shared/hooks";
 
 export const Header = () => {
-  const { user, logout } = useAuthStore();
+  const { user, logout, isSuperAdmin } = useRoleAccess();
 
   const navigate = useNavigate();
 
@@ -20,7 +19,7 @@ export const Header = () => {
 
   const TITLES = user
     ? [
-        !hasRoleSuperAdmin(user.role) && user.company?.name,
+        !isSuperAdmin && user.company?.name,
         `${user.firstName} ${user.lastName}`,
         ROLE_LABELS[user.role],
       ].filter(Boolean)

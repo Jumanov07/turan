@@ -14,20 +14,20 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useAuthStore } from "@/shared/stores";
+import { useRoleAccess } from "@/shared/hooks";
 import { ROLE_LABELS, SIDEBAR_LINKS } from "@/shared/constants";
 import { getRoleIcon, getSidebarIcon } from "../../utils/helpers";
 
 export const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(true);
 
-  const user = useAuthStore((state) => state.user);
+  const { user } = useRoleAccess();
 
   const theme = useTheme();
 
   const { pathname } = useLocation();
 
-  if (!user) return;
+  if (!user) return null;
 
   const filteredLinks = SIDEBAR_LINKS.filter(({ roles }) =>
     roles.includes(user.role),

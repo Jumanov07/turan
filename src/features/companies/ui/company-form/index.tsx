@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
@@ -10,7 +9,7 @@ import {
   type Company,
   type CompanyPayload,
 } from "@/entities/companies";
-import { useToastMutation } from "@/shared/hooks";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
 import { FormActions } from "@/shared/ui/form-actions";
@@ -25,6 +24,10 @@ interface Props {
 
 export const CompanyForm = ({ company, onClose }: Props) => {
   const isEditing = !!company;
+  const defaultValues = {
+    name: company?.name ?? "",
+    address: company?.address ?? "",
+  };
 
   const {
     control,
@@ -32,18 +35,10 @@ export const CompanyForm = ({ company, onClose }: Props) => {
     reset,
   } = useForm<CompanyFormValues>({
     resolver: zodResolver(CompanyFormSchema),
-    defaultValues: {
-      name: company?.name ?? "",
-      address: company?.address ?? "",
-    },
+    defaultValues,
   });
 
-  useEffect(() => {
-    reset({
-      name: company?.name ?? "",
-      address: company?.address ?? "",
-    });
-  }, [company, reset]);
+  useFormReset(reset, defaultValues, [company, reset]);
 
   const mutation = useToastMutation({
     mutationFn: (payload: CompanyPayload) =>

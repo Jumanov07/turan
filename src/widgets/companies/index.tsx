@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { Company } from "@/entities/companies";
 import {
   createCompanyColumns,
   useCompaniesQuery,
@@ -7,9 +8,9 @@ import {
 } from "@/features/companies";
 import { TableSection } from "@/shared/ui/table-section";
 import { ERROR_TEXTS } from "@/shared/constants";
+import { useEntityModal } from "@/shared/hooks";
 import { CompaniesHeader } from "./ui/companies-header";
 import { CompaniesModals } from "./ui/companies-modals";
-import { useCompaniesUiState } from "./hooks/useCompaniesUiState";
 
 export const CompaniesWidget = () => {
   const { isArchived, setIsArchived } = useCompanyFilters();
@@ -20,12 +21,12 @@ export const CompaniesWidget = () => {
   const { handleRefreshToken, handleToggleArchive } = useCompanyActions();
 
   const {
-    isModalOpen,
-    editingCompany,
-    openCreateModal,
-    openEditModal,
-    closeModal,
-  } = useCompaniesUiState();
+    isOpen: isModalOpen,
+    editingItem: editingCompany,
+    openCreate: openCreateModal,
+    openEdit: openEditModal,
+    close: closeModal,
+  } = useEntityModal<Company>();
 
   const columns = useMemo(
     () =>

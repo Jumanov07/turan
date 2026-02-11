@@ -8,12 +8,18 @@ import {
 } from "@/shared/helpers";
 
 export const useRoleAccess = () => {
-  const user = useAuthStore((state) => state.user);
+  const { user, accessToken, logout } = useAuthStore((state) => ({
+    user: state.user,
+    accessToken: state.accessToken,
+    logout: state.logout,
+  }));
   const role = user?.role;
 
   return {
     user,
     role,
+    accessToken,
+    logout,
     isAdmin: hasRoleAdmin(role),
     isSuperAdmin: hasRoleSuperAdmin(role),
     canEditMeters: canEditMeters(role),

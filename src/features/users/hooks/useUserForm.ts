@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
 import { getCompanies, companiesKeys, type Company } from "@/entities/companies";
 import { useAuthStore } from "@/shared/stores";
-import { useToastMutation } from "@/shared/hooks";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
 import {
   getApiErrorMessage,
   availableUserRolesFor,
@@ -52,9 +52,7 @@ export const useUserForm = ({ onClose, userToEdit }: Params) => {
     defaultValues: getDefaultValues(userToEdit),
   });
 
-  useEffect(() => {
-    reset(getDefaultValues(userToEdit));
-  }, [userToEdit, reset]);
+  useFormReset(reset, getDefaultValues(userToEdit), [userToEdit, reset]);
 
   const watchedRole = watch("role") as Role;
 

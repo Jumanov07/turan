@@ -5,13 +5,12 @@ import {
   useUserFilters,
   useUsersQuery,
 } from "@/features/users";
-import { useRoleAccess } from "@/shared/hooks";
-import { usePagination } from "@/shared/hooks";
+import { useEntityModal, usePagination, useRoleAccess } from "@/shared/hooks";
 import { TableSection } from "@/shared/ui/table-section";
 import { ERROR_TEXTS, ROWS_PER_PAGE_LABELS } from "@/shared/constants";
 import { UsersHeader } from "./ui/users-header";
 import { UsersModals } from "./ui/users-modals";
-import { useUsersUiState } from "./hooks/useUsersUiState";
+import type { UserRow } from "@/entities/users";
 
 export const UsersWidget = () => {
   const { canDeleteUsers } = useRoleAccess();
@@ -28,12 +27,12 @@ export const UsersWidget = () => {
   const { handleToggleArchive, handleDeleteUser } = useUserActions();
 
   const {
-    isModalOpen,
-    editingUser,
-    openCreateModal,
-    openEditModal,
-    closeModal,
-  } = useUsersUiState();
+    isOpen: isModalOpen,
+    editingItem: editingUser,
+    openCreate: openCreateModal,
+    openEdit: openEditModal,
+    close: closeModal,
+  } = useEntityModal<UserRow>();
 
   const columns = useMemo(
     () =>
@@ -66,7 +65,6 @@ export const UsersWidget = () => {
           limit,
           total,
           onPageChange: setPage,
-          rowsPerPageOptions: [5, 10, 20],
           labelRowsPerPage: ROWS_PER_PAGE_LABELS.users,
           onLimitChange: setLimit,
         }}
