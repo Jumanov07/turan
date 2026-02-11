@@ -4,8 +4,7 @@ import {
   useUserFilters,
   useUsersQuery,
 } from "@/features/users";
-import { useAuthStore } from "@/shared/stores";
-import { canDeleteUsers } from "@/shared/helpers";
+import { useRoleAccess } from "@/shared/hooks";
 import { usePagination } from "@/shared/hooks";
 import { TableSection } from "@/shared/ui/table-section";
 import { UsersHeader } from "./ui/users-header";
@@ -13,7 +12,7 @@ import { UsersModals } from "./ui/users-modals";
 import { useUsersUiState } from "./hooks/useUsersUiState";
 
 export const UsersWidget = () => {
-  const { user } = useAuthStore();
+  const { canDeleteUsers } = useRoleAccess();
 
   const { isArchived, setIsArchived, filtersKey } = useUserFilters();
 
@@ -34,12 +33,10 @@ export const UsersWidget = () => {
     closeModal,
   } = useUsersUiState();
 
-  const canDelete = canDeleteUsers(user?.role);
-
   const columns = createUserColumns(
     handleToggleArchive,
     openEditModal,
-    canDelete,
+    canDeleteUsers,
     handleDeleteUser,
   );
 

@@ -1,16 +1,11 @@
-import { useAuthStore } from "@/shared/stores";
-import {
-  canEditMeters,
-  canManageMetersToGroups as canManageMetersToGroupsRole,
-  hasRoleAdmin,
-} from "@/shared/helpers";
+import { useRoleAccess } from "@/shared/hooks";
 
 export const useMeterAccess = () => {
-  const user = useAuthStore((state) => state.user);
+  const { isAdmin, canEditMeters, canManageMetersToGroups } = useRoleAccess();
 
   return {
-    isAdmin: hasRoleAdmin(user?.role),
-    canEdit: canEditMeters(user?.role),
-    canManageMetersToGroups: canManageMetersToGroupsRole(user?.role),
+    isAdmin,
+    canEdit: canEditMeters,
+    canManageMetersToGroups,
   };
 };

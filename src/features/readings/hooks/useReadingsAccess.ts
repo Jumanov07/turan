@@ -1,10 +1,9 @@
-import { useAuthStore } from "@/shared/stores";
-import { hasRoleAdmin } from "@/shared/helpers";
+import { useRoleAccess } from "@/shared/hooks";
 
 export const useReadingsAccess = () => {
-  const user = useAuthStore((state) => state.user);
+  const { isAdmin } = useRoleAccess();
 
   return {
-    isAdmin: hasRoleAdmin(user?.role),
+    isAdmin,
   };
 };
