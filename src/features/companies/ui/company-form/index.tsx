@@ -1,16 +1,22 @@
-import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
+import { useMemo } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import Alert from "@mui/material/Alert";
-import type {
-  Company,
-  CompanyPayload,
-} from "@/features/companies/interfaces/companies";
-import { createCompany, editCompany } from "../../api/companies";
+import {
+  createCompany,
+  editCompany,
+  companiesKeys,
+  type Company,
+  type CompanyPayload,
+} from "@/entities/companies";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
+import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
+import { getApiErrorMessage } from "@/shared/helpers";
+import { CompanyFormSchema } from "../../model/schema";
+import type { CompanyFormValues } from "../../model/types";
 
 interface Props {
   company?: Company | null;
@@ -18,83 +24,79 @@ interface Props {
 }
 
 export const CompanyForm = ({ company, onClose }: Props) => {
-  const [name, setName] = useState(company?.name || "");
-  const [address, setAddress] = useState(company?.address || "");
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const queryClient = useQueryClient();
-
   const isEditing = !!company;
+  const defaultValues = useMemo(
+    () => ({
+      name: company?.name ?? "",
+      address: company?.address ?? "",
+    }),
+    [company],
+  );
 
-  const mutation = useMutation({
+  const {
+    control,
+    handleSubmit,
+    reset,
+  } = useForm<CompanyFormValues>({
+    resolver: zodResolver(CompanyFormSchema),
+    defaultValues,
+  });
+
+  useFormReset(reset, defaultValues);
+
+  const mutation = useToastMutation({
     mutationFn: (payload: CompanyPayload) =>
       isEditing ? editCompany(company!.id, payload) : createCompany(payload),
+    invalidateKeys: [companiesKeys.all],
+    successMessage: isEditing
+      ? "Компания успешно обновлена"
+      : "Компания успешно создана",
+    errorMessage: (error: AxiosError<{ message?: string }>) =>
+      getApiErrorMessage(error, "Ошибка при сохранении компании"),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companies"] });
       onClose();
-      toast.success(
-        isEditing ? "Компания успешно обновлена" : "Компания успешно создана"
-      );
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      setErrorMessage(
-        error.response?.data?.message || "Ошибка при сохранении компании"
-      );
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage("");
-
-    if (name.trim().length < 3) {
-      setErrorMessage("Название должно быть не менее 3 символов");
-      return;
-    }
-
-    mutation.mutate({ name: name.trim(), address: address.trim() });
+  const onSubmit = (values: CompanyFormValues) => {
+    mutation.mutate({
+      name: values.name.trim(),
+      address: values.address.trim(),
+    });
   };
 
-  const buttonText = mutation.isPending
-    ? isEditing
-      ? "Обновление..."
-      : "Создание..."
-    : isEditing
-    ? "Сохранить"
-    : "Создать";
+  const submitLabel = isEditing ? "Сохранить" : "Создать";
+  const submitLabelLoading = isEditing ? "Обновление..." : "Создание...";
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
+      <FormFieldset disabled={mutation.isPending}>
+        <FormTextField
+          label="Название компании"
+          fullWidth
+          required
+          name="name"
+          control={control}
+        />
 
-      <TextField
-        label="Название компании"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        fullWidth
-        required
+        <FormTextField
+          label="Адрес"
+          fullWidth
+          required
+          name="address"
+          control={control}
+        />
+      </FormFieldset>
+
+      <FormActions
+        isSubmitting={mutation.isPending}
+        submitLabel={submitLabel}
+        submitLabelLoading={submitLabelLoading}
       />
-
-      <TextField
-        label="Адрес"
-        value={address}
-        onChange={(e) => setAddress(e.target.value)}
-        fullWidth
-        required
-      />
-
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        disabled={mutation.isPending}
-      >
-        {buttonText}
-      </Button>
     </Box>
   );
 };

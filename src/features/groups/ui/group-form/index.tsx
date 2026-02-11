@@ -1,12 +1,21 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { useMemo } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
 import type { AxiosError } from "axios";
-import { useQueryClient } from "@tanstack/react-query";
-import type { Group } from "../../interface";
-import { createGroup, updateGroup } from "../../api";
+import {
+  createGroup,
+  updateGroup,
+  groupsKeys,
+  type Group,
+} from "@/entities/groups";
+import { useFormReset, useToastMutation } from "@/shared/hooks";
+import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
+import { getApiErrorMessage } from "@/shared/helpers";
+import { GroupFormSchema } from "../../model/schema";
+import type { GroupFormValues } from "../../model/types";
 
 interface Props {
   groupToEdit: Group | null;
@@ -14,70 +23,68 @@ interface Props {
 }
 
 export const GroupForm = ({ groupToEdit, onClose }: Props) => {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const defaultValues = useMemo(
+    () => ({
+      name: groupToEdit?.name ?? "",
+    }),
+    [groupToEdit],
+  );
 
-  const queryClient = useQueryClient();
+  const {
+    control,
+    handleSubmit,
+    reset,
+  } = useForm<GroupFormValues>({
+    resolver: zodResolver(GroupFormSchema),
+    defaultValues,
+  });
 
-  useEffect(() => {
-    if (groupToEdit) {
-      setName(groupToEdit.name);
-    } else {
-      setName("");
-    }
-  }, [groupToEdit]);
+  useFormReset(reset, defaultValues);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!name.trim()) {
-      toast.error("Введите название группы");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      if (groupToEdit) {
-        await updateGroup(groupToEdit.id, name.trim());
-        toast.success("Группа обновлена");
-      } else {
-        await createGroup(name.trim());
-        toast.success("Группа создана");
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ["groups"] });
+  const mutation = useToastMutation({
+    mutationFn: ({
+      groupId,
+      name,
+    }: {
+      groupId?: number;
+      name: string;
+    }) => (groupId ? updateGroup(groupId, name) : createGroup(name)),
+    invalidateKeys: [groupsKeys.all],
+    successMessage: (_, variables) =>
+      variables.groupId ? "Группа обновлена" : "Группа создана",
+    errorMessage: (error: AxiosError<{ message?: string }>) =>
+      getApiErrorMessage(error, "Ошибка при сохранении группы"),
+    onSuccess: () => {
       onClose();
-    } catch (error) {
-      const axiosError = error as AxiosError<{ message?: string }>;
-      toast.error(
-        axiosError.response?.data?.message || "Ошибка при сохранении группы"
-      );
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = (values: GroupFormValues) => {
+    const name = values.name.trim();
+    mutation.mutate({ groupId: groupToEdit?.id, name });
   };
 
   return (
     <Box
       component="form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       display="flex"
       flexDirection="column"
       gap={2}
     >
-      <TextField
-        label="Название группы"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        fullWidth
-      />
+      <FormFieldset disabled={mutation.isPending}>
+        <FormTextField
+          label="Название группы"
+          fullWidth
+          name="name"
+          control={control}
+        />
+      </FormFieldset>
 
-      <Box display="flex" justifyContent="flex-end" gap={1}>
-        <Button type="submit" variant="contained" disabled={loading}>
-          {groupToEdit ? "Сохранить" : "Создать"}
-        </Button>
-      </Box>
+      <FormActions
+        isSubmitting={mutation.isPending}
+        submitLabel={groupToEdit ? "Сохранить" : "Создать"}
+      />
     </Box>
   );
 };

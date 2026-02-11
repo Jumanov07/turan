@@ -5,7 +5,8 @@ interface Props {
   limit: number;
   total: number;
   onPageChange: (newPage: number) => void;
-  onRowsPerPageChange: (newLimit: number) => void;
+  onLimitChange: (newLimit: number) => void;
+  resetPageOnLimitChange?: boolean;
   rowsPerPageOptions?: number[];
   labelRowsPerPage?: string;
 }
@@ -15,7 +16,8 @@ export const Pagination = ({
   limit,
   total,
   onPageChange,
-  onRowsPerPageChange,
+  onLimitChange,
+  resetPageOnLimitChange = true,
   rowsPerPageOptions = [5, 10, 20],
   labelRowsPerPage = "На странице:",
 }: Props) => (
@@ -25,13 +27,19 @@ export const Pagination = ({
     page={page}
     onPageChange={(_, newPage) => onPageChange(newPage)}
     rowsPerPage={limit}
-    onRowsPerPageChange={(e) =>
-      onRowsPerPageChange(parseInt(e.target.value, 10))
-    }
     rowsPerPageOptions={rowsPerPageOptions}
     labelRowsPerPage={labelRowsPerPage}
     labelDisplayedRows={({ from, to, count }) =>
       `${from}-${to} из ${count !== -1 ? count : `более чем ${to}`}`
     }
+    onRowsPerPageChange={(e) => {
+      const nextLimit = parseInt(e.target.value, 10);
+
+      onLimitChange(nextLimit);
+
+      if (resetPageOnLimitChange) {
+        onPageChange(0);
+      }
+    }}
   />
 );

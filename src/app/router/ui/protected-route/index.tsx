@@ -1,19 +1,21 @@
 import type { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router";
-import { useAuthStore } from "@/features/authentication/store/auth";
-import { getAllowedPathsByRole } from "@/shared/utils/helpers";
+import { useAuthStore } from "@/shared/stores";
+import { getAllowedPathsByRole } from "@/shared/helpers";
+import { ROUTES } from "@/shared/constants";
 
 interface Props {
   children: ReactNode;
 }
 
 export const ProtectedRoute = ({ children }: Props) => {
-  const { user, accessToken } = useAuthStore();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const user = useAuthStore((state) => state.user);
 
   const location = useLocation();
 
   if (!accessToken) {
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to={`/${ROUTES.SIGN_IN}`} replace />;
   }
 
   if (!user) {
@@ -24,10 +26,15 @@ export const ProtectedRoute = ({ children }: Props) => {
   const firstAllowed = allowedPaths[0];
 
   if (allowedPaths.length === 0) {
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to={`/${ROUTES.SIGN_IN}`} replace />;
   }
 
-  if (!allowedPaths.includes(location.pathname)) {
+  const isAllowed = allowedPaths.some(
+    (path) =>
+      location.pathname === path || location.pathname.startsWith(`${path}/`),
+  );
+
+  if (!isAllowed) {
     return <Navigate to={firstAllowed} replace />;
   }
 

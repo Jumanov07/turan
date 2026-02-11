@@ -5,14 +5,15 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import type { Company } from "@/entities/companies";
 import type { Column } from "@/shared/types";
-import { copyToClipboard } from "@/shared/utils/helpers";
-import type { Company } from "../interfaces/companies";
+import { formatDateTime } from "@/shared/helpers";
+import { copyToClipboard } from "../utils/helpers";
 
 export const createCompanyColumns = (
   onRefreshToken: (id: number) => void,
   onToggleArchive: (id: number, isArchived: boolean) => void,
-  onEdit: (company: Company) => void
+  onEdit: (company: Company) => void,
 ): Column<Company>[] => [
   {
     id: "id",
@@ -50,7 +51,7 @@ export const createCompanyColumns = (
   {
     id: "createdAt",
     header: "Создано",
-    cell: (c) => new Date(c.createdAt).toLocaleString("ru-RU"),
+    cell: (c) => formatDateTime(c.createdAt),
   },
   {
     id: "actions",

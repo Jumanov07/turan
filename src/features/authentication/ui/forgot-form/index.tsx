@@ -1,38 +1,13 @@
-import { useState } from "react";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import { sendForgotRequest } from "@/features/authentication/api/auth";
+import { FormFieldset } from "@/shared/ui/form-fieldset";
+import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
+import { useForgotForm } from "../../hooks/useForgotForm";
 
 export const ForgotForm = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-
-    sendForgotRequest(email)
-      .then(() => {
-        setSuccess("Инструкция для восстановления отправлена на почту.");
-      })
-      .catch((err) => {
-        setError(
-          err.response?.data?.message ||
-            err.message ||
-            "Ошибка при восстановлении"
-        );
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const { control, onSubmit, isPending } = useForgotForm();
 
   return (
     <Box
@@ -52,38 +27,28 @@ export const ForgotForm = () => {
         <Box
           component="form"
           sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          onSubmit={handleSubmit}
+          onSubmit={onSubmit}
         >
-          <TextField
-            label="Email"
-            type="email"
+          <FormFieldset disabled={isPending}>
+            <FormTextField
+              label="Email"
+              type="email"
+              fullWidth
+              required
+              name="email"
+              control={control}
+            />
+          </FormFieldset>
+
+          <FormActions
+            isSubmitting={isPending}
+            submitLabel="Отправить"
+            submitLabelLoading="Отправка..."
+            align="center"
             fullWidth
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            submitProps={{ size: "large" }}
           />
 
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
-            fullWidth
-            disabled={loading}
-          >
-            {loading ? "Отправка..." : "Отправить"}
-          </Button>
-
-          {error && (
-            <Typography color="error" textAlign="center">
-              {error}
-            </Typography>
-          )}
-
-          {success && (
-            <Typography color="primary" textAlign="center">
-              {success}
-            </Typography>
-          )}
         </Box>
       </Paper>
     </Box>

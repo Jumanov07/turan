@@ -16,10 +16,13 @@
     "@mui/material": "^7.3.5",
     "@tanstack/react-query": "^5.90.10",
     "axios": "^1.13.2",
+    "@hookform/resolvers": "^5.2.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hot-toast": "^2.6.0",
+    "react-hook-form": "^7.62.0",
     "react-router": "^7.9.6",
+    "zod": "^3.25.76",
     "zustand": "^5.0.8"
   },
   "devDependencies": {

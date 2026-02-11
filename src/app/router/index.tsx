@@ -1,21 +1,47 @@
 import { createBrowserRouter } from "react-router";
 import { lazy } from "react";
-
 import { Authentication } from "@/pages/authentication";
+import { Layout } from "@/widgets/layout";
+import { ROUTES } from "@/shared/constants";
 import { ProtectedRoute } from "./ui/protected-route";
 import { WithSuspense } from "./ui/with-suspense";
-import { Layout } from "../layout";
 
-const Companies = lazy(() => import("@/pages/companies"));
-const Users = lazy(() => import("@/pages/users"));
-const Devices = lazy(() => import("@/pages/devices"));
-const Groups = lazy(() => import("@/pages/groups"));
-const Meters = lazy(() => import("@/pages/meters"));
-const Readings = lazy(() => import("@/pages/readings"));
-const Webhooks = lazy(() => import("@/pages/webhooks"));
-const NotFound = lazy(() => import("@/pages/not-found"));
+const NotFound = lazy(() =>
+  import("@/pages/not-found").then((m) => ({ default: m.NotFound })),
+);
+const Companies = lazy(() =>
+  import("@/pages/companies").then((m) => ({ default: m.Companies })),
+);
+const Users = lazy(() =>
+  import("@/pages/users").then((m) => ({ default: m.Users })),
+);
+const Devices = lazy(() =>
+  import("@/pages/devices").then((m) => ({ default: m.Devices })),
+);
+const Groups = lazy(() =>
+  import("@/pages/groups").then((m) => ({ default: m.Groups })),
+);
+const Meters = lazy(() =>
+  import("@/pages/meters").then((m) => ({ default: m.Meters })),
+);
+const Readings = lazy(() =>
+  import("@/pages/readings").then((m) => ({ default: m.Readings })),
+);
+const Webhooks = lazy(() =>
+  import("@/pages/webhooks").then((m) => ({ default: m.Webhooks })),
+);
 
 export const ROUTER = createBrowserRouter([
+  { path: `/${ROUTES.SIGN_IN}`, element: <Authentication /> },
+  { path: `/${ROUTES.FORGOT}`, element: <Authentication /> },
+  {
+    path: "*",
+    element: (
+      <WithSuspense>
+        <NotFound />
+      </WithSuspense>
+    ),
+  },
   {
     path: "/",
     element: (
@@ -25,7 +51,7 @@ export const ROUTER = createBrowserRouter([
     ),
     children: [
       {
-        path: "companies",
+        path: ROUTES.COMPANIES,
         element: (
           <WithSuspense>
             <Companies />
@@ -33,7 +59,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "users",
+        path: ROUTES.USERS,
         element: (
           <WithSuspense>
             <Users />
@@ -41,7 +67,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "devices",
+        path: ROUTES.DEVICES,
         element: (
           <WithSuspense>
             <Devices />
@@ -49,7 +75,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "groups",
+        path: ROUTES.GROUPS,
         element: (
           <WithSuspense>
             <Groups />
@@ -57,7 +83,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "meters",
+        path: ROUTES.METERS,
         element: (
           <WithSuspense>
             <Meters />
@@ -65,7 +91,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "readings",
+        path: ROUTES.READINGS,
         element: (
           <WithSuspense>
             <Readings />
@@ -73,7 +99,7 @@ export const ROUTER = createBrowserRouter([
         ),
       },
       {
-        path: "webhooks",
+        path: ROUTES.WEBHOOKS,
         element: (
           <WithSuspense>
             <Webhooks />
@@ -81,15 +107,5 @@ export const ROUTER = createBrowserRouter([
         ),
       },
     ],
-  },
-  { path: "/sign-in", element: <Authentication /> },
-  { path: "/sign-in/forgot", element: <Authentication /> },
-  {
-    path: "*",
-    element: (
-      <WithSuspense>
-        <NotFound />
-      </WithSuspense>
-    ),
   },
 ]);

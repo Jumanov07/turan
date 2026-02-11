@@ -4,9 +4,10 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ROLE_LABELS } from "@/shared/utils/constants";
+import { ROLE_LABELS } from "@/shared/constants";
 import type { Column } from "@/shared/types";
-import type { UserRow } from "../types";
+import { formatDateTime } from "@/shared/helpers";
+import type { UserRow } from "@/entities/users";
 
 export const createUserColumns = (
   onToggleArchive: (userId: number, isArchived: boolean) => void,
@@ -46,8 +47,7 @@ export const createUserColumns = (
     id: "createdAt",
     header: "Дата создания",
     cell: (user) => {
-      const date = new Date(user.createdAt);
-      return date.toLocaleString("ru-RU", {
+      return formatDateTime(user.createdAt, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",

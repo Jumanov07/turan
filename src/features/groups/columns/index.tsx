@@ -2,13 +2,14 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import type { Group } from "@/entities/groups";
 import type { Column } from "@/shared/types";
-import type { Group } from "../interface";
+import { formatDateTime } from "@/shared/helpers";
 
 export const createGroupColumns = (
   onEdit: (group: Group) => void,
   onDelete: (id: number) => void,
-  isAdmin: boolean
+  isAdmin: boolean,
 ): Column<Group>[] => {
   const columns: Column<Group>[] = [
     {
@@ -21,11 +22,11 @@ export const createGroupColumns = (
       header: "Название",
       cell: (g) => g.name,
     },
-    {
-      id: "createdAt",
-      header: "Создано",
-      cell: (g) => new Date(g.createdAt).toLocaleString("ru-RU"),
-    },
+  {
+    id: "createdAt",
+    header: "Создано",
+    cell: (g) => formatDateTime(g.createdAt),
+  },
   ];
 
   if (isAdmin) {

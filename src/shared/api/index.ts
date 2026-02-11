@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "@/features/authentication/store/auth";
+import { useAuthStore } from "@/shared/stores";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -26,9 +26,14 @@ api.interceptors.response.use(
       isLoggingOut = true;
 
       const { logout } = useAuthStore.getState();
-      logout();
+
+      try {
+        logout();
+      } finally {
+        isLoggingOut = false;
+      }
     }
 
     return Promise.reject(error);
-  }
+  },
 );

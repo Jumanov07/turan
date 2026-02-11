@@ -2,8 +2,10 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import DeleteIcon from "@mui/icons-material/Delete";
-import type { CreateReadingColumnsParams, Reading } from "../interfaces";
+import type { Reading } from "@/entities/readings";
 import type { Column } from "@/shared/types";
+import { formatDateTime } from "@/shared/helpers";
+import type { CreateReadingColumnsParams } from "../types";
 
 export const createReadingColumns = ({
   isAdmin,
@@ -85,7 +87,7 @@ export const createReadingColumns = ({
     {
       id: "readingAt",
       header: "Время показания",
-      cell: (r) => new Date(r.readingAt).toLocaleString("ru-RU"),
+      cell: (r) => formatDateTime(r.readingAt),
     },
   );
 
