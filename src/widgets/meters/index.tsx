@@ -1,21 +1,14 @@
 import { useState } from "react";
 import Box from "@mui/material/Box";
-import Alert from "@mui/material/Alert";
 import {
   createMeterColumns,
-  MeterDetails,
-  MeterForm,
-  MeterGroupModal,
-  MetersActions,
-  MetersFiltersModal,
   useMeters,
 } from "@/features/meters";
 import { useGroups } from "@/features/groups";
 import type { Meter } from "@/entities/meters";
-import { DataTable } from "@/shared/ui/data-table";
-import { Loader } from "@/shared/ui/loader";
-import { Pagination } from "@/shared/ui/pagination";
-import { Modal } from "@/shared/ui/modal";
+import { MetersHeader } from "./ui/meters-header";
+import { MetersModals } from "./ui/meters-modals";
+import { MetersTableSection } from "./ui/meters-table-section";
 
 export const MetersWidget = () => {
   const [editingMeter, setEditingMeter] = useState<Meter | null>(null);
@@ -93,36 +86,6 @@ export const MetersWidget = () => {
     setDetailsOpen(false);
   };
 
-  const handleStatusChange = (value: string) => {
-    setStatus(value);
-    setPage(0);
-  };
-
-  const handleValveFilterChange = (value: "all" | "open" | "closed") => {
-    setValveFilter(value);
-    setPage(0);
-  };
-
-  const handleArchivedChange = (archived: boolean) => {
-    setIsArchived(archived);
-    setPage(0);
-  };
-
-  const handleGroupChange = (id: number | null) => {
-    setGroupId(id);
-    setPage(0);
-  };
-
-  const handleCustomerIdChange = (value: string) => {
-    setCustomerId(value);
-    setPage(0);
-  };
-
-  const handleMeterNameChange = (value: string) => {
-    setMeterName(value);
-    setPage(0);
-  };
-
   const openAddToGroupModal = () => {
     if (
       !canManageMetersToGroups ||
@@ -184,18 +147,11 @@ export const MetersWidget = () => {
     onView: handleView,
   });
 
-  const isEmptyState = !isLoading && !isError && !hasMeters;
-
   return (
     <>
       <Box>
-        {isError && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            Ошибка при загрузке счётчиков
-          </Alert>
-        )}
-
-        <MetersActions
+        <MetersHeader
+          isError={isError}
           isAdmin={isAdmin}
           canManageMetersToGroups={canManageMetersToGroups}
           selectedCount={selectedIds.length}
@@ -207,86 +163,51 @@ export const MetersWidget = () => {
           onResetFilters={handleResetFilters}
         />
 
-        {isLoading && (
-          <Box mt={2}>
-            <Loader />
-          </Box>
-        )}
-
-        {isEmptyState && (
-          <Alert severity="info" sx={{ mt: 2 }}>
-            {emptyText}
-          </Alert>
-        )}
-
-        {!isLoading && hasMeters && (
-          <>
-            <DataTable
-              rows={meters}
-              columns={columns}
-              getRowId={(m: Meter) => m.id}
-            />
-
-            <Pagination
-              page={page}
-              limit={limit}
-              total={total}
-              onPageChange={setPage}
-              rowsPerPageOptions={[5, 10, 20]}
-              labelRowsPerPage="Счётчиков на странице:"
-              onLimitChange={setLimit}
-            />
-          </>
-        )}
+        <MetersTableSection
+          isLoading={isLoading}
+          isError={isError}
+          hasMeters={hasMeters}
+          emptyText={emptyText}
+          meters={meters}
+          columns={columns}
+          page={page}
+          limit={limit}
+          total={total}
+          onPageChange={setPage}
+          onLimitChange={setLimit}
+        />
       </Box>
 
-      <Modal
-        open={isEditModalOpen}
-        onClose={closeEditModal}
-        title="Редактировать счётчик"
-      >
-        <MeterForm
-          meterToEdit={editingMeter}
-          onClose={closeEditModal}
-          canArchive={isAdmin}
-        />
-      </Modal>
-
-      <Modal
-        open={isDetailsOpen}
-        onClose={closeDetailsModal}
-        title="Детальная информация по счётчику"
-      >
-        {detailsMeter && <MeterDetails meter={detailsMeter} />}
-      </Modal>
-
-      <MeterGroupModal
-        open={groupModalOpen}
-        mode={groupModalMode}
+      <MetersModals
+        editOpen={isEditModalOpen}
+        editingMeter={editingMeter}
+        onCloseEdit={closeEditModal}
+        canArchive={isAdmin}
+        detailsOpen={isDetailsOpen}
+        detailsMeter={detailsMeter}
+        onCloseDetails={closeDetailsModal}
+        groupModalOpen={groupModalOpen}
+        groupModalMode={groupModalMode}
         groups={groups}
         selectedCount={selectedIds.length}
         selectedGroupId={groupModalGroupId}
         onChangeGroup={setGroupModalGroupId}
-        onClose={closeGroupModal}
-        onConfirm={handleConfirmGroupModal}
-      />
-
-      <MetersFiltersModal
-        open={isFiltersOpen}
-        onClose={() => setFiltersOpen(false)}
+        onCloseGroupModal={closeGroupModal}
+        onConfirmGroupModal={handleConfirmGroupModal}
+        filtersOpen={isFiltersOpen}
+        onCloseFilters={() => setFiltersOpen(false)}
         status={status}
-        onStatusChange={handleStatusChange}
+        onStatusChange={setStatus}
         valveFilter={valveFilter}
-        onValveFilterChange={handleValveFilterChange}
+        onValveFilterChange={setValveFilter}
         isArchived={isArchived}
-        onArchivedChange={handleArchivedChange}
+        onArchivedChange={setIsArchived}
         groupId={groupId}
-        onGroupChange={handleGroupChange}
-        groups={groups}
+        onGroupChange={setGroupId}
         customerId={customerId}
-        onCustomerIdChange={handleCustomerIdChange}
+        onCustomerIdChange={setCustomerId}
         meterName={meterName}
-        onMeterNameChange={handleMeterNameChange}
+        onMeterNameChange={setMeterName}
       />
     </>
   );
