@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getGroups, type Group } from "@/entities/groups";
+import { getGroups, groupsKeys, type Group } from "@/entities/groups";
 
 interface Params {
   page: number;
@@ -9,9 +9,7 @@ interface Params {
 
 export const useGroupsQuery = ({ page, limit, forFilter }: Params) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: forFilter
-      ? ["groups", "all-for-filter"]
-      : ["groups", page, limit],
+    queryKey: forFilter ? groupsKeys.filter() : groupsKeys.list(page, limit),
     queryFn: () =>
       forFilter ? getGroups(1, 1000) : getGroups(page + 1, limit),
   });

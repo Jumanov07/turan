@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import {
   createCompany,
   editCompany,
+  companiesKeys,
   type Company,
   type CompanyPayload,
 } from "@/entities/companies";
@@ -47,7 +48,7 @@ export const CompanyForm = ({ company, onClose }: Props) => {
   const mutation = useToastMutation({
     mutationFn: (payload: CompanyPayload) =>
       isEditing ? editCompany(company!.id, payload) : createCompany(payload),
-    invalidateKeys: [["companies"]],
+    invalidateKeys: [companiesKeys.all],
     successMessage: isEditing
       ? "Компания успешно обновлена"
       : "Компания успешно создана",

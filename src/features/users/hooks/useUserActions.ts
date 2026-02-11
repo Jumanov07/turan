@@ -2,6 +2,7 @@ import type { AxiosError } from "axios";
 import {
   archiveUser,
   deleteUser,
+  usersKeys,
   unarchiveUser,
 } from "@/entities/users";
 import { useToastMutation } from "@/shared/hooks";
@@ -16,7 +17,7 @@ export const useUserActions = () => {
       userId: number;
       archived: boolean;
     }) => (archived ? unarchiveUser(userId) : archiveUser(userId)),
-    invalidateKeys: [["users"]],
+    invalidateKeys: [usersKeys.all],
     successMessage: (_, { archived }) =>
       archived ? "Пользователь разархивирован" : "Пользователь архивирован",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
@@ -25,7 +26,7 @@ export const useUserActions = () => {
 
   const deleteUserMutation = useToastMutation({
     mutationFn: (userId: number) => deleteUser(userId),
-    invalidateKeys: [["users"]],
+    invalidateKeys: [usersKeys.all],
     successMessage: "Пользователь удален",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
       getApiErrorMessage(error, "Ошибка при удалении пользователя"),

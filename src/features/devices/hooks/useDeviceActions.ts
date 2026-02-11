@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import { deleteDevice, verifyDevice } from "@/entities/devices";
+import { deleteDevice, devicesKeys, verifyDevice } from "@/entities/devices";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
@@ -10,7 +10,7 @@ interface Params {
 export const useDeviceActions = ({ onRemoved }: Params) => {
   const verifyMutation = useToastMutation({
     mutationFn: (deviceId: number) => verifyDevice(deviceId),
-    invalidateKeys: [["devices"]],
+    invalidateKeys: [devicesKeys.all],
     successMessage: "Устройство подтверждено",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
       getApiErrorMessage(error, "Ошибка при подтверждении устройства"),
@@ -18,7 +18,7 @@ export const useDeviceActions = ({ onRemoved }: Params) => {
 
   const deleteMutation = useToastMutation({
     mutationFn: (deviceIds: number[]) => deleteDevice(deviceIds),
-    invalidateKeys: [["devices"]],
+    invalidateKeys: [devicesKeys.all],
     successMessage: (_, deviceIds) =>
       deviceIds.length === 1
         ? "Устройство удалено"

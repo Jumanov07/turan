@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getReadings, type Reading } from "@/entities/readings";
+import { getReadings, readingsKeys, type Reading } from "@/entities/readings";
 
 interface Params {
   page: number;
@@ -8,7 +8,7 @@ interface Params {
 
 export const useReadingsQuery = ({ page, limit }: Params) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["readings", page, limit],
+    queryKey: readingsKeys.list(page, limit),
     queryFn: () => getReadings(page + 1, limit),
   });
 

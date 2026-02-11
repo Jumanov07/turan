@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
-import { updateMeter, type Meter } from "@/entities/meters";
+import { updateMeter, metersKeys, type Meter } from "@/entities/meters";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 import { MeterFormSchema } from "../model/schema";
@@ -45,7 +45,7 @@ export const useMeterForm = ({
       descriptions: string | null;
       isArchived: boolean;
     }) => updateMeter(payload),
-    invalidateKeys: [["meters"]],
+    invalidateKeys: [metersKeys.all],
     successMessage: "Счётчик обновлён",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
       getApiErrorMessage(error, "Ошибка при сохранении счётчика"),

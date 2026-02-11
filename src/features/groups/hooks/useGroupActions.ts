@@ -3,7 +3,9 @@ import {
   addMetersToGroup,
   deleteGroup,
   removeMetersFromGroup,
+  groupsKeys,
 } from "@/entities/groups";
+import { metersKeys } from "@/entities/meters";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
@@ -18,7 +20,7 @@ export const useGroupActions = ({
 }: Params) => {
   const deleteMutation = useToastMutation({
     mutationFn: (groupId: number) => deleteGroup(groupId),
-    invalidateKeys: [["groups"]],
+    invalidateKeys: [groupsKeys.all],
     successMessage: "Группа удалена",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
       getApiErrorMessage(error, "Ошибка при удалении группы"),
@@ -32,7 +34,7 @@ export const useGroupActions = ({
       groupId: number;
       meterIds: number[];
     }) => addMetersToGroup(groupId, meterIds),
-    invalidateKeys: [["meters"]],
+    invalidateKeys: [metersKeys.all],
     successMessage: (data) => {
       const message = (data as { message?: string })?.message;
       return message || null;
@@ -49,7 +51,7 @@ export const useGroupActions = ({
       groupId: number;
       meterIds: number[];
     }) => removeMetersFromGroup(groupId, meterIds),
-    invalidateKeys: [["meters"]],
+    invalidateKeys: [metersKeys.all],
     successMessage: (data) => {
       const message = (data as { message?: string })?.message;
       return message || null;

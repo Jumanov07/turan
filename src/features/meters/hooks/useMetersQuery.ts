@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getMeters, type Meter } from "@/entities/meters";
+import { getMeters, metersKeys, type Meter } from "@/entities/meters";
 import type { MeterFilters } from "./useMeterFilters";
 
 interface Params {
@@ -19,8 +19,7 @@ export const useMetersQuery = ({ page, limit, filters }: Params) => {
   } = filters;
 
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: [
-      "meters",
+    queryKey: metersKeys.list(
       page,
       limit,
       status,
@@ -28,7 +27,7 @@ export const useMetersQuery = ({ page, limit, filters }: Params) => {
       groupId,
       customerId,
       meterName,
-    ],
+    ),
     queryFn: () =>
       getMeters(
         page + 1,

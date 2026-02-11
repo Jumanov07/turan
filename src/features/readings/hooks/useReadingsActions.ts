@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import { deleteReadings } from "@/entities/readings";
+import { deleteReadings, readingsKeys } from "@/entities/readings";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
@@ -11,7 +11,7 @@ interface Params {
 export const useReadingsActions = ({ isAdmin, onRemoved }: Params) => {
   const deleteMutation = useToastMutation({
     mutationFn: (ids: string[]) => deleteReadings(ids),
-    invalidateKeys: [["readings"]],
+    invalidateKeys: [readingsKeys.all],
     successMessage: (_, ids) =>
       ids.length === 1 ? "Показание удалено" : "Выбранные показания удалены",
     errorMessage: (error: AxiosError<{ message?: string }>, ids) =>

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUsers, type UserRow } from "@/entities/users";
+import { getUsers, usersKeys, type UserRow } from "@/entities/users";
 
 interface Params {
   page: number;
@@ -9,7 +9,7 @@ interface Params {
 
 export const useUsersQuery = ({ page, limit, isArchived }: Params) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["users", page, limit, isArchived],
+    queryKey: usersKeys.list(page, limit, isArchived),
     queryFn: () => getUsers(page + 1, limit, isArchived),
   });
 

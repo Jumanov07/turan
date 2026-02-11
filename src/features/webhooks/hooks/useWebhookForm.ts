@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
-import { createWebhook } from "@/entities/webhooks";
+import { createWebhook, webhooksKeys } from "@/entities/webhooks";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 import { WebhookFormSchema } from "../model/schema";
@@ -21,7 +21,7 @@ export const useWebhookForm = ({ onClose }: Params) => {
 
   const mutation = useToastMutation({
     mutationFn: (url: string) => createWebhook(url),
-    invalidateKeys: [["webhooks"]],
+    invalidateKeys: [webhooksKeys.all],
     successMessage: "Вебхук создан",
     errorMessage: (error: AxiosError<{ message?: string }>) =>
       getApiErrorMessage(error, "Ошибка при создании вебхука"),

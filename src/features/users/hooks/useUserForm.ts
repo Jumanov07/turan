@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useQuery } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import type { AxiosError } from "axios";
-import { getCompanies, type Company } from "@/entities/companies";
+import { getCompanies, companiesKeys, type Company } from "@/entities/companies";
 import { useAuthStore } from "@/shared/stores";
 import { useToastMutation } from "@/shared/hooks";
 import {
@@ -17,6 +17,7 @@ import type { Role } from "@/shared/types";
 import {
   createUser,
   editUser,
+  usersKeys,
   type CreateUserPayload,
   type UserRow,
 } from "@/entities/users";
@@ -58,7 +59,7 @@ export const useUserForm = ({ onClose, userToEdit }: Params) => {
   const watchedRole = watch("role") as Role;
 
   const { data: companies, isLoading: isCompaniesLoading } = useQuery({
-    queryKey: ["companies"],
+    queryKey: companiesKeys.list(false),
     queryFn: () => getCompanies(false),
     enabled: hasRoleSuperAdmin(user?.role),
   });
@@ -66,7 +67,7 @@ export const useUserForm = ({ onClose, userToEdit }: Params) => {
   const mutation = useToastMutation({
     mutationFn: (payload: CreateUserPayload) =>
       isEditing ? editUser(userToEdit!.id, payload) : createUser(payload),
-    invalidateKeys: [["users"]],
+    invalidateKeys: [usersKeys.all],
     successMessage: (_, variables) => {
       const role = variables.role ?? ROLE.ADMIN;
       return isEditing

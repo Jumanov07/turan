@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getCompanies, type Company } from "@/entities/companies";
+import { getCompanies, companiesKeys, type Company } from "@/entities/companies";
 
 interface Params {
   isArchived: boolean;
@@ -7,7 +7,7 @@ interface Params {
 
 export const useCompaniesQuery = ({ isArchived }: Params) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["companies", isArchived],
+    queryKey: companiesKeys.list(isArchived),
     queryFn: () => getCompanies(isArchived),
   });
 

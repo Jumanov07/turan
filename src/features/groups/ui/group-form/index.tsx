@@ -4,7 +4,12 @@ import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import type { AxiosError } from "axios";
-import { createGroup, updateGroup, type Group } from "@/entities/groups";
+import {
+  createGroup,
+  updateGroup,
+  groupsKeys,
+  type Group,
+} from "@/entities/groups";
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
@@ -43,7 +48,7 @@ export const GroupForm = ({ groupToEdit, onClose }: Props) => {
       groupId?: number;
       name: string;
     }) => (groupId ? updateGroup(groupId, name) : createGroup(name)),
-    invalidateKeys: [["groups"]],
+    invalidateKeys: [groupsKeys.all],
     successMessage: (_, variables) =>
       variables.groupId ? "Группа обновлена" : "Группа создана",
     errorMessage: (error: AxiosError<{ message?: string }>) =>

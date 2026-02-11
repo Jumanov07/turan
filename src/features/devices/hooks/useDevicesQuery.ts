@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getDevices, type Device } from "@/entities/devices";
+import { getDevices, devicesKeys, type Device } from "@/entities/devices";
 
 interface Params {
   page: number;
@@ -9,7 +9,7 @@ interface Params {
 
 export const useDevicesQuery = ({ page, limit, verified }: Params) => {
   const { data, isLoading, isError, isFetching } = useQuery({
-    queryKey: ["devices", page, limit, verified],
+    queryKey: devicesKeys.list(page, limit, verified),
     queryFn: () => getDevices(page + 1, limit, verified),
   });
 

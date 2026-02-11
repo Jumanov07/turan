@@ -1,5 +1,5 @@
 import type { AxiosError } from "axios";
-import { deleteMeters, sendMeterCommand } from "@/entities/meters";
+import { deleteMeters, metersKeys, sendMeterCommand } from "@/entities/meters";
 import { useToastMutation } from "@/shared/hooks";
 import { getApiErrorMessage } from "@/shared/helpers";
 
@@ -11,7 +11,7 @@ interface Params {
 export const useMeterActions = ({ isAdmin, onRemoved }: Params) => {
   const deleteMutation = useToastMutation({
     mutationFn: (meterIds: number[]) => deleteMeters(meterIds),
-    invalidateKeys: [["meters"]],
+    invalidateKeys: [metersKeys.all],
     successMessage: (_, meterIds) =>
       meterIds.length === 1
         ? "Счётчик удалён"
@@ -36,7 +36,7 @@ export const useMeterActions = ({ isAdmin, onRemoved }: Params) => {
       meterId: number;
       command: "open" | "close";
     }) => sendMeterCommand(meterId, command),
-    invalidateKeys: [["meters"]],
+    invalidateKeys: [metersKeys.all],
     successMessage: (_, { command }) =>
       command === "open"
         ? "Команда на открытие клапана отправлена"
