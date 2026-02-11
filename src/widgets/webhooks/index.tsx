@@ -3,9 +3,9 @@ import {
   useWebhookActions,
   useWebhooksQuery,
 } from "@/features/webhooks";
+import { TableSection } from "@/shared/ui/table-section";
 import { WebhooksHeader } from "./ui/webhooks-header";
 import { WebhooksModals } from "./ui/webhooks-modals";
-import { WebhooksTableSection } from "./ui/webhooks-table-section";
 import { useWebhooksUiState } from "./hooks/useWebhooksUiState";
 
 export const WebhooksWidget = () => {
@@ -22,14 +22,16 @@ export const WebhooksWidget = () => {
 
   return (
     <>
-      <WebhooksTableSection
+      <TableSection
         isLoading={isLoading}
         isError={isError}
-        hasWebhooks={hasWebhooks}
+        errorText="Ошибка при загрузке вебхуков"
+        hasItems={hasWebhooks}
         emptyText={emptyText}
-        webhooks={webhooks}
-        columns={columns}
         toolbar={toolbar}
+        rows={webhooks}
+        columns={columns}
+        getRowId={(w) => w.id}
       />
 
       <WebhooksModals isOpen={isModalOpen} onClose={closeModal} />

@@ -6,8 +6,8 @@ import {
   useReadingsSelection,
 } from "@/features/readings";
 import { usePagination } from "@/shared/hooks";
+import { TableSection } from "@/shared/ui/table-section";
 import { ReadingsHeader } from "./ui/readings-header";
-import { ReadingsTableSection } from "./ui/readings-table-section";
 
 export const ReadingsWidget = () => {
   const { page, limit, setPage, setLimit } = usePagination({});
@@ -50,18 +50,12 @@ export const ReadingsWidget = () => {
   });
 
   return (
-    <ReadingsTableSection
+    <TableSection
       isLoading={isLoading}
       isError={isError}
-      hasReadings={hasReadings}
+      errorText="Ошибка при загрузке показаний водомеров"
+      hasItems={hasReadings}
       emptyText={emptyText}
-      readings={readings}
-      columns={columns}
-      page={page}
-      limit={limit}
-      total={total}
-      onPageChange={setPage}
-      onLimitChange={setLimit}
       toolbar={
         <ReadingsHeader
           isAdmin={isAdmin}
@@ -69,6 +63,18 @@ export const ReadingsWidget = () => {
           onDeleteSelected={handleDeleteSelectedWithIds}
         />
       }
+      pagination={{
+        page,
+        limit,
+        total,
+        onPageChange: setPage,
+        rowsPerPageOptions: [5, 10, 20],
+        labelRowsPerPage: "Показаний на странице:",
+        onLimitChange: setLimit,
+      }}
+      rows={readings}
+      columns={columns}
+      getRowId={(r) => r.id}
     />
   );
 };

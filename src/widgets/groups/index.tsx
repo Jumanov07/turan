@@ -5,9 +5,9 @@ import {
   useGroupsQuery,
 } from "@/features/groups";
 import { usePagination } from "@/shared/hooks";
+import { TableSection } from "@/shared/ui/table-section";
 import { GroupsHeader } from "./ui/groups-header";
 import { GroupsModals } from "./ui/groups-modals";
-import { GroupsTableSection } from "./ui/groups-table-section";
 import { useGroupsUiState } from "./hooks/useGroupsUiState";
 
 export const GroupsWidget = () => {
@@ -49,21 +49,27 @@ export const GroupsWidget = () => {
 
   return (
     <>
-      <GroupsTableSection
+      <TableSection
         isLoading={isLoading}
         isError={isError}
-        hasGroups={hasGroups}
+        errorText="Ошибка при загрузке групп"
+        hasItems={hasGroups}
         emptyText={emptyText}
-        groups={groups}
-        columns={columns}
-        page={page}
-        limit={limit}
-        total={total}
-        onPageChange={setPage}
-        onLimitChange={setLimit}
         toolbar={
           <GroupsHeader isAdmin={isAdmin} onCreate={handleOpenCreateModal} />
         }
+        pagination={{
+          page,
+          limit,
+          total,
+          onPageChange: setPage,
+          rowsPerPageOptions: [5, 10, 20],
+          labelRowsPerPage: "Групп на странице:",
+          onLimitChange: setLimit,
+        }}
+        rows={groups}
+        columns={columns}
+        getRowId={(g) => g.id}
       />
 
       <GroupsModals

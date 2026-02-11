@@ -6,8 +6,8 @@ import {
   useDevicesQuery,
 } from "@/features/devices";
 import { usePagination } from "@/shared/hooks";
+import { TableSection } from "@/shared/ui/table-section";
 import { DevicesHeader } from "./ui/devices-header";
-import { DevicesTableSection } from "./ui/devices-table-section";
 
 export const DevicesWidget = () => {
   const { verified, setVerified, filtersKey } = useDeviceFilters();
@@ -51,18 +51,12 @@ export const DevicesWidget = () => {
   });
 
   return (
-    <DevicesTableSection
+    <TableSection
       isLoading={isLoading}
       isError={isError}
-      hasDevices={hasDevices}
+      errorText="Ошибка при загрузке устройств"
+      hasItems={hasDevices}
       emptyText={emptyText}
-      devices={devices}
-      columns={columns}
-      page={page}
-      limit={limit}
-      total={total}
-      onPageChange={setPage}
-      onLimitChange={setLimit}
       toolbar={
         <DevicesHeader
           verified={verified}
@@ -71,6 +65,18 @@ export const DevicesWidget = () => {
           onDeleteSelected={handleDeleteSelectedWithIds}
         />
       }
+      pagination={{
+        page,
+        limit,
+        total,
+        onPageChange: setPage,
+        rowsPerPageOptions: [5, 10, 20],
+        labelRowsPerPage: "Устройств на странице:",
+        onLimitChange: setLimit,
+      }}
+      rows={devices}
+      columns={columns}
+      getRowId={(d) => d.id}
     />
   );
 };

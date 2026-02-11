@@ -7,9 +7,9 @@ import {
 import { useAuthStore } from "@/shared/stores";
 import { canDeleteUsers } from "@/shared/helpers";
 import { usePagination } from "@/shared/hooks";
+import { TableSection } from "@/shared/ui/table-section";
 import { UsersHeader } from "./ui/users-header";
 import { UsersModals } from "./ui/users-modals";
-import { UsersTableSection } from "./ui/users-table-section";
 import { useUsersUiState } from "./hooks/useUsersUiState";
 
 export const UsersWidget = () => {
@@ -45,18 +45,12 @@ export const UsersWidget = () => {
 
   return (
     <>
-      <UsersTableSection
+      <TableSection
         isLoading={isLoading}
         isError={isError}
-        hasUsers={hasUsers}
+        errorText="Ошибка при загрузке пользователей"
+        hasItems={hasUsers}
         emptyText={emptyText}
-        users={users}
-        columns={columns}
-        page={page}
-        limit={limit}
-        total={total}
-        onPageChange={setPage}
-        onLimitChange={setLimit}
         toolbar={
           <UsersHeader
             isArchived={isArchived}
@@ -64,6 +58,18 @@ export const UsersWidget = () => {
             onCreate={openCreateModal}
           />
         }
+        pagination={{
+          page,
+          limit,
+          total,
+          onPageChange: setPage,
+          rowsPerPageOptions: [5, 10, 20],
+          labelRowsPerPage: "Пользователей на странице:",
+          onLimitChange: setLimit,
+        }}
+        rows={users}
+        columns={columns}
+        getRowId={(user) => user.id}
       />
 
       <UsersModals

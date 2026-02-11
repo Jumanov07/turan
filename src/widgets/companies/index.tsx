@@ -4,9 +4,9 @@ import {
   useCompanyActions,
   useCompanyFilters,
 } from "@/features/companies";
+import { TableSection } from "@/shared/ui/table-section";
 import { CompaniesHeader } from "./ui/companies-header";
 import { CompaniesModals } from "./ui/companies-modals";
-import { CompaniesTableSection } from "./ui/companies-table-section";
 import { useCompaniesUiState } from "./hooks/useCompaniesUiState";
 
 export const CompaniesWidget = () => {
@@ -41,14 +41,17 @@ export const CompaniesWidget = () => {
 
   return (
     <>
-      <CompaniesTableSection
+      <TableSection
         isLoading={isLoading}
         isError={isError}
-        hasCompanies={hasCompanies}
+        errorText="Ошибка при загрузке компаний"
+        errorVariant="filled"
+        hasItems={hasCompanies}
         emptyText={emptyText}
-        companies={companies}
-        columns={columns}
         toolbar={toolbar}
+        rows={companies}
+        columns={columns}
+        getRowId={(c) => c.id}
       />
 
       <CompaniesModals
