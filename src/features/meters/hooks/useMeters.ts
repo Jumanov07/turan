@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import {
@@ -15,34 +14,20 @@ import {
   hasRoleAdmin,
 } from "@/shared/helpers";
 import { useAuthStore } from "@/shared/stores";
-
-type MeterFilters = {
-  meterName: string;
-  customerId: string;
-  status: string;
-  isArchived: boolean;
-  groupId: number | null;
-  valveFilter: "all" | "open" | "closed";
-};
+import { useMeterFilters } from "./useMeterFilters";
 
 export const useMeters = () => {
-  const [filters, setFilters] = useState<MeterFilters>({
-    meterName: "",
-    customerId: "",
-    status: "all" as string,
-    isArchived: false,
-    groupId: null as number | null,
-    valveFilter: "all" as "all" | "open" | "closed",
-  });
-
-  const filtersKey = [
-    filters.status,
-    filters.isArchived ? "archived" : "active",
-    filters.groupId ?? "null",
-    filters.customerId,
-    filters.meterName,
-    filters.valveFilter,
-  ].join("|");
+  const {
+    filters,
+    filtersKey,
+    setStatus,
+    setIsArchived,
+    setGroupId,
+    setCustomerId,
+    setMeterName,
+    setValveFilter,
+    resetFilters,
+  } = useMeterFilters();
 
   const { page, limit, setPage, setLimit } = usePagination({
     resetKey: filtersKey,
@@ -119,18 +104,6 @@ export const useMeters = () => {
     resetKey: [page, limit, filtersKey].join("|"),
   });
 
-  const updateFilters = (patch: Partial<MeterFilters>) => {
-    setFilters((prev) => ({ ...prev, ...patch }));
-  };
-
-  const setStatus = (value: string) => updateFilters({ status: value });
-  const setIsArchived = (value: boolean) => updateFilters({ isArchived: value });
-  const setGroupId = (value: number | null) => updateFilters({ groupId: value });
-  const setCustomerId = (value: string) => updateFilters({ customerId: value });
-  const setMeterName = (value: string) => updateFilters({ meterName: value });
-  const setValveFilter = (value: "all" | "open" | "closed") =>
-    updateFilters({ valveFilter: value });
-
   const deleteMutation = useToastMutation({
     mutationFn: (meterIds: number[]) => deleteMeters(meterIds),
     invalidateKeys: [["meters"]],
@@ -191,14 +164,7 @@ export const useMeters = () => {
   };
 
   const handleResetFilters = () => {
-    setFilters({
-      meterName: "",
-      customerId: "",
-      status: "all",
-      isArchived: false,
-      groupId: null,
-      valveFilter: "all",
-    });
+    resetFilters();
     setPage(0);
   };
 
