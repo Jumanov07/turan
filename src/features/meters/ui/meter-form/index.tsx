@@ -1,10 +1,10 @@
 // src/features/meters/ui/meter-form.tsx
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import { type Meter } from "@/entities/meters";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormCheckbox } from "@/shared/ui/form-checkbox";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { useMeterForm } from "../../hooks/useMeterForm";
 
 interface Props {
@@ -64,11 +64,7 @@ export const MeterForm = ({ meterToEdit, onClose, canArchive }: Props) => {
         )}
       </FormFieldset>
 
-      <Box display="flex" justifyContent="flex-end" gap={1}>
-        <Button type="submit" variant="contained" disabled={isPending}>
-          Сохранить
-        </Button>
-      </Box>
+      <FormActions isSubmitting={isPending} submitLabel="Сохранить" />
     </Box>
   );
 };

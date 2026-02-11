@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import type { AxiosError } from "axios";
 import {
   createGroup,
@@ -13,6 +12,7 @@ import {
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { getApiErrorMessage } from "@/shared/helpers";
 import { GroupFormSchema } from "../../model/schema";
 import type { GroupFormValues } from "../../model/types";
@@ -80,15 +80,10 @@ export const GroupForm = ({ groupToEdit, onClose }: Props) => {
         />
       </FormFieldset>
 
-      <Box display="flex" justifyContent="flex-end" gap={1}>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={mutation.isPending}
-        >
-          {groupToEdit ? "Сохранить" : "Создать"}
-        </Button>
-      </Box>
+      <FormActions
+        isSubmitting={mutation.isPending}
+        submitLabel={groupToEdit ? "Сохранить" : "Создать"}
+      />
     </Box>
   );
 };

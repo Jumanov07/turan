@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { useWebhookForm } from "../../hooks/useWebhookForm";
 
 interface Props {
@@ -28,11 +28,7 @@ export const WebhookForm = ({ onClose }: Props) => {
         />
       </FormFieldset>
 
-      <Box display="flex" justifyContent="flex-end" gap={1}>
-        <Button type="submit" variant="contained" disabled={isPending}>
-          Создать
-        </Button>
-      </Box>
+      <FormActions isSubmitting={isPending} submitLabel="Создать" />
     </Box>
   );
 };

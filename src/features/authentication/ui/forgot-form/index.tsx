@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { useForgotForm } from "../../hooks/useForgotForm";
 
 export const ForgotForm = () => {
@@ -40,15 +40,14 @@ export const ForgotForm = () => {
             />
           </FormFieldset>
 
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
+          <FormActions
+            isSubmitting={isPending}
+            submitLabel="Отправить"
+            submitLabelLoading="Отправка..."
+            align="center"
             fullWidth
-            disabled={isPending}
-          >
-            {isPending ? "Отправка..." : "Отправить"}
-          </Button>
+            submitProps={{ size: "large" }}
+          />
 
         </Box>
       </Paper>

@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { ROUTES } from "@/shared/constants";
 import { useSignInForm } from "../../hooks/useSignInForm";
 
@@ -50,15 +51,14 @@ export const SignInForm = () => {
             />
           </FormFieldset>
 
-          <Button
-            type="submit"
-            variant="contained"
-            size="large"
+          <FormActions
+            isSubmitting={isPending}
+            submitLabel="Войти"
+            submitLabelLoading="Вход..."
+            align="center"
             fullWidth
-            disabled={isPending}
-          >
-            {isPending ? "Вход..." : "Войти"}
-          </Button>
+            submitProps={{ size: "large" }}
+          />
 
           <Button
             variant="text"

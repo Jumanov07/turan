@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { AxiosError } from "axios";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import {
   createCompany,
   editCompany,
@@ -14,6 +13,7 @@ import {
 import { useToastMutation } from "@/shared/hooks";
 import { FormFieldset } from "@/shared/ui/form-fieldset";
 import { FormTextField } from "@/shared/ui/form-text-field";
+import { FormActions } from "@/shared/ui/form-actions";
 import { getApiErrorMessage } from "@/shared/helpers";
 import { CompanyFormSchema } from "../../model/schema";
 import type { CompanyFormValues } from "../../model/types";
@@ -66,13 +66,8 @@ export const CompanyForm = ({ company, onClose }: Props) => {
     });
   };
 
-  const buttonText = mutation.isPending
-    ? isEditing
-      ? "Обновление..."
-      : "Создание..."
-    : isEditing
-      ? "Сохранить"
-      : "Создать";
+  const submitLabel = isEditing ? "Сохранить" : "Создать";
+  const submitLabelLoading = isEditing ? "Обновление..." : "Создание...";
 
   return (
     <Box
@@ -98,14 +93,11 @@ export const CompanyForm = ({ company, onClose }: Props) => {
         />
       </FormFieldset>
 
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        disabled={mutation.isPending}
-      >
-        {buttonText}
-      </Button>
+      <FormActions
+        isSubmitting={mutation.isPending}
+        submitLabel={submitLabel}
+        submitLabelLoading={submitLabelLoading}
+      />
     </Box>
   );
 };
