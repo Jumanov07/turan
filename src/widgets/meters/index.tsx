@@ -1,8 +1,5 @@
 import Box from "@mui/material/Box";
-import {
-  createMeterColumns,
-  useMeters,
-} from "@/features/meters";
+import { createMeterColumns, useMeters } from "@/features/meters";
 import { useGroups } from "@/features/groups";
 import { MetersHeader } from "./ui/meters-header";
 import { MetersModals } from "./ui/meters-modals";
@@ -52,6 +49,7 @@ export const MetersWidget = () => {
     useGroups({
       forFilter: true,
     });
+
   const {
     editingMeter,
     isEditModalOpen,
