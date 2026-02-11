@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import type { Column } from "@/shared/types";
 import type { Group } from "@/entities/groups";
-import { DataTable } from "@/shared/ui/data-table";
-import { ListSection } from "@/shared/ui/list-section";
-import { Pagination } from "@/shared/ui/pagination";
+import { TableSection } from "@/shared/ui/table-section";
 
 interface Props {
   isLoading: boolean;
@@ -34,25 +32,24 @@ export const GroupsTableSection = ({
   onLimitChange,
   toolbar,
 }: Props) => (
-  <ListSection
+  <TableSection
     isLoading={isLoading}
     isError={isError}
     errorText="Ошибка при загрузке групп"
     hasItems={hasGroups}
     emptyText={emptyText}
     toolbar={toolbar}
-    pagination={
-      <Pagination
-        page={page}
-        limit={limit}
-        total={total}
-        onPageChange={onPageChange}
-        rowsPerPageOptions={[5, 10, 20]}
-        labelRowsPerPage="Групп на странице:"
-        onLimitChange={onLimitChange}
-      />
-    }
-  >
-    <DataTable rows={groups} columns={columns} getRowId={(g) => g.id} />
-  </ListSection>
+    pagination={{
+      page,
+      limit,
+      total,
+      onPageChange,
+      rowsPerPageOptions: [5, 10, 20],
+      labelRowsPerPage: "Групп на странице:",
+      onLimitChange,
+    }}
+    rows={groups}
+    columns={columns}
+    getRowId={(g) => g.id}
+  />
 );

@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
-import type { Column } from "@/shared/types";
 import type { Webhook } from "@/entities/webhooks";
-import { DataTable } from "@/shared/ui/data-table";
-import { ListSection } from "@/shared/ui/list-section";
+import type { Column } from "@/shared/types";
+import { TableSection } from "@/shared/ui/table-section";
 
 interface Props {
   isLoading: boolean;
@@ -23,14 +22,15 @@ export const WebhooksTableSection = ({
   columns,
   toolbar,
 }: Props) => (
-  <ListSection
+  <TableSection
     isLoading={isLoading}
     isError={isError}
     errorText="Ошибка при загрузке вебхуков"
     hasItems={hasWebhooks}
     emptyText={emptyText}
     toolbar={toolbar}
-  >
-    <DataTable rows={webhooks} columns={columns} getRowId={(w) => w.id} />
-  </ListSection>
+    rows={webhooks}
+    columns={columns}
+    getRowId={(w) => w.id}
+  />
 );

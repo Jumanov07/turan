@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import type { Column } from "@/shared/types";
 import type { Company } from "@/entities/companies";
-import { DataTable } from "@/shared/ui/data-table";
-import { ListSection } from "@/shared/ui/list-section";
+import { TableSection } from "@/shared/ui/table-section";
 
 interface Props {
   isLoading: boolean;
@@ -23,7 +22,7 @@ export const CompaniesTableSection = ({
   columns,
   toolbar,
 }: Props) => (
-  <ListSection
+  <TableSection
     isLoading={isLoading}
     isError={isError}
     errorText="Ошибка при загрузке компаний"
@@ -31,7 +30,8 @@ export const CompaniesTableSection = ({
     hasItems={hasCompanies}
     emptyText={emptyText}
     toolbar={toolbar}
-  >
-    <DataTable rows={companies} columns={columns} getRowId={(c) => c.id} />
-  </ListSection>
+    rows={companies}
+    columns={columns}
+    getRowId={(c) => c.id}
+  />
 );

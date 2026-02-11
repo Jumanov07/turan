@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import type { Column } from "@/shared/types";
 import type { Device } from "@/entities/devices";
-import { DataTable } from "@/shared/ui/data-table";
-import { ListSection } from "@/shared/ui/list-section";
-import { Pagination } from "@/shared/ui/pagination";
+import { TableSection } from "@/shared/ui/table-section";
 
 interface Props {
   isLoading: boolean;
@@ -34,25 +32,24 @@ export const DevicesTableSection = ({
   onLimitChange,
   toolbar,
 }: Props) => (
-  <ListSection
+  <TableSection
     isLoading={isLoading}
     isError={isError}
     errorText="Ошибка при загрузке устройств"
     hasItems={hasDevices}
     emptyText={emptyText}
     toolbar={toolbar}
-    pagination={
-      <Pagination
-        page={page}
-        limit={limit}
-        total={total}
-        onPageChange={onPageChange}
-        rowsPerPageOptions={[5, 10, 20]}
-        labelRowsPerPage="Устройств на странице:"
-        onLimitChange={onLimitChange}
-      />
-    }
-  >
-    <DataTable rows={devices} columns={columns} getRowId={(d) => d.id} />
-  </ListSection>
+    pagination={{
+      page,
+      limit,
+      total,
+      onPageChange,
+      rowsPerPageOptions: [5, 10, 20],
+      labelRowsPerPage: "Устройств на странице:",
+      onLimitChange,
+    }}
+    rows={devices}
+    columns={columns}
+    getRowId={(d) => d.id}
+  />
 );
